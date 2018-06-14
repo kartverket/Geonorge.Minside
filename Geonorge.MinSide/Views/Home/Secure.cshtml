@@ -4,3 +4,25 @@
 
 
 Dette er en beskyttet side
+
+<table>
+    <tr>
+        <th width="200">type</th>
+        <th width="200">value</th>
+        <th width="200">value type</th>
+        <th width="200">issuer</th>
+        <th width="200">original issuer</th>
+        <th width="200">properties count</th>
+    </tr>
+@foreach (var claim in User.Claims)
+{
+    <tr>
+        <td>@claim.Type</td>
+        <td>@claim.Value</td>
+        <td>@claim.ValueType</td>
+        <td>@claim.Issuer</td>
+        <td>@claim.OriginalIssuer</td>
+        <td>@claim.Properties.Count</td>
+    </tr>
+}
+</table>
