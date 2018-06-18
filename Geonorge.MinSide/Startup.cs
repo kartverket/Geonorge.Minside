@@ -1,9 +1,11 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.WindowsAzure.Storage;
 
 namespace Geonorge.MinSide
 {
@@ -27,8 +29,13 @@ namespace Geonorge.MinSide
                 {
                     options.DefaultScheme = "Cookies";
                     options.DefaultChallengeScheme = "oidc";
+                   
                 })
-                .AddCookie("Cookies")
+                .AddCookie("Cookies", options =>
+                {
+                    options.LoginPath = new PathString("/signin");
+                    options.LogoutPath = new PathString("/signout");
+                })
                 .AddOpenIdConnect("oidc", options =>
                 {
                     options.Authority = Configuration["auth:oidc:authority"];
