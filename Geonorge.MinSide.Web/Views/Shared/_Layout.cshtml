@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@using System.Net.Cache
+@using Microsoft.AspNetCore.Http
+@inject ApplicationSettings AppSettings
+
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -9,10 +13,34 @@
         <link rel="stylesheet" href="~/dist/site.css" asp-append-version="true" />
     </environment>
 </head>
-<body>
+<body class="geonorge-container geonorge">
+
+@Html.Partial("~/wwwroot/dist/partials/Header.html")
     @RenderBody()
-    
-    <script src="~/dist/vendor.js" asp-append-version="true"></script>
-    @RenderSection("scripts", required: false)
+
+@Html.Partial("~/wwwroot/dist/partials/Footer_v2.html")
+
+<script>
+    var applicationEnvironment = '@AppSettings.EnvironmentName';
+    var applicationVersionNumber = '@AppSettings.BuildVersionNumber';
+    var authenticationData = {
+        supportsLogin: true,
+        isAuthenticated: false,
+        urlActionSignOut: '@Url.Action("SignOut", "Authentication")',
+        urlActionSignIn: '@Url.Action("SignIn", "Authentication")'
+    }
+    var cultureData = {
+        supportsMultiCulture: "false",
+        currentCulture: 'no'
+    };
+</script>
+
+<script src="~/dist/vendor.js" asp-append-version="true"></script>
+<script src="~/dist/js/geonorge-shared/vendor.js" asp-append-version="true"></script>
+<script src="~/dist/js/geonorge-shared/main.js" asp-append-version="true"></script>
+<script src="~/dist/js/geonorge-base/init.js" asp-append-version="true"></script>
+
+@RenderSection("scripts", required: false)
+
 </body>
 </html>
