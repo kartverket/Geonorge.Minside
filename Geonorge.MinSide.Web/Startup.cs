@@ -1,4 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using Geonorge.MinSide.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -46,6 +47,10 @@ namespace Geonorge.MinSide
                     options.ResponseType = OpenIdConnectResponseType.Code;
                     options.GetClaimsFromUserInfoEndpoint = true;
                 });
+
+            var applicationSettings = new ApplicationSettings();
+            Configuration.Bind(applicationSettings);
+            services.AddSingleton<ApplicationSettings>(applicationSettings);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
