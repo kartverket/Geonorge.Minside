@@ -15,10 +15,10 @@
 </head>
 <body class="geonorge-container geonorge">
 
-@Html.Partial("~/wwwroot/dist/partials/Header.html")
+@await Html.PartialAsync("~/wwwroot/dist/partials/Header.html")
     @RenderBody()
 
-@Html.Partial("~/wwwroot/dist/partials/Footer_v2.html")
+@await Html.PartialAsync("~/wwwroot/dist/partials/Footer_v2.html")
 
 <script>
     var applicationEnvironment = '@AppSettings.EnvironmentName';
@@ -26,8 +26,8 @@
     var authenticationData = {
         supportsLogin: true,
         isAuthenticated: false,
-        urlActionSignOut: '@Url.Action("SignOut", "Authentication")',
-        urlActionSignIn: '@Url.Action("SignIn", "Authentication")'
+        urlActionSignOut: '@Url.Action("LogOut", "Authentication")',
+        urlActionSignIn: '@Url.Action("LogIn", "Authentication")'
     }
     var cultureData = {
         supportsMultiCulture: "false",

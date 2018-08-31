@@ -1,8 +1,10 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using Geonorge.MinSide.Models;
+﻿using Geonorge.MinSide.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,33 +23,35 @@ namespace Geonorge.MinSide
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
 
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
-
-            services.AddAuthentication(options =>
-                {
-                    options.DefaultScheme = "Cookies";
-                    options.DefaultChallengeScheme = "oidc";
-                   
+            services.AddAuthentication(options => {
+                    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
                 })
-                .AddCookie("Cookies", options =>
-                {
-                    options.LoginPath = new PathString("/signin");
-                    options.LogoutPath = new PathString("/signout");
+                .AddCookie(options => 
+                { 
+                    options.LoginPath = new PathString("/login"); 
+                    options.LogoutPath = new PathString("/logout"); 
                 })
-                .AddOpenIdConnect("oidc", options =>
-                {
-                    options.Authority = Configuration["auth:oidc:authority"];
-                    options.ClientId = Configuration["auth:oidc:clientid"];
-                    options.ClientSecret = Configuration["auth:oidc:clientsecret"];
-                    options.MetadataAddress = Configuration["auth:oidc:metadataaddress"];
-                    options.SaveTokens = true;
-                    options.ResponseType = OpenIdConnectResponseType.Code;
-                    options.GetClaimsFromUserInfoEndpoint = true;
-                });
-
+                .AddOpenIdConnect(options =>
+                    {
+                        options.Authority = Configuration["auth:oidc:authority"];
+                        options.ClientId = Configuration["auth:oidc:clientid"];
+                        options.ClientSecret = Configuration["auth:oidc:clientsecret"];
+                        options.MetadataAddress = Configuration["auth:oidc:metadataaddress"];
+                        options.SaveTokens = true;
+                        options.ResponseType = OpenIdConnectResponseType.Code;
+                        options.GetClaimsFromUserInfoEndpoint = true;
+                    }
+                );
             var applicationSettings = new ApplicationSettings();
             Configuration.Bind(applicationSettings);
             services.AddSingleton<ApplicationSettings>(applicationSettings);
