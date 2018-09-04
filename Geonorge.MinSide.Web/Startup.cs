@@ -75,7 +75,7 @@ namespace Geonorge.MinSide
 
             app.UseHttpsRedirection();
 
-            app.UseStatusCodePages();
+            //app.UseStatusCodePages();
 
             app.UseStaticFiles();
 
