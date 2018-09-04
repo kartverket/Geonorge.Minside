@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using Geonorge.MinSide.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -70,7 +70,6 @@ namespace Geonorge.MinSide
         {
             if (env.IsDevelopment())
             {
-                app.UseBrowserLink();
                 app.UseDeveloperExceptionPage();
                 app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
                 {
