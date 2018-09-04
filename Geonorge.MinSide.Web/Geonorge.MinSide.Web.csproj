@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-    <RootNamespace>Geonorge.MinSide.Web</RootNamespace>
+    <RootNamespace>Geonorge.MinSide</RootNamespace>
     <AssemblyName>Geonorge.MinSide.Web</AssemblyName>
     <UserSecretsId>0eb72c5b-1bfc-4504-b75c-580b7a62f611</UserSecretsId>
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
