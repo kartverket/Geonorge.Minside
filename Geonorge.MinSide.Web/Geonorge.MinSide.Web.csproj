@@ -29,6 +29,10 @@
     <!-- Files not to publish (note that the 'dist' subfolders are re-added below) -->
     <Content Remove="ClientApp\**" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Geonorge.MinSide.Core\Geonorge.MinSide.Core.csproj" />
+    <ProjectReference Include="..\Geonorge.MinSide.Infrastructure\Geonorge.MinSide.Infrastructure.csproj" />
+  </ItemGroup>
   <Target Name="RunWebpack" AfterTargets="ComputeFilesToPublish">
     <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
     <Exec Command="npm install" />
