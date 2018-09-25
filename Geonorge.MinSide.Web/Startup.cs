@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Reflection;
 using Geonorge.MinSide.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -11,11 +12,14 @@ using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Serilog;
 
 namespace Geonorge.MinSide
 {
     public class Startup
     {
+        private static readonly ILogger Log = Serilog.Log.ForContext(MethodBase.GetCurrentMethod().DeclaringType);
+        
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -88,6 +92,28 @@ namespace Geonorge.MinSide
             app.UseStaticFiles();
 
             app.UseForwardedHeaders();
+            
+            // Debug Proxy headers
+            app.Use(async (context, next) =>
+            {
+                // Request method, scheme, and path
+                Log.Debug("Request Method: {METHOD}", context.Request.Method);
+                Log.Debug("Request Scheme: {SCHEME}", context.Request.Scheme);
+                Log.Debug("Request Path: {PATH}", context.Request.Path);
+
+                // Headers
+                foreach (var header in context.Request.Headers)
+                {
+                    Log.Debug("Header: {KEY}: {VALUE}", header.Key, header.Value);
+                }
+
+                // Connection: RemoteIp
+                Log.Debug("Request RemoteIp: {REMOTE_IP_ADDRESS}", 
+                    context.Connection.RemoteIpAddress);
+
+                await next();
+            });
+            
             app.UseAuthentication();
 
             app.UseMvc(routes =>
