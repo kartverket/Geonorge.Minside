@@ -87,6 +87,7 @@ namespace Geonorge.MinSide
 
             app.UseStaticFiles();
 
+            app.UseForwardedHeaders();
             app.UseAuthentication();
 
             app.UseMvc(routes =>
