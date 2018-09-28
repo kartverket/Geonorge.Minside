@@ -85,6 +85,13 @@ namespace Geonorge.MinSide
                 app.UseExceptionHandler("/Home/Error");
             }
 
+            // proxy does not send correct header - force https scheme
+            app.Use((context, next) =>
+            {
+                context.Request.Scheme = "https";
+                return next();
+            });
+            
             app.UseHttpsRedirection();
 
             //app.UseStatusCodePages();
