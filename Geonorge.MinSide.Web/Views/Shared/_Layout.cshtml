@@ -36,6 +36,11 @@
 <script src="~/dist/vendor.js" asp-append-version="true"></script>
 <script src="~/dist/js/geonorge-shared/vendor.js" asp-append-version="true"></script>
 <script src="~/dist/js/geonorge-shared/main.js" asp-append-version="true"></script>
+
+<script>
+searchOption.epiBaseUrl = '@AppSettings.Urls.GeonorgeRoot';
+</script>
+
 <script src="~/dist/js/geonorge-base/init.js" asp-append-version="true"></script>
 
 @RenderSection("scripts", required: false)
