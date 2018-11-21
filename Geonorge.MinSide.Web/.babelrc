@@ -1,8 +1,0 @@
-﻿{
-  "presets": ["env", "stage-2"],
-  "plugins": [
-    "transform-runtime",
-    "transform-async-to-generator"
-  ],
-  "comments": false
-}
