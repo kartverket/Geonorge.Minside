@@ -1,6 +1,12 @@
 ﻿@{ ViewData["Title"] = "Min side"; }
 
-<div id="app"></div>
+<div id="app">
+    <a href="http://kartkatalog.dev.geonorge.no/search?Facets%5B0%5D.name=organization&Facets%5B0%5D.value=Kartverket" target="_blank">Metadata</a><br />
+    <a href="http://register.dev.geonorge.no/produktspesifikasjoner?sorting=&text=Kartverket" target="_blank">Produktspesifikasjoner</a><br />
+    <a href="http://register.dev.geonorge.no/produktark?register=Produktark&text=Kartverket" target="_blank">Produktark</a><br />
+    <a href="https://rapportgenerator.dev.geonorge.no/statistics?organization=Kartverket" target="_blank">Statistikk</a>
+
+</div>
 
 @section scripts {
     <script src="~/dist/main.js" asp-append-version="true"></script>
