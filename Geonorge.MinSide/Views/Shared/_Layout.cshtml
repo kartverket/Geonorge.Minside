@@ -5,45 +5,57 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Geonorge.MinSide - @ViewData["Title"]</title>
+    <title>Geonorge.Minside - @ViewData["Title"]</title>
     <link rel="stylesheet" href="~/dist/vendor.css" asp-append-version="true" />
     <environment exclude="Development">
         <link rel="stylesheet" href="~/dist/site.css" asp-append-version="true" />
     </environment>
 </head>
-<body class="geonorge-container geonorge">
+<body class="geonorge-container prototype geonorge">
+    <div id="loading-animation" class="loading-animation" style="display: none;"></div>
 
-@await Html.PartialAsync("~/wwwroot/dist/partials/Header.html")
-    @RenderBody()
-
-@await Html.PartialAsync("~/wwwroot/dist/partials/Footer_v2.html")
-
-<script>
+    <script>
     var applicationEnvironment = '@AppSettings.EnvironmentName';
     var applicationVersionNumber = '@AppSettings.BuildVersionNumber';
-    var authenticationData = {
-        supportsLogin: true,
-        isAuthenticated: false,
-        urlActionSignOut: '@Url.Action("LogOut", "Authentication")',
-        urlActionSignIn: '@Url.Action("LogIn", "Authentication")'
-    }
-    var cultureData = {
-        supportsMultiCulture: "false",
-        currentCulture: 'no'
-    };
-</script>
+    var authenticationData = { supportsLogin: false, isAuthenticated: false };
+    var cultureData = { supportsMultiCulture: "true", currentCulture: 'no' };
+    </script>
 
-<script src="~/dist/vendor.js" asp-append-version="true"></script>
-<script src="~/dist/js/geonorge-shared/vendor.js" asp-append-version="true"></script>
-<script src="~/dist/js/geonorge-shared/main.js" asp-append-version="true"></script>
+    @await Html.PartialAsync("~/wwwroot/dist/partials/Header.html")
 
-<script>
-searchOption.epiBaseUrl = '@AppSettings.Urls.GeonorgeRoot';
-</script>
+    <div class="body-content">
+        <div class="container container-breadcrumbs" id="navTabCont">
+            <ul class="breadcrumbs col-md-12">
+                <li><a href="@AppSettings.Urls.GeonorgeRoot">Geonorge</a></li>
+                <li><a href="/">Minside</a></li>
+                @RenderSection("breadcrumb", false)
+            </ul>
+        </div>
+        <div class="container">
+            <section class="Heading">
+                <div>
+                    <h1 class="small-h1">@ViewData["title"]</h1>
+                    <div class="col-sm-12">
+                        <span class="separator-lg"></span>
+                    </div>
+                </div>
+            </section>
+            @RenderBody()
+        </div>
+    </div>
+    @await Html.PartialAsync("~/wwwroot/dist/partials/Footer_v2.html")
 
-<script src="~/dist/js/geonorge-base/init.js" asp-append-version="true"></script>
+    <script src="~/dist/vendor.js" asp-append-version="true"></script>
+    <script src="~/dist/js/geonorge-shared/vendor.js" asp-append-version="true"></script>
+    <script src="~/dist/js/geonorge-shared/main.js" asp-append-version="true"></script>
 
-@RenderSection("scripts", required: false)
+    <script>
+    searchOption.epiBaseUrl = '@AppSettings.Urls.GeonorgeRoot';
+    </script>
+
+    <script src="~/dist/js/geonorge-base/init.js" asp-append-version="true"></script>
+
+    @RenderSection("scripts", required: false)
 
 </body>
 </html>
