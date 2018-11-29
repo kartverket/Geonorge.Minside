@@ -86,6 +86,7 @@ namespace Geonorge.MinSide
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseStatusCodePages();
                 //app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
                 //{
                 //    HotModuleReplacement = true
@@ -94,23 +95,18 @@ namespace Geonorge.MinSide
             else
             {
                 app.UseExceptionHandler("/Home/Error");
+                
+                // Geonorge proxy does not send correct header - force https scheme
+                app.Use((context, next) =>
+                {
+                    context.Request.Scheme = "https";
+                    return next();
+                });
             }
-
-            /*
-            // proxy does not send correct header - force https scheme
-            app.Use((context, next) =>
-            {
-                context.Request.Scheme = "https";
-                return next();
-            });
-
             
-            */
-            
-            app.UseStatusCodePages();
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseForwardedHeaders();
 
             //// Debug Proxy headers
