@@ -1,6 +1,8 @@
 ﻿using System.Linq;
 using System.Reflection;
+using System.Security.Claims;
 using Geonorge.MinSide.Models;
+using Geonorge.MinSide.Utils;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
@@ -45,15 +47,12 @@ namespace Geonorge.MinSide
                     manager.FeatureProviders.Add(new ReferencesMetadataReferenceFeatureProvider());
                 }); ;
 
-            services.AddAuthentication(options => {
-                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-            })
-                .AddCookie(options =>
-                {
-                    options.LoginPath = new PathString("/login");
-                    options.LogoutPath = new PathString("/logout");
+            services
+                .AddAuthentication(options => {
+                    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
                 })
+                .AddCookie()
                 .AddOpenIdConnect(options =>
                 {
                     options.Authority = Configuration["auth:oidc:authority"];
@@ -63,11 +62,23 @@ namespace Geonorge.MinSide
                     options.SaveTokens = true;
                     options.ResponseType = OpenIdConnectResponseType.Code;
                     options.GetClaimsFromUserInfoEndpoint = true;
-                }
-                );
+                    options.Events = new OpenIdConnectEvents
+                    {
+                        OnTokenValidated = async ctx =>
+                        {
+                            var authorizationService =
+                                ctx.HttpContext.RequestServices.GetRequiredService<IAuthorizationService>();
+                            ctx.Principal.AddIdentity(await authorizationService.GetClaims((ClaimsIdentity)ctx.Principal.Identity));
+                        }
+                    };
+                });
+            
             var applicationSettings = new ApplicationSettings();
             Configuration.Bind(applicationSettings);
             services.AddSingleton<ApplicationSettings>(applicationSettings);
+            services.AddHttpClient();
+            services.AddTransient<IAuthorizationService, GeonorgeAuthorizationService>();
+            services.AddTransient<IBaatAuthzApi, BaatAuthzApi>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -85,6 +96,7 @@ namespace Geonorge.MinSide
                 app.UseExceptionHandler("/Home/Error");
             }
 
+            /*
             // proxy does not send correct header - force https scheme
             app.Use((context, next) =>
             {
@@ -92,10 +104,11 @@ namespace Geonorge.MinSide
                 return next();
             });
 
+            
+            */
+            
+            app.UseStatusCodePages();
             app.UseHttpsRedirection();
-
-            //app.UseStatusCodePages();
-
             app.UseStaticFiles();
 
             app.UseForwardedHeaders();
