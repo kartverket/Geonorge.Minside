@@ -50,6 +50,7 @@ namespace Geonorge.MinSide
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
+                .UseKestrel()
                 .UseConfiguration(Configuration)
                 .UseSerilog()
                 .Build();
