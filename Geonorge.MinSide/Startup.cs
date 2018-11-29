@@ -109,26 +109,26 @@ namespace Geonorge.MinSide
             app.UseStaticFiles();
             app.UseForwardedHeaders();
 
-            //// Debug Proxy headers
-            //app.Use(async (context, next) =>
-            //{
-            //    // Request method, scheme, and path
-            //    Log.Debug("Request Method: {METHOD}", context.Request.Method);
-            //    Log.Debug("Request Scheme: {SCHEME}", context.Request.Scheme);
-            //    Log.Debug("Request Path: {PATH}", context.Request.Path);
+            // Debug Proxy headers
+            app.Use(async (context, next) =>
+            {
+                // Request method, scheme, and path
+                Log.Debug("Request Method: {METHOD}", context.Request.Method);
+                Log.Debug("Request Scheme: {SCHEME}", context.Request.Scheme);
+                Log.Debug("Request Path: {PATH}", context.Request.Path);
 
-            //    // Headers
-            //    foreach (var header in context.Request.Headers)
-            //    {
-            //        Log.Debug("Header: {KEY}: {VALUE}", header.Key, header.Value);
-            //    }
+                // Headers
+                foreach (var header in context.Request.Headers)
+                {
+                    Log.Debug("Header: {KEY}: {VALUE}", header.Key, header.Value);
+                }
 
-            //    // Connection: RemoteIp
-            //    Log.Debug("Request RemoteIp: {REMOTE_IP_ADDRESS}",
-            //        context.Connection.RemoteIpAddress);
+                // Connection: RemoteIp
+                Log.Debug("Request RemoteIp: {REMOTE_IP_ADDRESS}",
+                    context.Connection.RemoteIpAddress);
 
-            //    await next();
-            //});
+                await next();
+            });
 
             app.UseAuthentication();
 
