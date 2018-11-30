@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Geonorge.MinSide.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Geonorge.MinSide.Controllers
@@ -18,6 +19,12 @@ namespace Geonorge.MinSide.Controllers
             return View();
         }
 
+        [Authorize]
+        public IActionResult ApiDemo()
+        {
+            return Json(new { title="hello"});
+        }
+        
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
