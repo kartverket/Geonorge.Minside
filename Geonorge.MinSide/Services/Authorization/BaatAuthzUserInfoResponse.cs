@@ -10,6 +10,10 @@ namespace Geonorge.MinSide.Utils
         
         public BaatAuthzUserInfoOrganization Organization { get; set; }
         
+        public string Name { get; set; }
+        
+        public string Email { get; set; }
+        
         [JsonProperty("authorized_from")]
         public string AuthorizedFrom { get; set; }
         
