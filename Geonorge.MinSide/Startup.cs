@@ -1,7 +1,5 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
+﻿using System.Linq;
 using System.Reflection;
-using System.Security.Claims;
 using Geonorge.MinSide.Models;
 using Geonorge.MinSide.Utils;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -18,7 +16,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Serilog;
-using IAuthorizationService = Geonorge.MinSide.Utils.IAuthorizationService;
 
 namespace Geonorge.MinSide
 {
@@ -64,24 +61,8 @@ namespace Geonorge.MinSide
                     options.ClientId = Configuration["auth:oidc:clientid"];
                     options.ClientSecret = Configuration["auth:oidc:clientsecret"];
                     options.MetadataAddress = Configuration["auth:oidc:metadataaddress"];
-                    options.SaveTokens = false;
-                    options.ResponseType = OpenIdConnectResponseType.Code; 
-                    options.Events = new OpenIdConnectEvents
-                    {
-                        OnTokenValidated = async ctx =>
-                        {
-                            var authorizationService =
-                                ctx.HttpContext.RequestServices.GetRequiredService<IAuthorizationService>();
-
-                            if (ctx.Principal.Identity is ClaimsIdentity identity)
-                            {
-                                identity.AddClaims(await authorizationService.GetClaims(identity));
-
-                                if (ctx.SecurityToken != null)
-                                    identity.AddClaim(new Claim("access_token", ctx.SecurityToken.RawData));
-                            }
-                        }
-                    };
+                    options.ResponseType = OpenIdConnectResponseType.Code;
+                    options.EventsType = typeof(GeonorgeOpenIdConnectEvents);
                 })
                 .AddJwtBearer(options =>
                 {
@@ -104,7 +85,9 @@ namespace Geonorge.MinSide
             Configuration.Bind(applicationSettings);
             services.AddSingleton<ApplicationSettings>(applicationSettings);
             services.AddHttpClient();
-            services.AddTransient<IAuthorizationService, GeonorgeAuthorizationService>();
+            
+            services.AddScoped<GeonorgeOpenIdConnectEvents>();
+            services.AddTransient<IGeonorgeAuthorizationService, GeonorgeAuthorizationService>();
             services.AddTransient<IBaatAuthzApi, BaatAuthzApi>();
         }
 

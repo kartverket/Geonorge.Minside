@@ -6,17 +6,10 @@ using Serilog;
 
 namespace Geonorge.MinSide.Utils
 {
-    public interface IAuthorizationService
-    {
-        /// <summary>
-        ///     Return Claims for the given user
-        /// </summary>
-        /// <param name="identity"></param>
-        /// <returns></returns>
-        Task<List<Claim>> GetClaims(ClaimsIdentity identity);
-    }
-
-    public class GeonorgeAuthorizationService : IAuthorizationService
+    /// <summary>
+    /// Retrieves information from Geonorges authorization service, also known as BAAT.
+    /// </summary>
+    public class GeonorgeAuthorizationService : IGeonorgeAuthorizationService
     {
         private static readonly ILogger Log = Serilog.Log.ForContext(MethodBase.GetCurrentMethod().DeclaringType);
 
