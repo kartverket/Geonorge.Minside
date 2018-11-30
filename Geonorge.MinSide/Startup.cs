@@ -72,15 +72,13 @@ namespace Geonorge.MinSide
                         {
                             var authorizationService =
                                 ctx.HttpContext.RequestServices.GetRequiredService<IAuthorizationService>();
-                            ctx.Principal.AddIdentity(await authorizationService.GetClaims((ClaimsIdentity)ctx.Principal.Identity));
-                            
-                            JwtSecurityToken accessToken = ctx.SecurityToken;
-                            if (accessToken != null)
+
+                            if (ctx.Principal.Identity is ClaimsIdentity identity)
                             {
-                                if (ctx.Principal.Identity is ClaimsIdentity identity)
-                                {
-                                    identity.AddClaim(new Claim("access_token", accessToken.RawData));
-                                }
+                                identity.AddClaims(await authorizationService.GetClaims(identity));
+
+                                if (ctx.SecurityToken != null)
+                                    identity.AddClaim(new Claim("access_token", ctx.SecurityToken.RawData));
                             }
                         }
                     };

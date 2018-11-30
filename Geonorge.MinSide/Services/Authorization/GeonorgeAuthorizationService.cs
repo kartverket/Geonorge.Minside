@@ -13,7 +13,7 @@ namespace Geonorge.MinSide.Utils
         /// </summary>
         /// <param name="identity"></param>
         /// <returns></returns>
-        Task<ClaimsIdentity> GetClaims(ClaimsIdentity identity);
+        Task<List<Claim>> GetClaims(ClaimsIdentity identity);
     }
 
     public class GeonorgeAuthorizationService : IAuthorizationService
@@ -32,7 +32,7 @@ namespace Geonorge.MinSide.Utils
         /// </summary>
         /// <param name="identity"></param>
         /// <returns></returns>
-        public async Task<ClaimsIdentity> GetClaims(ClaimsIdentity identity)
+        public async Task<List<Claim>> GetClaims(ClaimsIdentity identity)
         {
             Claim usernameClaim =
                 identity.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
@@ -57,7 +57,7 @@ namespace Geonorge.MinSide.Utils
                     new Claim("OrganizationContactPhone", response.Organization?.ContactPhone)
                 });
 
-            return new ClaimsIdentity(claims);
+            return claims;
         }
     }
 }
