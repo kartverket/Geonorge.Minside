@@ -1,10 +1,13 @@
-﻿using System.Linq;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Reflection;
 using System.Security.Claims;
 using Geonorge.MinSide.Models;
 using Geonorge.MinSide.Utils;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -15,6 +18,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Serilog;
+using IAuthorizationService = Geonorge.MinSide.Utils.IAuthorizationService;
 
 namespace Geonorge.MinSide
 {
@@ -45,12 +49,13 @@ namespace Geonorge.MinSide
                     var oldMetadataReferenceFeatureProvider = manager.FeatureProviders.First(f => f is MetadataReferenceFeatureProvider);
                     manager.FeatureProviders.Remove(oldMetadataReferenceFeatureProvider);
                     manager.FeatureProviders.Add(new ReferencesMetadataReferenceFeatureProvider());
-                }); ;
+                });
 
             services
                 .AddAuthentication(options => {
                     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+                    
                 })
                 .AddCookie()
                 .AddOpenIdConnect(options =>
@@ -59,9 +64,8 @@ namespace Geonorge.MinSide
                     options.ClientId = Configuration["auth:oidc:clientid"];
                     options.ClientSecret = Configuration["auth:oidc:clientsecret"];
                     options.MetadataAddress = Configuration["auth:oidc:metadataaddress"];
-                    options.SaveTokens = true;
-                    options.ResponseType = OpenIdConnectResponseType.Code;
-                    options.GetClaimsFromUserInfoEndpoint = true;
+                    options.SaveTokens = false;
+                    options.ResponseType = OpenIdConnectResponseType.Code; 
                     options.Events = new OpenIdConnectEvents
                     {
                         OnTokenValidated = async ctx =>
@@ -69,9 +73,34 @@ namespace Geonorge.MinSide
                             var authorizationService =
                                 ctx.HttpContext.RequestServices.GetRequiredService<IAuthorizationService>();
                             ctx.Principal.AddIdentity(await authorizationService.GetClaims((ClaimsIdentity)ctx.Principal.Identity));
+                            
+                            JwtSecurityToken accessToken = ctx.SecurityToken;
+                            if (accessToken != null)
+                            {
+                                if (ctx.Principal.Identity is ClaimsIdentity identity)
+                                {
+                                    identity.AddClaim(new Claim("access_token", accessToken.RawData));
+                                }
+                            }
                         }
                     };
+                })
+                .AddJwtBearer(options =>
+                {
+                    options.Authority = Configuration["auth:oidc:authority"];
+                    options.Audience = Configuration["auth:oidc:clientid"];
+                    options.MetadataAddress = Configuration["auth:oidc:metadataaddress"];
                 });
+            
+            // authorize both via cookies and jwt bearer tokens
+            services.AddAuthorization(options =>
+            {
+                var defaultAuthorizationPolicyBuilder = new AuthorizationPolicyBuilder(
+                    CookieAuthenticationDefaults.AuthenticationScheme, JwtBearerDefaults.AuthenticationScheme);
+                defaultAuthorizationPolicyBuilder = defaultAuthorizationPolicyBuilder.RequireAuthenticatedUser();
+                options.DefaultPolicy = defaultAuthorizationPolicyBuilder.Build();
+            });
+            
             
             var applicationSettings = new ApplicationSettings();
             Configuration.Bind(applicationSettings);
@@ -108,7 +137,7 @@ namespace Geonorge.MinSide
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseForwardedHeaders();
-
+/*
             // Debug Proxy headers
             app.Use(async (context, next) =>
             {
@@ -129,7 +158,7 @@ namespace Geonorge.MinSide
 
                 await next();
             });
-
+*/
             app.UseAuthentication();
 
             app.UseMvc(routes =>
