@@ -10,6 +10,7 @@
     <environment exclude="Development">
         <link rel="stylesheet" href="~/dist/site.css" asp-append-version="true" />
     </environment>
+    @RenderSection("scripts", required: false)
 </head>
 <body class="geonorge-container prototype geonorge">
     <div id="loading-animation" class="loading-animation" style="display: none;"></div>
@@ -48,6 +49,9 @@
     <script src="~/dist/vendor.js" asp-append-version="true"></script>
     <script src="~/dist/js/geonorge-shared/vendor.js" asp-append-version="true"></script>
     <script src="~/dist/js/geonorge-shared/main.js" asp-append-version="true"></script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/16.4.0/umd/react.development.js"></script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.4.0/umd/react-dom.development.js"></script>
+    <script src="@Url.Content("~/Scripts/app.jsx")"></script>
 
     <script>
     searchOption.epiBaseUrl = '@AppSettings.Urls.GeonorgeRoot';

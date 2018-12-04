@@ -19,6 +19,9 @@ module.exports = (env) => {
                 { test: /\.(png|jpg|jpeg|gif|svg)$/, use: 'url-loader?limit=25000' }
             ]
         },
+        entry: {
+            main: './js/main.js'
+        },
         plugins: [
             new webpack.DllReferencePlugin({
                 context: __dirname,
