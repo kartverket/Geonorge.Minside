@@ -10,6 +10,18 @@ namespace Geonorge.MinSide.Controllers
     {
         public IActionResult Index()
         {
+            ViewData["OrganizationName"] = "Kartverket";
+            ViewData["OrganizationOrgnr"] = "971040238";
+
+            foreach (var claim in User.Claims)
+            {
+                if (claim.Type == "OrganizationName" && claim.Value.Length > 0)
+                    ViewData["OrganizationName"] = claim.Value;
+
+                if (claim.Type == "OrganizationOrgnr" && claim.Value.Length > 1)
+                    ViewData["OrganizationOrgnr"] = claim.Value;
+            }
+
             return View();
         }
 

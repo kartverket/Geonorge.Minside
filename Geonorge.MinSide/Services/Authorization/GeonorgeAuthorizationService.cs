@@ -39,7 +39,7 @@ namespace Geonorge.MinSide.Utils
             else
                 claims.AddRange(new List<Claim>
                 {
-                    new Claim("Name", response.Name),
+                    new Claim("Name", string.IsNullOrEmpty(response?.Name) ? "" : response.Name),
                     new Claim("Email", response.Email),
                     new Claim("AuthorizedFrom", response.AuthorizedFrom),
                     new Claim("AuthorizedUntil", response.AuthorizedUntil),

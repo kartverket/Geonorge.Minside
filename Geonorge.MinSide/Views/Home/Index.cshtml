@@ -1,14 +1,14 @@
 ﻿@inject ApplicationSettings AppSettings
-@{ ViewData["Title"] = "Min side"; ViewData["Organization"] = System.Net.WebUtility.UrlEncode("Kartverket"); //Todo get from claim
+@{ ViewData["Title"] = "Min side";
    ViewData["Environment"] = !string.IsNullOrEmpty(AppSettings.EnvironmentName) ? AppSettings.EnvironmentName.ToLower() + "." : ""; 
  }
 
 <div id="app">
-    <a href="http://kartkatalog.@ViewData["Environment"]geonorge.no/search?Facets%5B0%5D.name=organization&Facets%5B0%5D.value=@ViewData["Organization"]" target="_blank">Metadata</a><br />
-    <a href="http://register.@ViewData["Environment"]geonorge.no/produktspesifikasjoner?sorting=&text=@ViewData["Organization"]" target="_blank">Produktspesifikasjoner</a><br />
-    <a href="http://register.@ViewData["Environment"]geonorge.no/produktark?register=Produktark&text=@ViewData["Organization"]" target="_blank">Produktark</a><br />
-    <a href="https://register.@ViewData["Environment"]geonorge.no/kartografi/Files/index?text=@ViewData["Organization"]" target="_blank">Kartografi</a><br />
-    <a href="https://rapportgenerator.@ViewData["Environment"]geonorge.no/statistics?organization=@ViewData["Organization"]" target="_blank">Statistikk</a>
+    <a href="http://kartkatalog.@ViewData["Environment"]geonorge.no/search?Facets%5B0%5D.name=organization&Facets%5B0%5D.value=@ViewData["OrganizationName"]" target="_blank">Metadata</a><br />
+    <a href="http://register.@ViewData["Environment"]geonorge.no/produktspesifikasjoner?sorting=&text=@ViewData["OrganizationName"]" target="_blank">Produktspesifikasjoner</a><br />
+    <a href="http://register.@ViewData["Environment"]geonorge.no/produktark?register=Produktark&text=@ViewData["OrganizationName"]" target="_blank">Produktark</a><br />
+    <a href="https://register.@ViewData["Environment"]geonorge.no/kartografi/Files/index?text=@ViewData["OrganizationName"]" target="_blank">Kartografi</a><br />
+    <a href="https://rapportgenerator.@ViewData["Environment"]geonorge.no/statistics?organization=@ViewData["OrganizationName"]" target="_blank">Statistikk</a>
 
 </div>
 
