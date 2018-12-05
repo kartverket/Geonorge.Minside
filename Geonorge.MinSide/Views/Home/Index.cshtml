@@ -1,17 +1,58 @@
 @inject ApplicationSettings AppSettings
 @{ ViewData["Title"] = "Min side";
-   ViewData["Environment"] = !string.IsNullOrEmpty(AppSettings.EnvironmentName) ? AppSettings.EnvironmentName.ToLower() + "." : ""; 
- }
-
+    ViewData["Environment"] = !string.IsNullOrEmpty(AppSettings.EnvironmentName) ? AppSettings.EnvironmentName.ToLower() + "." : "";
+}
 <div id="app">
-    <a href="http://kartkatalog.@ViewData["Environment"]geonorge.no/search?Facets%5B0%5D.name=organization&Facets%5B0%5D.value=@ViewData["OrganizationName"]" target="_blank">Metadata</a><br />
-    <a href="http://register.@ViewData["Environment"]geonorge.no/produktspesifikasjoner?filterOrganization=@ViewData["OrganizationName"]" target="_blank">Produktspesifikasjoner</a><br />
-    <a href="http://register.@ViewData["Environment"]geonorge.no/produktark?filterOrganization=@ViewData["OrganizationName"]" target="_blank">Produktark</a><br />
-    <a href="https://register.@ViewData["Environment"]geonorge.no/kartografi/Files/index?text=@ViewData["OrganizationName"]" target="_blank">Kartografi</a><br />
-    <a href="https://rapportgenerator.@ViewData["Environment"]geonorge.no/statistics?organization=@ViewData["OrganizationName"]" target="_blank">Statistikk</a>
+    <div class="view-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-9">
+                    <h1 class="view-title">{{ ViewTitle }} - {{ OrganizationName }}</h1>
+                </div>
+                <div class="col-sm-3">
+                    <span class="pull-right">Orgnr. {{ OrganizationNumber }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
 
+    <div class="container">
+        <div class="section" is="organization-data"></div>
+        <div class="section" is="metadata"></div>
+        <a href="https://rapportgenerator.@ViewData["Environment"]geonorge.no/statistics?organization=@ViewData["OrganizationName"]" target="_blank">Statistikk</a>
+        <a href="https://register.@ViewData["Environment"]geonorge.no/kartografi/Files/index?text=@ViewData["OrganizationName"]" target="_blank">Kartografi</a><br />
+        <a href="http://register.@ViewData["Environment"]geonorge.no/produktark?filterOrganization=@ViewData["OrganizationName"]" target="_blank">Produktark</a><br />
+        <a href="http://register.@ViewData["Environment"]geonorge.no/produktspesifikasjoner?filterOrganization=@ViewData["OrganizationName"]" target="_blank">Produktspesifikasjoner</a><br />
+        <a href="http://kartkatalog.@ViewData["Environment"]geonorge.no/search?Facets%5B0%5D.name=organization&Facets%5B0%5D.value=@ViewData["OrganizationName"]" target="_blank">Metadata</a><br />
+    </div>
 </div>
 
 @section scripts {
-    <script src="~/dist/main.js" asp-append-version="true"></script>
+    @await Html.PartialAsync("~/Views/Shared/VueComponents/_OrganizationData.cshtml")
+    @await Html.PartialAsync("~/Views/Shared/VueComponents/_Metadata.cshtml")
+    <script>
+        var app = new Vue({
+            el: '#app',
+            components: {
+                OrganizationData: OrganizationData,
+                Metadata: Metadata
+            },
+            data: function() {
+                return {
+                    OrganizationNumber: '@ViewData["OrganizationOrgnr"]',
+                    OrganizationName: '@ViewData["OrganizationName"]',
+                    Environment: '@ViewData["Environment"]',
+                    ViewTitle: '@ViewData["title"]'
+                }
+            },
+            methods: {
+                getApiData: function(url) {
+                    return axios.get(url)
+                        .then(response => { return response.data; })
+                        .catch(error => { throw error; });
+                }
+            }
+        })
+    </script>
 }
