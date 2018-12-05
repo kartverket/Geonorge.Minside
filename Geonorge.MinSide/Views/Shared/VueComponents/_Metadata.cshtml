@@ -1,0 +1,93 @@
+﻿<script type="text/x-template" id="metadata-template">
+    <div>
+        <div v-if="items && items.Results" class="list">
+            <h3 class="section-title">Metadata ({{items.NumFound}})</h3>
+            <div class="list-header">
+                <div class="row">
+                    <div class="col-sm-4">
+                        Tittel
+                    </div>
+                    <div class="col-sm-3">
+                        Sist Oppdatert
+                    </div>
+                    <div class="col-sm-3">
+                        Type
+                    </div>
+                </div>
+            </div>
+            <div class="list-content">
+                <div v-for="item in items.Results" class="list-item">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <a v-bind:href="item.ShowDetailsUrl" v-bind:title="'Vis detaljer for ' + item.Title">{{item.Title}}</a>
+                        </div>
+                        <div class="col-sm-3">
+                            {{ formatDate(item.Date) }}
+                        </div>
+                        <div class="col-sm-3">{{ getTypeName(item.Type) }}</div>
+                        <div class="col-sm-2">
+                            <button class="fa fa-edit icon-button pull-right"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center">
+                <button v-show="moreItemsAvailable" v-on:click="getItems()" class="fa fa-plus icon-button add-more-button"></button>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script>
+    var Metadata = {
+        name: "Metadata",
+        template: "#metadata-template",
+        data: function () {
+            return {
+                items: null,
+                numberOfVisibleItems: 0,
+                typeNames: {
+                    dataset: "Datasett",
+                    service: "Tjeneste",
+                    servicelayer: "Tjenestelag",
+                    software: "Applikasjon",
+                    dimensionGroup: "Datapakke"
+                }
+            }
+        },
+        computed: {
+            moreItemsAvailable: function () {
+                return this.items && this.items.NumFound > this.numberOfVisibleItems;
+            }
+        },
+        methods: {
+            getItems: function () {
+                var offsetParameter = this.numberOfVisibleItems ? "&offset=" + this.numberOfVisibleItems : "";
+                Promise.resolve(this.$root.getApiData("https://kartkatalog.dev.geonorge.no/api/search?facets%5b0%5dname=organization&facets%5b0%5dvalue=Kartverket&limit=10" + offsetParameter))
+                    .then((apiData) => {
+                        if (this.items) {
+                            this.items.Results = this.items.Results.concat(apiData.Results);
+                        } else {
+                            this.items = apiData;
+                        }
+                        this.numberOfVisibleItems += 10;
+                    });
+            },
+            formatDate: function (date) {
+                if (date) {
+                    return moment(date).format('DD.MM.YYYY');
+                }
+            },
+            getTypeName: function (type) {
+                if (this.typeNames[type]) {
+                    return this.typeNames[type];
+                } else {
+                    return type;
+                }
+            }
+        },
+        mounted: function () {
+            this.getItems();
+        }
+    };
+</script>
