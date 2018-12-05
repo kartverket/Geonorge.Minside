@@ -1,0 +1,47 @@
+﻿<script type="text/x-template" id="organization-data-template">
+    <div>
+        <div v-if="organizationData">
+            <div class="row">
+                <div class="col-sm-9">
+                    <h3 class="section-title">Kontaktinformasjon</h3>
+                    <div v-if="organizationData.ContactInformation.Name">
+                        Kontaktperson: {{ organizationData.ContactInformation.Name }}
+                    </div>
+                    <div v-if="organizationData.ContactInformation.Epost">
+                        E-post: {{ organizationData.ContactInformation.Epost }}
+                    </div>
+                    <div>
+                        <a href="#">Meld fra om endring i kontaktinfo</a>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <img v-bind:src="organizationData.LogoUrl" />
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script>
+    var OrganizationData = {
+        name: "OrganizationData",
+        template: "#organization-data-template",
+        data: function () {
+            return {
+                organizationData: null,
+            }
+        },
+        methods: {
+            getOrganizationData: function () {
+                var organizationNumber = this.$root.OrganizationNumber;
+                Promise.resolve(this.$root.getApiData("https://register.dev.geonorge.no/api/organisasjon/orgnr/" + organizationNumber))
+                    .then((apiData) => {
+                        this.organizationData = apiData;
+                    });
+            }
+        },
+        mounted: function () {
+            this.getOrganizationData();
+        }
+    };
+</script>
