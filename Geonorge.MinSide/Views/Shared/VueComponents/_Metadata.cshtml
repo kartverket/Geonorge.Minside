@@ -1,4 +1,4 @@
-﻿<script type="text/x-template" id="metadata-template">
+<script type="text/x-template" id="metadata-template">
     <div>
         <div v-if="items && items.Results" class="list">
             <h3 class="section-title">Metadata ({{items.NumFound}})</h3>
@@ -62,15 +62,18 @@
         },
         methods: {
             getItems: function () {
+                var itemsPerRequest = 10;
                 var offsetParameter = this.numberOfVisibleItems ? "&offset=" + this.numberOfVisibleItems : "";
-                Promise.resolve(this.$root.getApiData("https://kartkatalog.dev.geonorge.no/api/search?facets%5b0%5dname=organization&facets%5b0%5dvalue=Kartverket&limit=10" + offsetParameter))
+                var organizationNameParameter = '?facets%5b0%5dname=organization&facets%5b0%5dvalue=' + this.$root.OrganizationName;
+                var environmentParameter = this.$root.Environment;
+                Promise.resolve(this.$root.getApiData("https://kartkatalog." + environmentParameter + "geonorge.no/api/search" + organizationNameParameter + "&limit=" + itemsPerRequest + offsetParameter))
                     .then((apiData) => {
                         if (this.items) {
                             this.items.Results = this.items.Results.concat(apiData.Results);
                         } else {
                             this.items = apiData;
                         }
-                        this.numberOfVisibleItems += 10;
+                        this.numberOfVisibleItems += itemsPerRequest;
                     });
             },
             formatDate: function (date) {
