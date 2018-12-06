@@ -27,12 +27,12 @@
 }
 
     .list .list-header {
-        font-size: 14pt;
+        font-size: 16pt;
     }
 
     .list .list-item {
-        font-size: 12pt;
-        padding: 4px 0;
+        font-size: 13pt;
+        padding: 6px 0;
     }
 
         .list .list-item:not(:last-child) {

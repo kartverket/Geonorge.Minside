@@ -1,16 +1,16 @@
-<script type="text/x-template" id="metadata-template">
+﻿<script type="text/x-template" id="metadata-template">
     <div>
         <div v-if="items && items.Results" class="list">
             <h3 class="section-title">Metadata ({{items.NumFound}})</h3>
-            <div class="list-header">
+            <div class="list-header hidden-xs hidden-sm">
                 <div class="row">
-                    <div class="col-sm-4">
+                    <div class="col-md-4">
                         Tittel
                     </div>
-                    <div class="col-sm-3">
-                        Sist Oppdatert
+                    <div class="col-md-3">
+                        Sist oppdatert
                     </div>
-                    <div class="col-sm-3">
+                    <div class="col-md-3">
                         Type
                     </div>
                 </div>
@@ -18,15 +18,20 @@
             <div class="list-content">
                 <div v-for="item in items.Results" class="list-item">
                     <div class="row">
-                        <div class="col-sm-4">
+                        <div class="col-md-4">
                             <a v-bind:href="item.ShowDetailsUrl" v-bind:title="'Vis detaljer for ' + item.Title">{{item.Title}}</a>
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-md-3">
+                            <span class="visible-xs-inline-block visible-sm-inline-block">Sist oppdatert:</span>
                             {{ formatDate(item.Date) }}
                         </div>
-                        <div class="col-sm-3">{{ getTypeName(item.Type) }}</div>
-                        <div class="col-sm-2">
-                            <button class="fa fa-edit icon-button pull-right"></button>
+                        <div class="col-md-3">
+                            <span class="visible-xs-inline-block visible-sm-inline-block">Type:</span>
+                            {{ getTypeName(item.Type) }}
+                        </div>
+                        <div class="col-md-2">
+                            <button class="hidden-xs hidden-sm fa fa-edit icon-button pull-right"></button>
+                            <button class="visible-xs visible-sm btn pull-right">Rediger <span class="fa fa-edit"></span></button>
                         </div>
                     </div>
                 </div>
