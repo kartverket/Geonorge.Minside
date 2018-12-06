@@ -1,7 +1,7 @@
 ﻿<script type="text/x-template" id="cartography-template">
     <div>
         <div v-if="items" class="list">
-            <h3 class="section-title">Kartografi ({{items.length}})</h3>
+            <h3 class="section-title">Kartografi ({{items.Total}})</h3>
             <div class="list-header hidden-xs hidden-sm">
                 <div class="row">
                     <div class="col-md-4">
@@ -19,7 +19,7 @@
                 </div>
             </div>
             <div class="list-content">
-                <div v-for="item in items" class="list-item">
+                <div v-for="item in items.Files" class="list-item">
                     <div class="row">
                         <div class="col-md-4">
                             <a v-bind:href="item.FileUrl" v-bind:title="'Vis detaljer for ' + item.Name">{{item.Name}}</a>
@@ -62,7 +62,7 @@
         },
         computed: {
             moreItemsAvailable: function () {
-                return this.items && this.items.NumFound > this.numberOfVisibleItems;
+                return this.items && this.items.Total > this.numberOfVisibleItems;
             }
         },
         methods: {
@@ -71,10 +71,10 @@
                 var offsetParameter = this.numberOfVisibleItems ? "&offset=" + this.numberOfVisibleItems : "";
                 var organizationNameParameter = '?owner=' + this.$root.OrganizationName;
                 var environmentParameter = this.$root.Environment;
-                Promise.resolve(this.$root.getApiData("https://register." + environmentParameter + "geonorge.no/kartografi/api/kartografi" + organizationNameParameter + "&limit=" + itemsPerRequest + offsetParameter))
+                Promise.resolve(this.$root.getApiData("https://register." + environmentParameter + "geonorge.no/kartografi/api/cartography" + organizationNameParameter + "&limit=" + itemsPerRequest + offsetParameter))
                     .then((apiData) => {
                         if (this.items) {
-                            this.items.Results = this.items.Results.concat(apiData.Results);
+                            this.items.Files = this.items.Files.concat(apiData.Files);
                         } else {
                             this.items = apiData;
                         }
