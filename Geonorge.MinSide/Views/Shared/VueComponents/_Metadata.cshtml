@@ -52,11 +52,26 @@
                 items: null,
                 numberOfVisibleItems: 0,
                 typeNames: {
-                    dataset: "Datasett",
-                    service: "Tjeneste",
-                    servicelayer: "Tjenestelag",
-                    software: "Applikasjon",
-                    dimensionGroup: "Datapakke"
+                    dataset: {
+                        en: "Dataset",
+                        no: "Datasett"
+                    },
+                    service: {
+                        en: "Service",
+                        no: "Tjeneste"
+                    },
+                    servicelayer: {
+                        en: "Service layer",
+                        no: "Tjenestelag"
+                    },
+                    software: {
+                        en: "Software",
+                        no: "Applikasjon"
+                    },
+                    dimensionGroup: {
+                        en: "Dimension group",
+                        no: "Datapakke"
+                    }
                 }
             }
         },
@@ -87,8 +102,9 @@
                 }
             },
             getTypeName: function (type) {
-                if (this.typeNames[type]) {
-                    return this.typeNames[type];
+                var activeLanguage = this.$root.activeLanguage;
+                if (this.typeNames[type] && this.typeNames[type][activeLanguage]) {
+                    return this.typeNames[type][activeLanguage];
                 } else {
                     return type;
                 }

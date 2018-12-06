@@ -46,14 +46,18 @@
                     OrganizationNumber: '@ViewData["OrganizationOrgnr"]',
                     OrganizationName: '@ViewData["OrganizationName"]',
                     Environment: '@ViewData["Environment"]',
-                    ViewTitle: '@ViewData["title"]'
+                    ViewTitle: '@ViewData["title"]',
+                    activeLanguage: this.getActiveLanguage()
                 }
             },
             methods: {
-                getApiData: function(url) {
-                    return axios.get(url)
+                getApiData: function (url) {
+                    return axios.get(url, { headers: { 'Accept-Language': this.activeLanguage } })
                         .then(response => { return response.data; })
                         .catch(error => { throw error; });
+                },
+                getActiveLanguage: function () {
+                    return Cookies.get('_culture') ? Cookies.get('_culture') : 'no';
                 }
             }
         })
