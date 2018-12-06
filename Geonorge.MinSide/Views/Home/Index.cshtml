@@ -20,6 +20,7 @@
     <div class="container">
         <div class="section" is="organization-data"></div>
         <div class="section" is="metadata"></div>
+        <div class="section" is="report-measurment"></div>
         <a href="https://rapportgenerator.@ViewData["Environment"]geonorge.no/statistics?organization=@ViewData["OrganizationName"]" target="_blank">Statistikk</a>
         <a href="https://register.@ViewData["Environment"]geonorge.no/kartografi/Files/index?text=@ViewData["OrganizationName"]" target="_blank">Kartografi</a><br />
         <a href="http://register.@ViewData["Environment"]geonorge.no/produktark?filterOrganization=@ViewData["OrganizationName"]" target="_blank">Produktark</a><br />
@@ -31,12 +32,14 @@
 @section scripts {
     @await Html.PartialAsync("~/Views/Shared/VueComponents/_OrganizationData.cshtml")
     @await Html.PartialAsync("~/Views/Shared/VueComponents/_Metadata.cshtml")
+    @await Html.PartialAsync("~/Views/Shared/VueComponents/_ReportMeasurment.cshtml")
     <script>
         var app = new Vue({
             el: '#app',
             components: {
                 OrganizationData: OrganizationData,
-                Metadata: Metadata
+                Metadata: Metadata,
+                ReportMeasurment: ReportMeasurment
             },
             data: function() {
                 return {

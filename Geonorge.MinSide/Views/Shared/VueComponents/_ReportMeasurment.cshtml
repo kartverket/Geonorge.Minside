@@ -1,0 +1,45 @@
+﻿<script type="text/x-template" id="report-measurment-template">
+    <div>
+        <div v-if="items" class="list">
+            <h3 class="section-title">Statistikk</h3>
+            <div class="list-content">
+                <div v-for="item in items" class="list-item">
+                    <div class="row">
+                        <div class="col-md-10">
+                            {{item.Label}}
+                            <span class="visible-xs-inline-block visible-sm-inline-block"> ({{ item.Value }})</span>
+                        </div>
+                        <div class="col-md-2">
+                            <span class="hidden-xs hidden-sm pull-right">{{ item.Value }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script>
+    var ReportMeasurment = {
+        name: "ReportMeasurment",
+        template: "#report-measurment-template",
+        data: function () {
+            return {
+                items: null,
+            }
+        },
+        methods: {
+            getItems: function () {
+                var organizationNameParameter = '?organization=' + this.$root.OrganizationName;
+                var environmentParameter = this.$root.Environment;
+                Promise.resolve(this.$root.getApiData("https://rapportgenerator." + environmentParameter + "geonorge.no/api/statistics" + organizationNameParameter))
+                    .then((apiData) => {
+                        this.items = apiData;
+                    });
+            }
+        },
+        mounted: function () {
+            this.getItems();
+        }
+    };
+</script>
