@@ -15,13 +15,14 @@
             </div>
         </div>
     </div>
-    
+
 
     <div class="container">
         <div class="section" is="organization-data"></div>
         <div class="section" is="metadata"></div>
         <div class="section" is="product-fact-sheets"></div>
         <div class="section" is="cartography"></div>
+        <div class="section" is="product-specifications"></div>
         <div class="section" is="report-measurment"></div>
         <a href="https://rapportgenerator.@ViewData["Environment"]geonorge.no/statistics?organization=@ViewData["OrganizationName"]" target="_blank">Statistikk</a>
         <a href="https://register.@ViewData["Environment"]geonorge.no/kartografi/Files/index?text=@ViewData["OrganizationName"]" target="_blank">Kartografi</a><br />
@@ -36,6 +37,7 @@
     @await Html.PartialAsync("~/Views/Shared/VueComponents/_Metadata.cshtml")
     @await Html.PartialAsync("~/Views/Shared/VueComponents/_ProductFactSheets.cshtml")
     @await Html.PartialAsync("~/Views/Shared/VueComponents/_Cartography.cshtml")
+    @await Html.PartialAsync("~/Views/Shared/VueComponents/_ProductSpecifications.cshtml")
     @await Html.PartialAsync("~/Views/Shared/VueComponents/_ReportMeasurment.cshtml")
     <script>
         var app = new Vue({
@@ -45,6 +47,7 @@
                 Metadata: Metadata,
                 ProductFactSheets: ProductFactSheets,
                 Cartography: Cartography,
+                ProductSpecifications: ProductSpecifications,
                 ReportMeasurment: ReportMeasurment
             },
             data: function() {
