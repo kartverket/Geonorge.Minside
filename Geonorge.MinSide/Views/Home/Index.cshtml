@@ -20,6 +20,7 @@
     <div class="container">
         <div class="section" is="organization-data"></div>
         <div class="section" is="metadata"></div>
+        <div class="section" is="product-fact-sheets"></div>
         <div class="section" is="cartography"></div>
         <div class="section" is="report-measurment"></div>
         <a href="https://rapportgenerator.@ViewData["Environment"]geonorge.no/statistics?organization=@ViewData["OrganizationName"]" target="_blank">Statistikk</a>
@@ -33,6 +34,7 @@
 @section scripts {
     @await Html.PartialAsync("~/Views/Shared/VueComponents/_OrganizationData.cshtml")
     @await Html.PartialAsync("~/Views/Shared/VueComponents/_Metadata.cshtml")
+    @await Html.PartialAsync("~/Views/Shared/VueComponents/_ProductFactSheets.cshtml")
     @await Html.PartialAsync("~/Views/Shared/VueComponents/_Cartography.cshtml")
     @await Html.PartialAsync("~/Views/Shared/VueComponents/_ReportMeasurment.cshtml")
     <script>
@@ -41,6 +43,7 @@
             components: {
                 OrganizationData: OrganizationData,
                 Metadata: Metadata,
+                ProductFactSheets: ProductFactSheets,
                 Cartography: Cartography,
                 ReportMeasurment: ReportMeasurment
             },
