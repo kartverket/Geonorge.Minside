@@ -7,11 +7,11 @@
                     <div class="col-md-6">
                         Tittel
                     </div>
-                    <div class="col-md-3">
-                        Sist Oppdatert
-                    </div>
                     <div class="col-md-2">
                         Status
+                    </div>
+                    <div class="col-md-3">
+                        Sist Oppdatert
                     </div>
                 </div>
             </div>
@@ -21,13 +21,13 @@
                         <div class="col-md-6">
                             <a v-bind:href="item.id" v-bind:title="'Vis detaljer for ' + item.label">{{item.label}}</a>
                         </div>
-                        <div class="col-md-3">
-                            <span class="visible-xs-inline-block visible-sm-inline-block">Sist oppdatert:</span>
-                            {{ formatDate(item.lastUpdated) }}
-                        </div>
                         <div class="col-md-2">
                             <span class="visible-xs-inline-block visible-sm-inline-block">Status:</span>
                             {{ item.status }}
+                        </div>
+                        <div class="col-md-3">
+                            <span class="visible-xs-inline-block visible-sm-inline-block">Sist oppdatert:</span>
+                            {{ formatDate(item.lastUpdated) }}
                         </div>
                         <div class="col-md-1">
                             <a v-bind:href="item.documentreference" class="hidden-xs hidden-sm fa fa-download icon-button pull-right"></a>

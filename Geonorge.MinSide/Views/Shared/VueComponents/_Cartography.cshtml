@@ -7,14 +7,14 @@
                     <div class="col-md-4">
                         Tittel
                     </div>
-                    <div class="col-md-3">
-                        Sist Oppdatert
-                    </div>
                     <div class="col-md-2">
                         Tema
                     </div>
                     <div class="col-md-2">
                         Status
+                    </div>
+                    <div class="col-md-3">
+                        Sist Oppdatert
                     </div>
                 </div>
             </div>
@@ -24,10 +24,6 @@
                         <div class="col-md-4">
                             <a v-bind:href="item.FileUrl" v-bind:title="'Vis detaljer for ' + item.Name">{{item.Name}}</a>
                         </div>
-                        <div class="col-md-3">
-                            <span class="visible-xs-inline-block visible-sm-inline-block">Sist oppdatert:</span>
-                            {{ formatDate(item.DateChanged) }}
-                        </div>
                         <div class="col-md-2">
                             <span class="visible-xs-inline-block visible-sm-inline-block">Tema:</span>
                             {{ item.Theme }}
@@ -35,6 +31,10 @@
                         <div class="col-md-2">
                             <span class="visible-xs-inline-block visible-sm-inline-block">Status:</span>
                             {{ item.Status }}
+                        </div>
+                        <div class="col-md-3">
+                            <span class="visible-xs-inline-block visible-sm-inline-block">Sist oppdatert:</span>
+                            {{ formatDate(item.DateChanged) }}
                         </div>
                         <div class="col-md-1">
                             <a v-bind:href="item.FileUrl" class="hidden-xs hidden-sm fa fa-download icon-button pull-right"></a>
