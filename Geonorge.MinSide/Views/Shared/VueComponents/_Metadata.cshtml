@@ -30,8 +30,8 @@
                             {{ formatDate(item.Date) }}
                         </div>
                         <div class="col-md-1">
-                            <button class="hidden-xs hidden-sm fa fa-edit icon-button pull-right"></button>
-                            <button class="visible-xs visible-sm btn pull-right">Rediger <span class="fa fa-edit"></span></button>
+                            <a v-bind:href="getEditLink(item)" class="hidden-xs hidden-sm fa fa-edit icon-button pull-right"></a>
+                            <a v-bind:href="getEditLink(item)" class="visible-xs visible-sm btn pull-right">Rediger <span class="fa fa-edit"></span></a>
                         </div>
                     </div>
                 </div>
@@ -108,6 +108,11 @@
                 } else {
                     return type;
                 }
+            },
+            getEditLink: function (item) {
+                var environmentParameter = this.$root.Environment;
+                var uuidParameter = "?uuid=" + item.Uuid;
+                return "https://editor." + environmentParameter + "geonorge.no/Metadata/Edit" + uuidParameter;
             }
         },
         mounted: function () {
