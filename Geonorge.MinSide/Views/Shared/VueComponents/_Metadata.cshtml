@@ -1,6 +1,6 @@
-<script type="text/x-template" id="metadata-template">
+﻿<script type="text/x-template" id="metadata-template">
     <div>
-        <div v-if="items && items.Results" class="list">
+        <div v-if="items && filteredItems.length" class="list">
             <h3 class="section-title">Metadata ({{items.NumFound}})</h3>
             <div class="list-header d-none d-md-block">
                 <div class="row">
@@ -16,7 +16,7 @@
                 </div>
             </div>
             <div class="list-content">
-                <div v-for="item in items.Results" class="list-item">
+                <div v-for="item in filteredItems" class="list-item">
                     <div class="row">
                         <div class="col-md-6">
                             <a v-bind:href="item.ShowDetailsUrl" v-bind:title="'Vis detaljer for ' + item.Title">{{item.Title}}</a>
@@ -47,10 +47,14 @@
     var Metadata = {
         name: "Metadata",
         template: "#metadata-template",
+        props: ['loadAllApiData'],
         data: function () {
             return {
                 items: null,
                 numberOfVisibleItems: 0,
+                filterProperties: [
+                    'Title',
+                ],
                 typeNames: {
                     dataset: {
                         en: "Dataset",
@@ -77,7 +81,30 @@
         },
         computed: {
             moreItemsAvailable: function () {
-                return this.items && this.items.NumFound > this.numberOfVisibleItems;
+                if (this.loadAllApiData) {
+                    return false;
+                } else {
+                    return this.items && this.items.NumFound > this.numberOfVisibleItems;
+                }
+            },
+            filteredItems: function () {
+                var filteredItems = [];
+                if (this.loadAllApiData && this.$root.searchInput) {
+                    this.items.Results.forEach(function (item) {
+                        var itemHasMatch = false;
+                        this.filterProperties.forEach(function (filterProperty) {
+                            if (item[filterProperty].toUpperCase().indexOf(this.$root.searchInput.toUpperCase()) > -1) {
+                                itemHasMatch = true;
+                            }
+                        }.bind(this));
+                        if (itemHasMatch) {
+                            filteredItems.push(item);
+                        }
+                    }.bind(this))
+                } else {
+                    filteredItems = this.items.Results;
+                }
+                return filteredItems;
             }
         },
         methods: {
@@ -86,7 +113,14 @@
                 var offsetParameter = this.numberOfVisibleItems ? "&offset=" + this.numberOfVisibleItems : "";
                 var organizationNameParameter = '?facets%5b0%5dname=organization&facets%5b0%5dvalue=' + this.$root.OrganizationName;
                 var environmentParameter = this.$root.Environment;
-                Promise.resolve(this.$root.getApiData("https://kartkatalog." + environmentParameter + "geonorge.no/api/search" + organizationNameParameter + "&limit=" + itemsPerRequest + offsetParameter))
+                if (this.loadAllApiData && this.items) {
+                    itemsPerRequest = this.items.NumFound;
+                }
+                var apiURL = this.loadAllApiData
+                    ? "https://kartkatalog." + environmentParameter + "geonorge.no/api/search" + organizationNameParameter + "&limit=" + itemsPerRequest
+                    : "https://kartkatalog." + environmentParameter + "geonorge.no/api/search" + organizationNameParameter + "&limit=" + itemsPerRequest + offsetParameter
+
+                Promise.resolve(this.$root.getApiData(apiURL))
                     .then((apiData) => {
                         if (this.items) {
                             this.items.Results = this.items.Results.concat(apiData.Results);
@@ -117,6 +151,11 @@
         },
         mounted: function () {
             this.getItems();
+        },
+        watch: {
+            loadAllApiData: function () {
+                this.getItems();
+            }
         }
     };
 </script>

@@ -19,11 +19,15 @@
 
     <div class="container">
         <div class="section" is="organization-data"></div>
-        <div class="section" is="metadata"></div>
-        <div class="section" is="product-fact-sheets"></div>
-        <div class="section" is="cartography"></div>
-        <div class="section" is="product-specifications"></div>
-        <div class="section" is="report-measurment"></div>
+        <div class="data-search-filter-container">
+            <input v-model="searchInput" placeholder="Søk i dine data her" class="data-search-filter" />
+            <img src="/dist/images/search_icon-01.svg" alt="search">
+        </div>
+        <div class="section" is="metadata" v-bind:load-all-api-data="loadAllApiData"></div>
+        <div class="section" is="product-fact-sheets" v-bind:load-all-api-data="loadAllApiData"></div>
+        <div class="section" is="cartography" v-bind:load-all-api-data="loadAllApiData"></div>
+        <div class="section" is="product-specifications" v-bind:load-all-api-data="loadAllApiData"></div>
+        <div class="section" is="report-measurment" v-bind:load-all-api-data="loadAllApiData"></div>
         <a href="https://rapportgenerator.@ViewData["Environment"]geonorge.no/statistics?organization=@ViewData["OrganizationName"]" target="_blank">Statistikk</a>
         <a href="https://register.@ViewData["Environment"]geonorge.no/kartografi/Files/index?text=@ViewData["OrganizationName"]" target="_blank">Kartografi</a><br />
         <a href="http://register.@ViewData["Environment"]geonorge.no/produktark?filterOrganization=@ViewData["OrganizationName"]" target="_blank">Produktark</a><br />
@@ -56,7 +60,9 @@
                     OrganizationName: '@ViewData["OrganizationName"]',
                     Environment: '@ViewData["Environment"]',
                     ViewTitle: '@ViewData["title"]',
-                    activeLanguage: this.getActiveLanguage()
+                    activeLanguage: this.getActiveLanguage(),
+                    searchInput: '',
+                    loadAllApiData: false
                 }
             },
             methods: {
@@ -67,6 +73,13 @@
                 },
                 getActiveLanguage: function () {
                     return Cookies.get('_culture') ? Cookies.get('_culture') : 'no';
+                }
+            },
+            watch: {
+                searchInput: function (value) {
+                    if (value) {
+                        this.loadAllApiData = true;
+                    }
                 }
             }
         })

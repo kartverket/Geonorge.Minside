@@ -1,9 +1,9 @@
-<script type="text/x-template" id="report-measurment-template">
+﻿<script type="text/x-template" id="report-measurment-template">
     <div>
-        <div v-if="items" class="list">
+        <div v-if="items && filteredItems.length" class="list">
             <h3 class="section-title">Statistikk</h3>
             <div class="list-content">
-                <div v-for="item in items" class="list-item">
+                <div v-for="item in filteredItems" class="list-item">
                     <div class="row">
                         <div class="col-md-10">
                             {{item.Label}}
@@ -23,9 +23,34 @@
     var ReportMeasurment = {
         name: "ReportMeasurment",
         template: "#report-measurment-template",
+        props: ['loadAllApiData'],
         data: function () {
             return {
                 items: null,
+                filterProperties: [
+                    'Label',
+                ]
+            }
+        },
+        computed: {
+            filteredItems: function () {
+                var filteredItems = [];
+                if (this.loadAllApiData && this.$root.searchInput) {
+                    this.items.forEach(function (item) {
+                        var itemHasMatch = false;
+                        this.filterProperties.forEach(function (filterProperty) {
+                            if (item[filterProperty].toUpperCase().indexOf(this.$root.searchInput.toUpperCase()) > -1) {
+                                itemHasMatch = true;
+                            }
+                        }.bind(this));
+                        if (itemHasMatch) {
+                            filteredItems.push(item);
+                        }
+                    }.bind(this))
+                } else {
+                    filteredItems = this.items;
+                }
+                return filteredItems;
             }
         },
         methods: {

@@ -1,6 +1,6 @@
-<script type="text/x-template" id="cartography-template">
+﻿<script type="text/x-template" id="cartography-template">
     <div>
-        <div v-if="items" class="list">
+        <div v-if="items && filteredItems.length" class="list">
             <h3 class="section-title">Kartografi ({{items.Total}})</h3>
             <div class="list-header d-none d-md-block">
                 <div class="row">
@@ -54,15 +54,43 @@
     var Cartography = {
         name: "Cartography",
         template: "#cartography-template",
+        props: ['loadAllApiData'],
         data: function () {
             return {
                 items: null,
-                numberOfVisibleItems: 0
+                numberOfVisibleItems: 0,
+                filterProperties: [
+                    'Theme',
+                    'Name'
+                ]
             }
         },
         computed: {
             moreItemsAvailable: function () {
-                return this.items && this.items.Total > this.numberOfVisibleItems;
+                if (this.loadAllApiData) {
+                    return false;
+                } else {
+                    return this.items && this.items.Total > this.numberOfVisibleItems;
+                }
+            },
+            filteredItems: function () {
+                var filteredItems = [];
+                if (this.loadAllApiData && this.$root.searchInput) {
+                    this.items.Files.forEach(function (item) {
+                        var itemHasMatch = false;
+                        this.filterProperties.forEach(function (filterProperty) {
+                            if (item[filterProperty].toUpperCase().indexOf(this.$root.searchInput.toUpperCase()) > -1) {
+                                itemHasMatch = true;
+                            }
+                        }.bind(this));
+                        if (itemHasMatch) {
+                            filteredItems.push(item);
+                        }
+                    }.bind(this))
+                } else {
+                    filteredItems = this.items.Files;
+                }
+                return filteredItems;
             }
         },
         methods: {
@@ -71,7 +99,12 @@
                 var offsetParameter = this.numberOfVisibleItems ? "&offset=" + this.numberOfVisibleItems : "";
                 var organizationNameParameter = '?owner=' + this.$root.OrganizationName;
                 var environmentParameter = this.$root.Environment;
-                Promise.resolve(this.$root.getApiData("https://register." + environmentParameter + "geonorge.no/kartografi/api/cartography" + organizationNameParameter + "&limit=" + itemsPerRequest + offsetParameter))
+
+                var apiURL = this.loadAllApiData
+                    ? "https://register." + environmentParameter + "geonorge.no/kartografi/api/cartography" + organizationNameParameter
+                    : "https://register." + environmentParameter + "geonorge.no/kartografi/api/cartography" + organizationNameParameter + "&limit=" + itemsPerRequest + offsetParameter;
+
+                Promise.resolve(this.$root.getApiData(apiURL))
                     .then((apiData) => {
                         if (this.items) {
                             this.items.Files = this.items.Files.concat(apiData.Files);
@@ -89,6 +122,11 @@
         },
         mounted: function () {
             this.getItems();
+        },
+        watch: {
+            loadAllApiData: function () {
+                this.getItems();
+            }
         }
     };
 </script>

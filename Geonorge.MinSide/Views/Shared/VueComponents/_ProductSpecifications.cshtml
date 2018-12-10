@@ -1,6 +1,6 @@
-<script type="text/x-template" id="product-specifications-template">
+﻿<script type="text/x-template" id="product-specifications-template">
     <div>
-        <div v-if="items && items.containeditems" class="list">
+        <div v-if="items && filteredItems.length" class="list">
             <h3 class="section-title">{{items.label}} ({{items.ContainedItemsResult.Total}})</h3>
             <div class="list-header d-none d-md-block">
                 <div class="row">
@@ -16,7 +16,7 @@
                 </div>
             </div>
             <div class="list-content">
-                <div v-for="item in items.containeditems" class="list-item">
+                <div v-for="item in filteredItems" class="list-item">
                     <div class="row">
                         <div class="col-md-6">
                             <a v-bind:href="item.id" v-bind:title="'Vis detaljer for ' + item.label">{{item.label}}</a>
@@ -47,15 +47,42 @@
     var ProductSpecifications = {
         name: "ProductSpecifications",
         template: "#product-specifications-template",
+        props: ['loadAllApiData'],
         data: function () {
             return {
                 items: null,
-                numberOfVisibleItems: 0
+                numberOfVisibleItems: 0,
+                filterProperties: [
+                    'label',
+                ]
             }
         },
         computed: {
             moreItemsAvailable: function () {
-                return this.items && this.items.ContainedItemsResult.Total > this.numberOfVisibleItems;
+                if (this.loadAllApiData) {
+                    return false;
+                } else {
+                    return this.items && this.items.ContainedItemsResult.Total > this.numberOfVisibleItems;
+                }
+            },
+            filteredItems: function () {
+                var filteredItems = [];
+                if (this.loadAllApiData && this.$root.searchInput) {
+                    this.items.containeditems.forEach(function (item) {
+                        var itemHasMatch = false;
+                        this.filterProperties.forEach(function (filterProperty) {
+                            if (item[filterProperty].toUpperCase().indexOf(this.$root.searchInput.toUpperCase()) > -1) {
+                                itemHasMatch = true;
+                            }
+                        }.bind(this));
+                        if (itemHasMatch) {
+                            filteredItems.push(item);
+                        }
+                    }.bind(this))
+                } else {
+                    filteredItems = this.items.containeditems;
+                }
+                return filteredItems;
             }
         },
         methods: {
@@ -64,7 +91,12 @@
                 var offsetParameter = this.numberOfVisibleItems ? "&offset=" + this.numberOfVisibleItems : "";
                 var organizationNameParameter = '?filterOrganization=' + this.$root.OrganizationNumber;
                 var environmentParameter = this.$root.Environment;
-                Promise.resolve(this.$root.getApiData("https://register." + environmentParameter + "geonorge.no/api/produktspesifikasjoner" + organizationNameParameter + "&limit=" + itemsPerRequest + offsetParameter))
+
+                var apiURL = this.loadAllApiData
+                    ? "https://register." + environmentParameter + "geonorge.no/api/produktspesifikasjoner" + organizationNameParameter
+                    : "https://register." + environmentParameter + "geonorge.no/api/produktspesifikasjoner" + organizationNameParameter + "&limit=" + itemsPerRequest + offsetParameter;
+
+                Promise.resolve(this.$root.getApiData(apiURL))
                     .then((apiData) => {
                         if (this.items) {
                             this.items.containeditems = this.items.containeditems.concat(apiData.containeditems);
@@ -82,6 +114,11 @@
         },
         mounted: function () {
             this.getItems();
+        },
+        watch: {
+            loadAllApiData: function () {
+                this.getItems();
+            }
         }
     };
 </script>
