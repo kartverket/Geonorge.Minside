@@ -1,8 +1,8 @@
-﻿<script type="text/x-template" id="product-specifications-template">
+<script type="text/x-template" id="product-specifications-template">
     <div>
         <div v-if="items && items.containeditems" class="list">
             <h3 class="section-title">{{items.label}} ({{items.ContainedItemsResult.Total}})</h3>
-            <div class="list-header hidden-xs hidden-sm">
+            <div class="list-header d-none d-md-block">
                 <div class="row">
                     <div class="col-md-6">
                         Tittel
@@ -22,16 +22,16 @@
                             <a v-bind:href="item.id" v-bind:title="'Vis detaljer for ' + item.label">{{item.label}}</a>
                         </div>
                         <div class="col-md-2">
-                            <span class="visible-xs-inline-block visible-sm-inline-block">Status:</span>
+                            <span class="d-inline-block d-md-none">Status:</span>
                             {{ item.status }}
                         </div>
                         <div class="col-md-3">
-                            <span class="visible-xs-inline-block visible-sm-inline-block">Sist oppdatert:</span>
+                            <span class="d-inline-block d-md-none">Sist oppdatert:</span>
                             {{ formatDate(item.lastUpdated) }}
                         </div>
                         <div class="col-md-1">
-                            <a v-bind:href="item.documentreference" class="hidden-xs hidden-sm fa fa-download icon-button pull-right"></a>
-                            <a v-bind:href="item.documentreference" class="visible-xs visible-sm btn pull-right">Last ned <span class="fa fa-download"></span></a>
+                            <a v-bind:href="item.documentreference" class="d-none d-md-block fa fa-download icon-button float-right"></a>
+                            <a v-bind:href="item.documentreference" class="d-block d-md-none btn float-right">Last ned <span class="fa fa-download"></span></a>
                         </div>
                     </div>
                 </div>

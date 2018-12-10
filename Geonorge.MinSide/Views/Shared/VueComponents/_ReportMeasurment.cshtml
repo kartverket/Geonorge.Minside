@@ -1,4 +1,4 @@
-﻿<script type="text/x-template" id="report-measurment-template">
+<script type="text/x-template" id="report-measurment-template">
     <div>
         <div v-if="items" class="list">
             <h3 class="section-title">Statistikk</h3>
@@ -7,10 +7,10 @@
                     <div class="row">
                         <div class="col-md-10">
                             {{item.Label}}
-                            <span class="visible-xs-inline-block visible-sm-inline-block"> ({{ item.Value }})</span>
+                            <span class="d-inline-block d-md-none"> ({{ item.Value }})</span>
                         </div>
                         <div class="col-md-2">
-                            <span class="hidden-xs hidden-sm pull-right">{{ item.Value }}</span>
+                            <span class="d-none d-md-block float-right">{{ item.Value }}</span>
                         </div>
                     </div>
                 </div>

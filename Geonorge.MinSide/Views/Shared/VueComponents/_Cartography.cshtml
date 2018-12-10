@@ -1,8 +1,8 @@
-﻿<script type="text/x-template" id="cartography-template">
+<script type="text/x-template" id="cartography-template">
     <div>
         <div v-if="items" class="list">
             <h3 class="section-title">Kartografi ({{items.Total}})</h3>
-            <div class="list-header hidden-xs hidden-sm">
+            <div class="list-header d-none d-md-block">
                 <div class="row">
                     <div class="col-md-4">
                         Tittel
@@ -19,26 +19,26 @@
                 </div>
             </div>
             <div class="list-content">
-                <div v-for="item in items.Files" class="list-item">
+                <div v-for="item in filteredItems" class="list-item">
                     <div class="row">
                         <div class="col-md-4">
                             <a v-bind:href="item.FileUrl" v-bind:title="'Vis detaljer for ' + item.Name">{{item.Name}}</a>
                         </div>
                         <div class="col-md-2">
-                            <span class="visible-xs-inline-block visible-sm-inline-block">Tema:</span>
+                            <span class="d-inline-block d-md-none">Tema:</span>
                             {{ item.Theme }}
                         </div>
                         <div class="col-md-2">
-                            <span class="visible-xs-inline-block visible-sm-inline-block">Status:</span>
+                            <span class="d-inline-block d-md-none">Status:</span>
                             {{ item.Status }}
                         </div>
                         <div class="col-md-3">
-                            <span class="visible-xs-inline-block visible-sm-inline-block">Sist oppdatert:</span>
+                            <span class="d-inline-block d-md-none">Sist oppdatert:</span>
                             {{ formatDate(item.DateChanged) }}
                         </div>
                         <div class="col-md-1">
-                            <a v-bind:href="item.FileUrl" class="hidden-xs hidden-sm fa fa-download icon-button pull-right"></a>
-                            <button class="visible-xs visible-sm btn pull-right">Last ned <span class="fa fa-download"></span></button>
+                            <a v-bind:href="item.FileUrl" class="d-none d-md-block fa fa-download icon-button float-right"></a>
+                            <button class="d-block d-md-none btn float-right">Last ned <span class="fa fa-download"></span></button>
                         </div>
                     </div>
                 </div>
