@@ -17,7 +17,7 @@ module.exports = (env) => {
             rules: [
                 { test: /\.(png|woff|woff2|eot|ttf|svg)(\?|$)/, use: 'url-loader?limit=100000' },
                 { test: /\.css(\?|$)/, use: extractCSS.extract(['css-loader']) },
-                { test: /\.scss$/, use: ExtractTextPlugin.extract({ use: 'css-loader?minimize!sass-loader' }) },
+                { test: /\.scss$/, use: ExtractTextPlugin.extract({ use: ['css-loader', 'sass-loader'] }) },
             ]
         },
         entry: {
