@@ -65,3 +65,27 @@
         background-color: #fe5000;
         color: #fff;
     }
+
+.data-search-filter-container {
+
+}
+
+    .data-search-filter-container .data-search-filter {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        padding: 16px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        display: block;
+        width: 100%;
+        font-size: 16pt;
+        margin-bottom: 10px;
+    }
+
+    .data-search-filter-container img {
+        float: right;
+        position: relative;
+        bottom: 60px;
+        right: 16px;
+    }
