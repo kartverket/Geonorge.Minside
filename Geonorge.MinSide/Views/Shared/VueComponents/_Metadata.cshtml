@@ -1,7 +1,7 @@
-<script type="text/x-template" id="metadata-template">
+﻿<script type="text/x-template" id="metadata-template">
     <div>
         <div v-if="items && filteredItems.length" class="list">
-            <h3 class="section-title">Metadata ({{items.NumFound}})</h3>
+            <h3 class="section-title">Metadata ({{ getCounter() }})</h3>
             <div class="list-header d-none d-md-block">
                 <div class="row">
                     <div class="col-md-6">
@@ -150,6 +150,9 @@
                 var environmentParameter = this.$root.Environment;
                 var uuidParameter = "?uuid=" + item.Uuid;
                 return "https://editor." + environmentParameter + "geonorge.no/Metadata/Edit" + uuidParameter;
+            },
+            getCounter: function () {
+                return this.loadAllApiData && this.$root.searchInput ? this.filteredItems.length : this.items.NumFound;
             }
         },
         mounted: function () {

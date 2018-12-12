@@ -1,7 +1,7 @@
 ﻿<script type="text/x-template" id="product-fact-sheets-template">
     <div>
         <div v-if="items && filteredItems.length" class="list">
-            <h3 class="section-title">{{items.label}} ({{items.ContainedItemsResult.Total}})</h3>
+            <h3 class="section-title">{{items.label}} ({{ getCounter() }})</h3>
             <div class="list-header d-none d-md-block">
                 <div class="row">
                     <div class="col-md-6">
@@ -110,6 +110,9 @@
                 if (date) {
                     return moment(date).format('DD.MM.YYYY');
                 }
+            },
+            getCounter: function () {
+                return this.loadAllApiData && this.$root.searchInput ? this.filteredItems.length : this.items.ContainedItemsResult.Total;
             }
         },
         mounted: function () {
