@@ -99,3 +99,18 @@ header.page-top-container .col-xs-12 {
         width: 25%;
     }
 }
+
+header.page-top-container .page-top .search-results {
+    width: 100%;
+}
+
+header.page-top-container .page-top .auto-result-row,
+header.page-top-container .page-top .auto-results-col,
+header.page-top-container .page-top .auto-results-inner {
+    padding: 0;
+}
+
+header.page-top-container .page-top .auto-results-col {
+    padding-bottom: 12px;
+    padding-left: 34.6px;
+}
