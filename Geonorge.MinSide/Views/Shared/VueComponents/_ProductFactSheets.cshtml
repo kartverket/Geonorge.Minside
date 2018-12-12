@@ -15,7 +15,7 @@
                     </div>
                 </div>
             </div>
-            <div class="list-content">
+            <div class="list-content" v-bind:class="{'loading-data': loadingData}">
                 <div v-for="item in filteredItems" class="list-item">
                     <div class="row">
                         <div class="col-md-6">
@@ -37,7 +37,7 @@
                 </div>
             </div>
             <div class="text-center">
-                <button v-show="moreItemsAvailable" v-on:click="getItems()" class="fa fa-plus icon-button add-more-button"></button>
+                <button v-show="moreItemsAvailable" v-on:click="getItems()" class="icon-button add-more-button" v-bind:class="loadingData ? 'fas fa-spinner fa-pulse' : 'fa fa-plus'"></button>
             </div>
         </div>
     </div>
@@ -50,6 +50,7 @@
         props: ['loadAllApiData'],
         data: function () {
             return {
+                loadingData: false,
                 items: null,
                 numberOfVisibleItems: 0,
                 filterProperties: [
@@ -96,8 +97,10 @@
                     ? "https://register." + environmentParameter + "geonorge.no/api/produktark" + organizationNameParameter
                     : "https://register." + environmentParameter + "geonorge.no/api/produktark" + organizationNameParameter + "&limit=" + itemsPerRequest + offsetParameter;
 
+                this.loadingData = true;
                 Promise.resolve(this.$root.getApiData(apiURL))
                     .then((apiData) => {
+                        this.loadingData = false;
                         if (!this.items || this.loadAllApiData) {
                             this.items = apiData;
                         } else {

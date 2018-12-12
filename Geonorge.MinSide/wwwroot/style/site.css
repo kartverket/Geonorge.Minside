@@ -1,4 +1,4 @@
-﻿.main-header,
+.main-header,
 .view-header {
     background-color: #f8f8f7;
 }
@@ -30,6 +30,17 @@
     .list .list-header {
         font-size: 16pt;
     }
+
+    .list .list-content {
+        -moz-transition: all .35s linear 0s;
+        -o-transition: all .35s linear 0s;
+        -webkit-transition: all .35s linear 0s;
+        transition: all .35s linear 0s;
+    }
+
+        .list .list-content.loading-data {
+            opacity: .25;
+        }
 
     .list .list-item {
         font-size: 13pt;
