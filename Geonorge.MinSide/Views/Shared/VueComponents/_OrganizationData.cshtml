@@ -4,18 +4,20 @@
             <div class="row">
                 <div class="col-sm-9">
                     <h3 class="section-title">Kontaktinformasjon</h3>
-                    <div v-if="organizationData.ContactInformation.Name">
-                        Kontaktperson: {{ organizationData.ContactInformation.Name }}
-                    </div>
-                    <div v-if="organizationData.ContactInformation.Epost">
-                        E-post: {{ organizationData.ContactInformation.Epost }}
-                    </div>
-                    <div>
-                        <a href="mailto:'post@norgedigitalt.no'">Meld fra om endring i kontaktinfo</a>
+                    <div class="contact-info">
+                        <div v-if="organizationData.ContactInformation.Name">
+                            Kontaktperson: {{ organizationData.ContactInformation.Name }}
+                        </div>
+                        <div v-if="organizationData.ContactInformation.Epost">
+                            E-post: {{ organizationData.ContactInformation.Epost }}
+                        </div>
+                        <div>
+                            <a href="mailto:'post@norgedigitalt.no'">Meld fra om endring i kontaktinfo</a>
+                        </div>
                     </div>
                 </div>
                 <div class="col-sm-3">
-                    <img v-bind:src="organizationData.LogoUrl" />
+                    <img v-bind:src="organizationData.LogoUrl" class="float-right" />
                 </div>
             </div>
         </div>

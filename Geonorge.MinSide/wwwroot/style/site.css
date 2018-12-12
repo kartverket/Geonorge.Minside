@@ -1,4 +1,4 @@
-.main-header,
+﻿.main-header,
 .view-header {
     background-color: #f8f8f7;
 }
@@ -22,6 +22,10 @@
         color: #333;
         font-size: 20pt;
     }
+
+.contact-info {
+    font-size: 14pt;
+}
 
 .list {
     margin-bottom: 10px;
@@ -67,9 +71,16 @@
 .add-more-button {
     font-size: 20px;
     color: #fe5000;
-    border: 1px solid #fe5000;
+    border: 2px solid #fe5000;
     border-radius: 50%;
+    width: 44px;
+    height: 44px;
     padding: 10px;
+    cursor: pointer;
+    -moz-transition: all .35s linear 0s;
+    -o-transition: all .35s linear 0s;
+    -webkit-transition: all .35s linear 0s;
+    transition: all .35s linear 0s;
 }
 
     .add-more-button:hover {
@@ -77,8 +88,11 @@
         color: #fff;
     }
 
-.data-search-filter-container {
+    .add-more-button:focus {
+        outline: none;
+    }
 
+.data-search-filter-container {
 }
 
     .data-search-filter-container .data-search-filter {
