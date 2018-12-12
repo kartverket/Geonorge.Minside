@@ -7,7 +7,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-sm-9">
-                    <h1 class="view-title">{{ ViewTitle }} - {{ OrganizationName }}</h1>
+                    <h1 class="view-title">{{ ViewTitle }} - {{ getTranslatedOrganizationName() }}</h1>
                 </div>
                 <div class="col-sm-3">
                     <span class="pull-right">Orgnr. {{ OrganizationNumber }}</span>
@@ -20,7 +20,7 @@
     <div class="container">
         <div class="section" is="organization-data"></div>
         <div class="data-search-filter-container">
-            <input v-model="searchInput" placeholder="Søk i dine data her" class="data-search-filter" />
+            <input v-model="searchInput" v-bind:placeholder="getSearchInputPlaceholder()" class="data-search-filter" />
             <img src="/dist/images/search_icon-01.svg" alt="search">
         </div>
         <div class="section" is="metadata" v-bind:load-all-api-data="loadAllApiData"></div>
@@ -43,6 +43,7 @@
     @await Html.PartialAsync("~/Views/Shared/VueComponents/_Cartography.cshtml")
     @await Html.PartialAsync("~/Views/Shared/VueComponents/_ProductSpecifications.cshtml")
     @await Html.PartialAsync("~/Views/Shared/VueComponents/_ReportMeasurment.cshtml")
+
     <script>
         var app = new Vue({
             el: '#app',
@@ -57,11 +58,16 @@
             data: function() {
                 return {
                     OrganizationNumber: '@ViewData["OrganizationOrgnr"]',
-                    OrganizationName: '@ViewData["OrganizationName"]',
+                    OrganizationName: '@Html.Raw(ViewData["OrganizationName"])',
+                    translatedOrganizationName: null,
                     Environment: '@ViewData["Environment"]',
                     ViewTitle: '@ViewData["title"]',
                     activeLanguage: this.getActiveLanguage(),
                     searchInput: '',
+                    searchInputPlaceholder: {
+                        en: 'Search your data',
+                        no: 'SÃ¸k i dine data her'
+                    },
                     loadAllApiData: false
                 }
             },
@@ -73,6 +79,13 @@
                 },
                 getActiveLanguage: function () {
                     return Cookies.get('_culture') ? Cookies.get('_culture') : 'no';
+
+                },
+                getSearchInputPlaceholder: function () {
+                    return this.searchInputPlaceholder[this.activeLanguage];
+                },
+                getTranslatedOrganizationName: function () {
+                    return this.translatedOrganizationName ? this.translatedOrganizationName : this.OrganizationName;
                 }
             },
             watch: {

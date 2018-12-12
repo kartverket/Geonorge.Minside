@@ -1,4 +1,4 @@
-﻿<script type="text/x-template" id="organization-data-template">
+<script type="text/x-template" id="organization-data-template">
     <div>
         <div v-if="organizationData">
             <div class="row">
@@ -37,6 +37,7 @@
                 Promise.resolve(this.$root.getApiData("https://register.dev.geonorge.no/api/organisasjon/orgnr/" + organizationNumber))
                     .then((apiData) => {
                         this.organizationData = apiData;
+                        this.$root.translatedOrganizationName = apiData.Name;
                     });
             }
         },
