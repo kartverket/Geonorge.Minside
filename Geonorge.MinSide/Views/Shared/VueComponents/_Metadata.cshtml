@@ -1,4 +1,4 @@
-﻿<script type="text/x-template" id="metadata-template">
+<script type="text/x-template" id="metadata-template">
     <div>
         <div v-if="items && filteredItems.length" class="list">
             <h3 class="section-title">Metadata ({{items.NumFound}})</h3>
@@ -124,10 +124,11 @@
 
                 Promise.resolve(this.$root.getApiData(apiURL))
                     .then((apiData) => {
-                        if (this.items) {
-                            this.items.Results = this.items.Results.concat(apiData.Results);
-                        } else {
+                        if (!this.items || this.loadAllApiData) {
                             this.items = apiData;
+                        }
+                        else {
+                            this.items.Results = this.items.Results.concat(apiData.Results);
                         }
                         this.numberOfVisibleItems += itemsPerRequest;
                     });

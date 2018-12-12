@@ -98,10 +98,10 @@
 
                 Promise.resolve(this.$root.getApiData(apiURL))
                     .then((apiData) => {
-                        if (this.items) {
-                            this.items.containeditems = this.items.containeditems.concat(apiData.containeditems);
-                        } else {
+                        if (!this.items || this.loadAllApiData) {
                             this.items = apiData;
+                        } else {
+                            this.items.containeditems = this.items.containeditems.concat(apiData.containeditems);
                         }
                         this.numberOfVisibleItems += itemsPerRequest;
                     });

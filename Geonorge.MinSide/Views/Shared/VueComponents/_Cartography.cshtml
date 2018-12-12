@@ -106,10 +106,10 @@
 
                 Promise.resolve(this.$root.getApiData(apiURL))
                     .then((apiData) => {
-                        if (this.items) {
-                            this.items.Files = this.items.Files.concat(apiData.Files);
-                        } else {
+                        if (!this.items || this.loadAllApiData) {
                             this.items = apiData;
+                        } else {
+                            this.items.Files = this.items.Files.concat(apiData.Files);
                         }
                         this.numberOfVisibleItems += itemsPerRequest;
                     });
