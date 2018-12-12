@@ -34,7 +34,10 @@
         methods: {
             getOrganizationData: function () {
                 var organizationNumber = this.$root.OrganizationNumber;
-                Promise.resolve(this.$root.getApiData("https://register.dev.geonorge.no/api/organisasjon/orgnr/" + organizationNumber))
+                var environmentParameter = this.$root.Environment;
+                var apiURL = "https://register." + environmentParameter + "geonorge.no/api/organisasjon/orgnr/" + organizationNumber;
+
+                Promise.resolve(this.$root.getApiData(apiURL))
                     .then((apiData) => {
                         this.organizationData = apiData;
                         this.$root.translatedOrganizationName = apiData.Name;
