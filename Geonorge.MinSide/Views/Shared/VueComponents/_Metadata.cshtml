@@ -1,43 +1,48 @@
 ﻿<script type="text/x-template" id="metadata-template">
     <div>
         <div v-if="items && filteredItems.length" class="list">
-            <h3 class="section-title">Metadata ({{ getCounter() }})</h3>
-            <div class="list-header d-none d-md-block">
-                <div class="row">
-                    <div class="col-md-6">
-                        Tittel
-                    </div>
-                    <div class="col-md-2">
-                        Type
-                    </div>
-                    <div class="col-md-3">
-                        Sist oppdatert
-                    </div>
-                </div>
-            </div>
-            <div class="list-content" v-bind:class="{'loading-data': loadingData}">
-                <div v-for="item in filteredItems" class="list-item">
+            <h3 v-on:click="expanded = !expanded" class="section-title clickable">
+                <span class="expand-arrow clickable" style="vertical-align: middle;" v-bind:class="{active: expanded}"></span>
+                Metadata ({{ getCounter() }})
+            </h3>
+            <div v-show="expanded">
+                <div class="list-header d-none d-md-block">
                     <div class="row">
                         <div class="col-md-6">
-                            <a v-bind:href="item.ShowDetailsUrl" v-bind:title="'Vis detaljer for ' + item.Title">{{item.Title}}</a>
+                            Tittel
                         </div>
                         <div class="col-md-2">
-                            <span class="d-inline-block d-md-none">Type:</span>
-                            {{ getTypeName(item.Type) }}
+                            Type
                         </div>
                         <div class="col-md-3">
-                            <span class="d-inline-block d-md-none">Sist oppdatert:</span>
-                            {{ formatDate(item.Date) }}
-                        </div>
-                        <div class="col-md-1">
-                            <a v-bind:href="getEditLink(item)" class="d-none d-md-block fa fa-edit icon-button float-right"></a>
-                            <a v-bind:href="getEditLink(item)" class="d-block d-md-none btn float-right">Rediger <span class="fa fa-edit"></span></a>
+                            Sist oppdatert
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="text-center">
-                <button v-show="moreItemsAvailable" v-on:click="getItems()" class="icon-button add-more-button" v-bind:class="loadingData ? 'fas fa-spinner fa-pulse' : 'fa fa-plus'"></button>
+                <div class="list-content" v-bind:class="{'loading-data': loadingData}">
+                    <div v-for="item in filteredItems" class="list-item">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <a v-bind:href="item.ShowDetailsUrl" v-bind:title="'Vis detaljer for ' + item.Title">{{item.Title}}</a>
+                            </div>
+                            <div class="col-md-2">
+                                <span class="d-inline-block d-md-none">Type:</span>
+                                {{ getTypeName(item.Type) }}
+                            </div>
+                            <div class="col-md-3">
+                                <span class="d-inline-block d-md-none">Sist oppdatert:</span>
+                                {{ formatDate(item.Date) }}
+                            </div>
+                            <div class="col-md-1">
+                                <a v-bind:href="getEditLink(item)" class="d-none d-md-block fa fa-edit icon-button float-right"></a>
+                                <a v-bind:href="getEditLink(item)" class="d-block d-md-none btn float-right">Rediger <span class="fa fa-edit"></span></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button v-show="moreItemsAvailable" v-on:click="getItems()" class="icon-button add-more-button" v-bind:class="loadingData ? 'fas fa-spinner fa-pulse' : 'fa fa-plus'"></button>
+                </div>
             </div>
         </div>
     </div>
@@ -51,6 +56,7 @@
         data: function () {
             return {
                 loadingData: false,
+                expanded: true,
                 items: null,
                 numberOfVisibleItems: 0,
                 filterProperties: [
