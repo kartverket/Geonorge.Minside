@@ -114,3 +114,23 @@
         bottom: 60px;
         right: 16px;
     }
+
+.container-footer ul li,
+aside ul li,
+.expand-arrow {
+    background-image: url(/dist/images/svg/arrow-right.svg);
+}
+
+    .container-footer ul li.active,
+    aside ul li.active,
+    .expand-arrow.active {
+        background-image: url(/dist/images/svg/arrow-down.svg);
+    }
+
+.container-breadcrumbs ul > li {
+    background-image: url(/dist/images/svg/breadcrumb-arrow.svg);
+}
+
+.loading-animation:before {
+    content: url(/dist/images/gif/loading.gif);
+}
