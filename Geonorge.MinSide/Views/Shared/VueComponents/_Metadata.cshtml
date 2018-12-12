@@ -112,13 +112,15 @@
                 var itemsPerRequest = 10;
                 var offsetParameter = this.numberOfVisibleItems ? "&offset=" + this.numberOfVisibleItems : "";
                 var organizationNameParameter = '?facets%5b0%5dname=organization&facets%5b0%5dvalue=' + this.$root.OrganizationName;
+                var orderParameter = "&orderby=updated";
                 var environmentParameter = this.$root.Environment;
+
                 if (this.loadAllApiData && this.items) {
                     itemsPerRequest = this.items.NumFound;
                 }
                 var apiURL = this.loadAllApiData
-                    ? "https://kartkatalog." + environmentParameter + "geonorge.no/api/search" + organizationNameParameter + "&limit=" + itemsPerRequest
-                    : "https://kartkatalog." + environmentParameter + "geonorge.no/api/search" + organizationNameParameter + "&limit=" + itemsPerRequest + offsetParameter
+                    ? "https://kartkatalog." + environmentParameter + "geonorge.no/api/search" + organizationNameParameter + "&limit=" + itemsPerRequest + orderParameter
+                    : "https://kartkatalog." + environmentParameter + "geonorge.no/api/search" + organizationNameParameter + "&limit=" + itemsPerRequest + orderParameter + offsetParameter
 
                 Promise.resolve(this.$root.getApiData(apiURL))
                     .then((apiData) => {
