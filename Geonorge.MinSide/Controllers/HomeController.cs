@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Geonorge.MinSide.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 
 namespace Geonorge.MinSide.Controllers
 {
@@ -10,8 +12,11 @@ namespace Geonorge.MinSide.Controllers
     {
         public IActionResult Index()
         {
-            ViewData["OrganizationName"] = "Kartverket";
-            ViewData["OrganizationOrgnr"] = "971040238";
+            if (!User.Identity.IsAuthenticated)
+            {
+                var redirectUrl = Url.Action(nameof(HomeController.Index), "Home");
+                return Challenge(new AuthenticationProperties { RedirectUri = redirectUrl }, OpenIdConnectDefaults.AuthenticationScheme);
+            }
 
             foreach (var claim in User.Claims)
             {
