@@ -16,6 +16,9 @@
                 </div>
             </div>
         </div>
+        <div>
+            <a v-bind:href="reportUrl" target="_blank">Vis mer statistikk</a>
+</div>
     </div>
 </script>
 
@@ -27,6 +30,7 @@
         data: function () {
             return {
                 items: null,
+                reportUrl: "https://rapportgenerator." + this.$root.Environment + "geonorge.no/statistics?organization=" + this.$root.OrganizationName,
                 filterProperties: [
                     'Label',
                 ]
