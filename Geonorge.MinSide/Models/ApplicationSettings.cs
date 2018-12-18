@@ -4,6 +4,7 @@
     {
         public string BuildVersionNumber { get; set; }
         public string EnvironmentName { get; set; }
+        public string ProxyAddress { get; set; }
         public Urls Urls { get; set; }
         public string BaatAuthzApiCredentials { get; set; }
     }

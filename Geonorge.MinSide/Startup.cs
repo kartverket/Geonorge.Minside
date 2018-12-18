@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Net;
 using System.Reflection;
 using Geonorge.MinSide.Models;
 using Geonorge.MinSide.Utils;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor.Compilation;
 using Microsoft.AspNetCore.SpaServices.Webpack;
@@ -93,6 +95,27 @@ namespace Geonorge.MinSide
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            var applicationSettings = app.ApplicationServices.GetService<ApplicationSettings>();
+
+            // Add explicit proxy configuration
+            // this must be the first "app.Use..."-statement in the Configure-method
+            if (!string.IsNullOrEmpty(applicationSettings.ProxyAddress))
+            {
+                app.UseForwardedHeaders(new ForwardedHeadersOptions
+                {
+                    ForwardedHeaders = ForwardedHeaders.All,
+                    ForwardLimit = null,
+                    KnownProxies = { IPAddress.Parse(applicationSettings.ProxyAddress) }
+                });    
+            }
+            else
+            {
+                app.UseForwardedHeaders(new ForwardedHeadersOptions
+                {
+                    ForwardedHeaders = ForwardedHeaders.All
+                });    
+            }
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -117,7 +140,6 @@ namespace Geonorge.MinSide
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseForwardedHeaders();
 /*
             // Debug Proxy headers
             app.Use(async (context, next) =>
