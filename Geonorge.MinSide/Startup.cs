@@ -18,6 +18,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Serilog;
+using Geonorge.AuthLib.NetCore;
+using Geonorge.AuthLib.Common;
 
 namespace Geonorge.MinSide
 {
