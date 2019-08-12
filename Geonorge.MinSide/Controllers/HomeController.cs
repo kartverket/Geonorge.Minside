@@ -5,8 +5,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using System.Security.Claims;
-using Geonorge.AuthLib.Common;
 
 namespace Geonorge.MinSide.Controllers
 {
@@ -20,8 +18,14 @@ namespace Geonorge.MinSide.Controllers
                 return Challenge(new AuthenticationProperties { RedirectUri = redirectUrl }, OpenIdConnectDefaults.AuthenticationScheme);
             }
 
-            ViewData["OrganizationName"] = ClaimsPrincipal.Current.GetOrganizationName();
-            ViewData["OrganizationOrgnr"] = ClaimsPrincipal.Current.GetOrganizationOrgnr();
+            foreach (var claim in User.Claims)
+            {
+                if (claim.Type == "OrganizationName" && claim.Value.Length > 0)
+                    ViewData["OrganizationName"] = claim.Value;
+
+                if (claim.Type == "OrganizationOrgnr" && claim.Value.Length > 1)
+                    ViewData["OrganizationOrgnr"] = claim.Value;
+            }
 
             return View();
         }
