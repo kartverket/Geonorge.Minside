@@ -20,6 +20,7 @@ using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Serilog;
 using Geonorge.AuthLib.NetCore;
 using Geonorge.AuthLib.Common;
+using Microsoft.IdentityModel.Logging;
 
 namespace Geonorge.MinSide
 {
@@ -52,6 +53,8 @@ namespace Geonorge.MinSide
                     manager.FeatureProviders.Add(new ReferencesMetadataReferenceFeatureProvider());
                 });
 
+            //IdentityModelEventSource.ShowPII = true;
+
             services
                 .AddAuthentication(options => {
                     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -61,18 +64,23 @@ namespace Geonorge.MinSide
                 .AddCookie()
                 .AddOpenIdConnect(options =>
                 {
+                    options.TokenValidationParameters.ValidIssuer = Configuration["auth:oidc:issuer"];
                     options.Authority = Configuration["auth:oidc:authority"];
                     options.ClientId = Configuration["auth:oidc:clientid"];
                     options.ClientSecret = Configuration["auth:oidc:clientsecret"];
                     options.MetadataAddress = Configuration["auth:oidc:metadataaddress"];
+                    //options.ClaimsIssuer = Configuration["auth:oidc:issuer"];
                     options.ResponseType = OpenIdConnectResponseType.Code;
                     options.EventsType = typeof(GeonorgeOpenIdConnectEvents);
                 })
                 .AddJwtBearer(options =>
                 {
+                    options.TokenValidationParameters.ValidIssuer = Configuration["auth:oidc:issuer"];
                     options.Authority = Configuration["auth:oidc:authority"];
                     options.Audience = Configuration["auth:oidc:clientid"];
                     options.MetadataAddress = Configuration["auth:oidc:metadataaddress"];
+                    //options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters { ValidIssuer = Configuration["auth:oidc:issuer"] };
+                    //options.ClaimsIssuer = Configuration["auth:oidc:issuer"];
                 });
             
             // authorize both via cookies and jwt bearer tokens
@@ -92,7 +100,9 @@ namespace Geonorge.MinSide
             
             services.AddScoped<GeonorgeOpenIdConnectEvents>();
             services.AddTransient<IGeonorgeAuthorizationService, GeonorgeAuthorizationService>();
-            services.AddTransient<IBaatAuthzApi, BaatAuthzApi>();
+            services.AddTransient<IBaatAuthzApi>(s => 
+                new BaatAuthzApi(applicationSettings.Urls.BaatAuthzApi, applicationSettings.BaatAuthzApiCredentials)
+            );
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
