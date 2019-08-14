@@ -59,6 +59,7 @@ namespace Geonorge.MinSide
                 .AddCookie()
                 .AddOpenIdConnect(options =>
                 {
+                    options.TokenValidationParameters.ValidIssuer = Configuration["auth:oidc:issuer"];
                     options.Authority = Configuration["auth:oidc:authority"];
                     options.ClientId = Configuration["auth:oidc:clientid"];
                     options.ClientSecret = Configuration["auth:oidc:clientsecret"];
