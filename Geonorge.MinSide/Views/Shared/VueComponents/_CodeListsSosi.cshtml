@@ -1,0 +1,127 @@
+﻿<script type="text/x-template" id="code-lists-sosi-template">
+    <div>
+        <div v-if="items && filteredItems.length" class="list">
+            <h3 v-on:click="expanded = !expanded" class="section-title clickable">
+                <span class="expand-arrow clickable" style="vertical-align: middle;" v-bind:class="{active: expanded}"></span>
+                Kodelister ({{ getCounter() }})
+            </h3>
+            <div v-show="expanded">
+                <div class="list-header d-none d-md-block">
+                    <div class="row">
+                        <div class="col-md-4">
+                            Tittel
+                        </div>
+                        <div class="col-md-2">
+                            Status
+                        </div>
+                    </div>
+                </div>
+                <div class="list-content" v-bind:class="{'loading-data': loadingData}">
+                    <div v-for="item in filteredItems" class="list-item">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <a v-bind:href="item.Url" v-bind:title="'Vis detaljer for ' + item.RegisterName">{{item.RegisterName}}</a>
+                            </div>
+                            <div class="col-md-2">
+                                <span class="d-inline-block d-md-none">Status:</span>
+                                {{ item.Status }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button v-show="moreItemsAvailable" v-on:click="getItems()" class="icon-button add-more-button" v-bind:class="loadingData ? 'fas fa-spinner fa-pulse' : 'fa fa-plus'"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script>
+    var CodeListsSosi = {
+        name: "CodeListsSosi",
+        template: "#code-lists-sosi-template",
+        props: ['loadAllApiData'],
+        data: function () {
+            return {
+                loadingData: false,
+                expanded: true,
+                items: null,
+                numberOfVisibleItems: 0,
+                filterProperties: [
+                    'Name'
+                ]
+            }
+        },
+        computed: {
+            moreItemsAvailable: function () {
+                if (this.loadAllApiData) {
+                    return false;
+                } else {
+                    return this.items && this.items.NumFound > this.numberOfVisibleItems;
+                }
+            },
+            filteredItems: function () {
+                var filteredItems = [];
+                if (this.loadAllApiData && this.$root.searchInput) {
+                    this.items.Results.forEach(function (item) {
+                        var itemHasMatch = false;
+                        this.filterProperties.forEach(function (filterProperty) {
+                            if (item[filterProperty].toUpperCase().indexOf(this.$root.searchInput.toUpperCase()) > -1) {
+                                itemHasMatch = true;
+                            }
+                        }.bind(this));
+                        if (itemHasMatch) {
+                            filteredItems.push(item);
+                        }
+                    }.bind(this))
+                } else {
+                    filteredItems = this.items.Results;
+                }
+                return filteredItems;
+            }
+        },
+        methods: {
+            getItems: function () {
+                var itemsPerRequest = 10;
+                var offsetParameter = this.numberOfVisibleItems ? "&offset=" + this.numberOfVisibleItems : "";
+                var organizationNameParameter = this.$root.OrganizationName;
+                var environmentParameter = this.$root.Environment;
+
+                var apiURL = this.loadAllApiData
+                    ? "https://register." + environmentParameter + "geonorge.no/api/search?facets[0]name=organization&facets[0]value=" + organizationNameParameter +
+                    "&facets[1]name=type&facets[1]value=kodeverdier&excludecodelistvalues=true"
+                    : "https://register." + environmentParameter + "geonorge.no/api/search?facets[0]name=organization&facets[0]value=" + organizationNameParameter +
+                    "&facets[1]name=type&facets[1]value=kodeverdier&excludecodelistvalues=true" + "&limit=" + itemsPerRequest + offsetParameter;
+
+                this.loadingData = true;
+                Promise.resolve(this.$root.getApiData(apiURL))
+                    .then((apiData) => {
+                        this.loadingData = false;
+                        if (!this.items || this.loadAllApiData) {
+                            this.items = apiData;
+                        } else {
+                            this.items.Results = this.items.Results.concat(apiData.Results);
+                        }
+                        this.numberOfVisibleItems += itemsPerRequest;
+                    });
+            },
+            formatDate: function (date) {
+                if (date) {
+                    return moment(date).format('DD.MM.YYYY');
+                }
+            },
+            getCounter: function () {
+                return this.loadAllApiData && this.$root.searchInput ? this.filteredItems.length : this.items.NumFound;
+            }
+        },
+        mounted: function () {
+            this.getItems();
+        },
+        watch: {
+            loadAllApiData: function () {
+                this.getItems();
+            }
+        }
+    };
+</script>
