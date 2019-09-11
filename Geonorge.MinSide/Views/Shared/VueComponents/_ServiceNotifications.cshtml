@@ -15,7 +15,7 @@
                             Varseltype
                         </div>
                         <div class="col-md-3">
-                            Siste
+                            Dato
                         </div>
                         <div class="col-md-3">
                             Ikrafttredelse
@@ -98,12 +98,13 @@
             getItems: function () {
                 var itemsPerRequest = 10;
                 var offsetParameter = this.numberOfVisibleItems ? "&offset=" + this.numberOfVisibleItems : "";
+                var orderBy = "?orderBy=alertDate";
                 var organizationNameParameter = '?owner=' + this.$root.OrganizationName;
                 var environmentParameter = this.$root.Environment;
 
                 var apiURL = this.loadAllApiData
-                    ? "https://register." + environmentParameter + "geonorge.no/api/varsler" + organizationNameParameter
-                    : "https://register." + environmentParameter + "geonorge.no/api/varsler" + organizationNameParameter + "&limit=" + itemsPerRequest + offsetParameter;
+                    ? "https://register." + environmentParameter + "geonorge.no/api/varsler" + organizationNameParameter + orderBy
+                    : "https://register." + environmentParameter + "geonorge.no/api/varsler" + organizationNameParameter + "&limit=" + itemsPerRequest + offsetParameter + orderBy;
 
                 this.loadingData = true;
                 Promise.resolve(this.$root.getApiData(apiURL))
