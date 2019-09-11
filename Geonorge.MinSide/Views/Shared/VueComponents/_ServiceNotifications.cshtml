@@ -98,7 +98,7 @@
             getItems: function () {
                 var itemsPerRequest = 10;
                 var offsetParameter = this.numberOfVisibleItems ? "&offset=" + this.numberOfVisibleItems : "";
-                var orderBy = "?orderBy=alertDate";
+                var orderBy = "&orderBy=alertDate";
                 var organizationNameParameter = '?owner=' + this.$root.OrganizationName;
                 var environmentParameter = this.$root.Environment;
 
