@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Net;
 using System.Reflection;
 using Geonorge.MinSide.Models;
@@ -64,7 +64,9 @@ namespace Geonorge.MinSide
                     options.ClientId = Configuration["auth:oidc:clientid"];
                     options.ClientSecret = Configuration["auth:oidc:clientsecret"];
                     options.MetadataAddress = Configuration["auth:oidc:metadataaddress"];
-                    options.ResponseType = OpenIdConnectResponseType.Code;
+                    options.ResponseType = OpenIdConnectResponseType.CodeIdTokenToken;
+                    options.SignedOutRedirectUri = Configuration["PostLogoutRedirectUri"];
+                    options.SaveTokens = true;
                     options.EventsType = typeof(GeonorgeOpenIdConnectEvents);
                 })
                 .AddJwtBearer(options =>

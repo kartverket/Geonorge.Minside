@@ -42,7 +42,8 @@
     <script src="~/dist/js/geonorge-shared/main.js" asp-append-version="true"></script>
 
     <script>
-    searchOption.epiBaseUrl = '@AppSettings.Urls.GeonorgeRoot';
+        searchOption.epiBaseUrl = '@AppSettings.Urls.GeonorgeRoot';
+        searchOption.logoutUrl = '@AppSettings.RedirectUri';
     </script>
 
     <script src="~/dist/js/geonorge-base/init.js" asp-append-version="true"></script>
