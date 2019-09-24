@@ -14,8 +14,7 @@ namespace Geonorge.MinSide.Controllers
         {
             if (!User.Identity.IsAuthenticated)
             {
-                var redirectUrl = Url.Action(nameof(HomeController.Index), "Home");
-                return Challenge(new AuthenticationProperties { RedirectUri = redirectUrl }, OpenIdConnectDefaults.AuthenticationScheme);
+                return View("LogIn");
             }
 
             foreach (var claim in User.Claims)
@@ -27,6 +26,11 @@ namespace Geonorge.MinSide.Controllers
                     ViewData["OrganizationOrgnr"] = claim.Value;
             }
 
+            return View();
+        }
+
+        public IActionResult LoggedOut()
+        {
             return View();
         }
 

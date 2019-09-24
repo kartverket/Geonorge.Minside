@@ -7,6 +7,8 @@
         public string ProxyAddress { get; set; }
         public Urls Urls { get; set; }
         public string BaatAuthzApiCredentials { get; set; }
+        public string RedirectUri { get; set; }
+        public string PostLogoutRedirectUri { get; set; }        
     }
 
     public class Urls
