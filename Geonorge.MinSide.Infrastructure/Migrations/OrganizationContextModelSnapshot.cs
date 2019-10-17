@@ -49,7 +49,7 @@ namespace Geonorge.MinSide.Infrastructure.Migrations
 
                     b.HasIndex("DistributionAgreementId");
 
-                    b.ToTable("AgreementDocuments");
+                    b.ToTable("Agreements");
                 });
 
             modelBuilder.Entity("Geonorge.MinSide.Infrastructure.Context.Document", b =>

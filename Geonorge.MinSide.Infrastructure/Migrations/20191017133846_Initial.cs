@@ -73,7 +73,7 @@ namespace Geonorge.MinSide.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AgreementDocuments",
+                name: "Agreements",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -87,33 +87,33 @@ namespace Geonorge.MinSide.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AgreementDocuments", x => x.Id);
+                    table.PrimaryKey("PK_Agreements", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AgreementDocuments_Document_AgreementDocumentId",
+                        name: "FK_Agreements_Document_AgreementDocumentId",
                         column: x => x.AgreementDocumentId,
                         principalTable: "Document",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_AgreementDocuments_Document_Appendix1Id",
+                        name: "FK_Agreements_Document_Appendix1Id",
                         column: x => x.Appendix1Id,
                         principalTable: "Document",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_AgreementDocuments_Document_Appendix2Id",
+                        name: "FK_Agreements_Document_Appendix2Id",
                         column: x => x.Appendix2Id,
                         principalTable: "Document",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_AgreementDocuments_Document_Appendix3Id",
+                        name: "FK_Agreements_Document_Appendix3Id",
                         column: x => x.Appendix3Id,
                         principalTable: "Document",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_AgreementDocuments_Document_DistributionAgreementId",
+                        name: "FK_Agreements_Document_DistributionAgreementId",
                         column: x => x.DistributionAgreementId,
                         principalTable: "Document",
                         principalColumn: "Id",
@@ -121,28 +121,28 @@ namespace Geonorge.MinSide.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_AgreementDocuments_AgreementDocumentId",
-                table: "AgreementDocuments",
+                name: "IX_Agreements_AgreementDocumentId",
+                table: "Agreements",
                 column: "AgreementDocumentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AgreementDocuments_Appendix1Id",
-                table: "AgreementDocuments",
+                name: "IX_Agreements_Appendix1Id",
+                table: "Agreements",
                 column: "Appendix1Id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AgreementDocuments_Appendix2Id",
-                table: "AgreementDocuments",
+                name: "IX_Agreements_Appendix2Id",
+                table: "Agreements",
                 column: "Appendix2Id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AgreementDocuments_Appendix3Id",
-                table: "AgreementDocuments",
+                name: "IX_Agreements_Appendix3Id",
+                table: "Agreements",
                 column: "Appendix3Id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AgreementDocuments_DistributionAgreementId",
-                table: "AgreementDocuments",
+                name: "IX_Agreements_DistributionAgreementId",
+                table: "Agreements",
                 column: "DistributionAgreementId");
 
             migrationBuilder.CreateIndex(
@@ -159,7 +159,7 @@ namespace Geonorge.MinSide.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "AgreementDocuments");
+                name: "Agreements");
 
             migrationBuilder.DropTable(
                 name: "ToDo");
