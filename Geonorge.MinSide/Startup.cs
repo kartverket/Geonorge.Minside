@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using Geonorge.MinSide.Infrastructure.Context;
 using Geonorge.MinSide.Models;
 using Geonorge.MinSide.Utils;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -14,6 +15,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor.Compilation;
 using Microsoft.AspNetCore.SpaServices.Webpack;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
@@ -90,7 +92,9 @@ namespace Geonorge.MinSide
             Configuration.Bind(applicationSettings);
             services.AddSingleton<ApplicationSettings>(applicationSettings);
             services.AddHttpClient();
-            
+
+            services.AddDbContext<OrganizationContext>(item => item.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
             services.AddScoped<GeonorgeOpenIdConnectEvents>();
             services.AddTransient<IGeonorgeAuthorizationService, GeonorgeAuthorizationService>();
             services.AddTransient<IBaatAuthzApi, BaatAuthzApi>();
