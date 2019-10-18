@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Geonorge.MinSide.Infrastructure.Context
 {
-    class Meeting
+    public class Meeting
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }

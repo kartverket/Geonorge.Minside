@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Geonorge.MinSide.Infrastructure.Context
 {
-    class ToDo
+    public class ToDo
     {
         public int Id { get; set; }
         public string Title { get; set; }

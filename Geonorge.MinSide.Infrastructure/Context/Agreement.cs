@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Geonorge.MinSide.Infrastructure.Context
 {
-    class Agreement
+    public class Agreement
     {
         public int Id { get; set; }
         public string OrganizationNumber { get; set; }

@@ -8,7 +8,7 @@ namespace Geonorge.MinSide.Infrastructure.Context
         {
         }
 
-        DbSet<Agreement> Agreements { get; set; }
-        DbSet<Meeting> Meetings { get; set; }
+        public DbSet<Agreement> Agreements { get; set; }
+        public DbSet<Meeting> Meetings { get; set; }
     }
 }
