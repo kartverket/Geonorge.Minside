@@ -58,6 +58,8 @@ namespace Geonorge.MinSide.Infrastructure.Migrations
 
                     b.Property<string>("Description");
 
+                    b.Property<string>("OrganizationNumber");
+
                     b.Property<string>("Title");
 
                     b.HasKey("Id");

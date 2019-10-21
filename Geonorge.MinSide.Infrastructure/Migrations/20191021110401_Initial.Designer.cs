@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Geonorge.MinSide.Infrastructure.Migrations
 {
     [DbContext(typeof(OrganizationContext))]
-    [Migration("20191021104246_Initial")]
+    [Migration("20191021110401_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -59,6 +59,8 @@ namespace Geonorge.MinSide.Infrastructure.Migrations
                     b.Property<DateTime>("Date");
 
                     b.Property<string>("Description");
+
+                    b.Property<string>("OrganizationNumber");
 
                     b.Property<string>("Title");
 

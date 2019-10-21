@@ -14,6 +14,7 @@ namespace Geonorge.MinSide.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    OrganizationNumber = table.Column<string>(nullable: true),
                     Date = table.Column<DateTime>(nullable: false),
                     Title = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),

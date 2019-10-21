@@ -53,7 +53,7 @@ namespace Geonorge.MinSide.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Date,Title,Description,Conclusion")] Meeting meeting)
+        public async Task<IActionResult> Create([Bind("Id,OrganizationNumber,Date,Title,Description,Conclusion")] Meeting meeting)
         {
             if (ModelState.IsValid)
             {
@@ -85,7 +85,7 @@ namespace Geonorge.MinSide.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Date,Title,Description,Conclusion")] Meeting meeting)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,OrganizationNumber,Date,Title,Description,Conclusion")] Meeting meeting)
         {
             if (id != meeting.Id)
             {
