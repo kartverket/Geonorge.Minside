@@ -19,39 +19,6 @@ namespace Geonorge.MinSide.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("Geonorge.MinSide.Infrastructure.Context.Agreement", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("AgreementDocumentId");
-
-                    b.Property<int?>("Appendix1Id");
-
-                    b.Property<int?>("Appendix2Id");
-
-                    b.Property<int?>("Appendix3Id");
-
-                    b.Property<int?>("DistributionAgreementId");
-
-                    b.Property<string>("OrganizationNumber");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AgreementDocumentId");
-
-                    b.HasIndex("Appendix1Id");
-
-                    b.HasIndex("Appendix2Id");
-
-                    b.HasIndex("Appendix3Id");
-
-                    b.HasIndex("DistributionAgreementId");
-
-                    b.ToTable("Agreements");
-                });
-
             modelBuilder.Entity("Geonorge.MinSide.Infrastructure.Context.Document", b =>
                 {
                     b.Property<int>("Id")
@@ -66,13 +33,17 @@ namespace Geonorge.MinSide.Infrastructure.Migrations
 
                     b.Property<string>("Name");
 
+                    b.Property<string>("OrganizationNumber");
+
                     b.Property<string>("Status");
+
+                    b.Property<string>("Type");
 
                     b.HasKey("Id");
 
                     b.HasIndex("MeetingId");
 
-                    b.ToTable("Document");
+                    b.ToTable("Documents");
                 });
 
             modelBuilder.Entity("Geonorge.MinSide.Infrastructure.Context.Meeting", b =>
@@ -86,6 +57,8 @@ namespace Geonorge.MinSide.Infrastructure.Migrations
                     b.Property<DateTime>("Date");
 
                     b.Property<string>("Description");
+
+                    b.Property<string>("Title");
 
                     b.HasKey("Id");
 
@@ -118,30 +91,7 @@ namespace Geonorge.MinSide.Infrastructure.Migrations
 
                     b.HasIndex("MeetingId");
 
-                    b.ToTable("ToDo");
-                });
-
-            modelBuilder.Entity("Geonorge.MinSide.Infrastructure.Context.Agreement", b =>
-                {
-                    b.HasOne("Geonorge.MinSide.Infrastructure.Context.Document", "AgreementDocument")
-                        .WithMany()
-                        .HasForeignKey("AgreementDocumentId");
-
-                    b.HasOne("Geonorge.MinSide.Infrastructure.Context.Document", "Appendix1")
-                        .WithMany()
-                        .HasForeignKey("Appendix1Id");
-
-                    b.HasOne("Geonorge.MinSide.Infrastructure.Context.Document", "Appendix2")
-                        .WithMany()
-                        .HasForeignKey("Appendix2Id");
-
-                    b.HasOne("Geonorge.MinSide.Infrastructure.Context.Document", "Appendix3")
-                        .WithMany()
-                        .HasForeignKey("Appendix3Id");
-
-                    b.HasOne("Geonorge.MinSide.Infrastructure.Context.Document", "DistributionAgreement")
-                        .WithMany()
-                        .HasForeignKey("DistributionAgreementId");
+                    b.ToTable("Todo");
                 });
 
             modelBuilder.Entity("Geonorge.MinSide.Infrastructure.Context.Document", b =>

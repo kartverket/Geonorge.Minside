@@ -7,9 +7,11 @@ namespace Geonorge.MinSide.Infrastructure.Context
     public class Document
     {
         public int Id { get; set; }
+        public string OrganizationNumber { get; set; }
         public string Name { get; set; }
         public string FileName { get; set; }
         public DateTime Date { get; set; }
         public string Status { get; set; } //Draft, Valid, Superseded
+        public string Type { get; set; }
     }
 }
