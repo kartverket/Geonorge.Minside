@@ -31,8 +31,6 @@ namespace Geonorge.MinSide.Infrastructure.Migrations
 
                     b.Property<int?>("MeetingId");
 
-                    b.Property<string>("Name");
-
                     b.Property<string>("OrganizationNumber");
 
                     b.Property<string>("Status");
@@ -62,7 +60,7 @@ namespace Geonorge.MinSide.Infrastructure.Migrations
 
                     b.Property<string>("OrganizationNumber");
 
-                    b.Property<string>("Title");
+                    b.Property<string>("Type");
 
                     b.HasKey("Id");
 
@@ -87,11 +85,11 @@ namespace Geonorge.MinSide.Infrastructure.Migrations
 
                     b.Property<int?>("MeetingId");
 
+                    b.Property<int>("Number");
+
                     b.Property<string>("ResponsibleOrganization");
 
                     b.Property<string>("Status");
-
-                    b.Property<string>("Title");
 
                     b.HasKey("Id");
 

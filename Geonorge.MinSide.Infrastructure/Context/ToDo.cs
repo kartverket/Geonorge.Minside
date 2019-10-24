@@ -7,11 +7,11 @@ namespace Geonorge.MinSide.Infrastructure.Context
     public class ToDo
     {
         public int Id { get; set; }
-        public string Title { get; set; }
+        public int Number { get; set; }
         public string Description { get; set; }
-        public string ResponsibleOrganization { get; set; } //Can be several organizations?
+        public string ResponsibleOrganization { get; set; } 
         public DateTime Deadline { get; set; }
-        public string Status { get; set; }  //Which statuses?
+        public string Status { get; set; }  
         public string Comment { get; set; }
         public DateTime Done { get; set; }
     }

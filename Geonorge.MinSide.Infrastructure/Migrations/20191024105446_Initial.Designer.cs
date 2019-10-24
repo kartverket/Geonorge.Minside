@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Geonorge.MinSide.Infrastructure.Migrations
 {
     [DbContext(typeof(OrganizationContext))]
-    [Migration("20191023071215_IndexOrganizationNumber")]
-    partial class IndexOrganizationNumber
+    [Migration("20191024105446_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -32,8 +32,6 @@ namespace Geonorge.MinSide.Infrastructure.Migrations
                     b.Property<string>("FileName");
 
                     b.Property<int?>("MeetingId");
-
-                    b.Property<string>("Name");
 
                     b.Property<string>("OrganizationNumber");
 
@@ -64,7 +62,7 @@ namespace Geonorge.MinSide.Infrastructure.Migrations
 
                     b.Property<string>("OrganizationNumber");
 
-                    b.Property<string>("Title");
+                    b.Property<string>("Type");
 
                     b.HasKey("Id");
 
@@ -89,11 +87,11 @@ namespace Geonorge.MinSide.Infrastructure.Migrations
 
                     b.Property<int?>("MeetingId");
 
+                    b.Property<int>("Number");
+
                     b.Property<string>("ResponsibleOrganization");
 
                     b.Property<string>("Status");
-
-                    b.Property<string>("Title");
 
                     b.HasKey("Id");
 

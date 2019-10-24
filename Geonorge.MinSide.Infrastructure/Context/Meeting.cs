@@ -9,7 +9,7 @@ namespace Geonorge.MinSide.Infrastructure.Context
         public int Id { get; set; }
         public string OrganizationNumber { get; set; }
         public DateTime Date { get; set; }
-        public string Title { get; set; }
+        public string Type { get; set; }
         public string Description { get; set; }
         public List<Document> Documents { get; set; }
         public List<ToDo> ToDo { get; set; }

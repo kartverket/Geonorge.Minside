@@ -16,7 +16,7 @@ namespace Geonorge.MinSide.Infrastructure.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     OrganizationNumber = table.Column<string>(nullable: true),
                     Date = table.Column<DateTime>(nullable: false),
-                    Title = table.Column<string>(nullable: true),
+                    Type = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
                     Conclusion = table.Column<string>(nullable: true)
                 },
@@ -32,11 +32,10 @@ namespace Geonorge.MinSide.Infrastructure.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     OrganizationNumber = table.Column<string>(nullable: true),
-                    Name = table.Column<string>(nullable: true),
+                    Type = table.Column<string>(nullable: true),
                     FileName = table.Column<string>(nullable: true),
                     Date = table.Column<DateTime>(nullable: false),
                     Status = table.Column<string>(nullable: true),
-                    Type = table.Column<string>(nullable: true),
                     MeetingId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
@@ -56,7 +55,7 @@ namespace Geonorge.MinSide.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Title = table.Column<string>(nullable: true),
+                    Number = table.Column<int>(nullable: false),
                     Description = table.Column<string>(nullable: true),
                     ResponsibleOrganization = table.Column<string>(nullable: true),
                     Deadline = table.Column<DateTime>(nullable: false),
@@ -80,6 +79,16 @@ namespace Geonorge.MinSide.Infrastructure.Migrations
                 name: "IX_Documents_MeetingId",
                 table: "Documents",
                 column: "MeetingId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Documents_OrganizationNumber",
+                table: "Documents",
+                column: "OrganizationNumber");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Meetings_OrganizationNumber",
+                table: "Meetings",
+                column: "OrganizationNumber");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Todo_MeetingId",
