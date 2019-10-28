@@ -53,7 +53,7 @@ namespace Geonorge.MinSide.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,OrganizationNumber,Type,FileName,Date,Status")] Document document)
+        public async Task<IActionResult> Create([Bind("Id,OrganizationNumber,Type,Name,FileName,Date,Status")] Document document)
         {
             if (ModelState.IsValid)
             {
@@ -85,7 +85,7 @@ namespace Geonorge.MinSide.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,OrganizationNumber,Type,FileName,Date,Status")] Document document)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,OrganizationNumber,Type,Name,FileName,Date,Status")] Document document)
         {
             if (id != document.Id)
             {
