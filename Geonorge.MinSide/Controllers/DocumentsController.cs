@@ -6,22 +6,24 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Geonorge.MinSide.Infrastructure.Context;
+using Geonorge.MinSide.Services;
 
 namespace Geonorge.MinSide.Web.Controllers
 {
     public class DocumentsController : Controller
     {
-        private readonly OrganizationContext _context;
+        private readonly IDocumentService _documentService;
+        string _orgNumber = "999601391"; // Todo create security service
 
-        public DocumentsController(OrganizationContext context)
+        public DocumentsController(IDocumentService documentService)
         {
-            _context = context;
+            _documentService = documentService;
         }
 
         // GET: Documents
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Documents.ToListAsync());
+            return View(await _documentService.GetAll(_orgNumber));
         }
 
         // GET: Documents/Details/5
@@ -32,8 +34,7 @@ namespace Geonorge.MinSide.Web.Controllers
                 return NotFound();
             }
 
-            var document = await _context.Documents
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var document = await _documentService.Get(id.Value);
             if (document == null)
             {
                 return NotFound();
@@ -57,8 +58,7 @@ namespace Geonorge.MinSide.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(document);
-                await _context.SaveChangesAsync();
+                await _documentService.Create(document);
                 return RedirectToAction(nameof(Index));
             }
             return View(document);
@@ -72,7 +72,7 @@ namespace Geonorge.MinSide.Web.Controllers
                 return NotFound();
             }
 
-            var document = await _context.Documents.FindAsync(id);
+            var document = await _documentService.Get(id.Value);
             if (document == null)
             {
                 return NotFound();
@@ -96,8 +96,7 @@ namespace Geonorge.MinSide.Web.Controllers
             {
                 try
                 {
-                    _context.Update(document);
-                    await _context.SaveChangesAsync();
+                    await _documentService.Update(document, document.Id);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -123,8 +122,7 @@ namespace Geonorge.MinSide.Web.Controllers
                 return NotFound();
             }
 
-            var document = await _context.Documents
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var document = await _documentService.Get(id.Value);
             if (document == null)
             {
                 return NotFound();
@@ -138,15 +136,15 @@ namespace Geonorge.MinSide.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var document = await _context.Documents.FindAsync(id);
-            _context.Documents.Remove(document);
-            await _context.SaveChangesAsync();
+            var document = await _documentService.Get(id);
+            await _documentService.Delete(document);
             return RedirectToAction(nameof(Index));
         }
 
         private bool DocumentExists(int id)
         {
-            return _context.Documents.Any(e => e.Id == id);
+            var document = _documentService.Get(id);
+            return document != null;
         }
     }
 }

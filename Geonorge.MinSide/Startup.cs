@@ -3,6 +3,7 @@ using System.Net;
 using System.Reflection;
 using Geonorge.MinSide.Infrastructure.Context;
 using Geonorge.MinSide.Models;
+using Geonorge.MinSide.Services;
 using Geonorge.MinSide.Utils;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -98,6 +99,8 @@ namespace Geonorge.MinSide
             services.AddScoped<GeonorgeOpenIdConnectEvents>();
             services.AddTransient<IGeonorgeAuthorizationService, GeonorgeAuthorizationService>();
             services.AddTransient<IBaatAuthzApi, BaatAuthzApi>();
+
+            services.AddTransient<IDocumentService, DocumentService>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

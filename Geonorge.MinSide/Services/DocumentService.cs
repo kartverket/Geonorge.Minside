@@ -14,6 +14,7 @@ namespace Geonorge.MinSide.Services
         Task<Document> Get(int documentId);
         Task<Document> Create(Document document);
         Task Update(Document updatedDocument, int documentId);
+        Task Delete(Document document);
     }
     
     public class DocumentService : IDocumentService
@@ -52,6 +53,12 @@ namespace Geonorge.MinSide.Services
         private async Task SaveChanges()
         {
             await _context.SaveChangesAsync();
+        }
+
+        public async Task Delete(Document document)
+        {
+            _context.Documents.Remove(document);
+            await SaveChanges();
         }
     }
 }
