@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
@@ -24,7 +24,7 @@ namespace Geonorge.MinSide.Services.Authorization
 
         public static string GetOrganizationName(this ClaimsPrincipal principal)
         {
-            return principal.FindFirstValue(GeonorgeClaims.OrganizationName);
+                return principal.FindFirstValue(GeonorgeClaims.OrganizationName);
         }
 
         public static string GetOrganizationOrgnr(this ClaimsPrincipal principal)

@@ -8,10 +8,12 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using System.Security.Claims;
 using Geonorge.MinSide.Services.Authorization;
 using Geonorge.MinSide.Web.Controllers;
+using System;
+using Microsoft.AspNetCore.Http;
 
 namespace Geonorge.MinSide.Controllers
 {
-    public class HomeController : BaseController
+    public class HomeController : Controller
     {
         public IActionResult Index()
         {
@@ -20,10 +22,29 @@ namespace Geonorge.MinSide.Controllers
                 return View("LogIn");
             }
 
-            ViewData["OrganizationName"] = HttpContext.User.GetOrganizationName();
-            ViewData["OrganizationOrgnr"] = HttpContext.User.GetOrganizationOrgnr();
+            GetOrganization();
 
             return View();
+        }
+
+        private void GetOrganization()
+        {
+            var organizationNumber = HttpContext.Session.GetString("OrganizationNumber");
+            var organizationName = HttpContext.Session.GetString("OrganizationName");
+
+            if(!string.IsNullOrEmpty(organizationNumber) && !string.IsNullOrEmpty(organizationName))
+            {
+                ViewData["OrganizationName"] = organizationName;
+                ViewData["OrganizationOrgnr"] = organizationNumber;
+            }
+            else
+            { 
+                ViewData["OrganizationName"] = HttpContext.User.GetOrganizationName();
+                ViewData["OrganizationOrgnr"] = HttpContext.User.GetOrganizationOrgnr();
+
+                HttpContext.Session.SetString("OrganizationNumber", ViewData["OrganizationOrgnr"].ToString());
+                HttpContext.Session.SetString("OrganizationName", ViewData["OrganizationName"].ToString());
+            }
         }
 
         public IActionResult LoggedOut()

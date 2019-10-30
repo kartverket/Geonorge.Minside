@@ -1,15 +1,18 @@
 ﻿@using Geonorge.MinSide.Services.Authorization;
+@using Microsoft.AspNetCore.Http;
 @model IEnumerable<Geonorge.MinSide.Infrastructure.Context.Document>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Avtaler";
 }
 
-<h2>Index</h2>
-
+<h2>Avtaler @Context.Session.GetString("OrganizationName")</h2>
+@if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
+{
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Ny avtale</a>
 </p>
+}
 <table class="table">
     <thead>
         <tr>
@@ -59,9 +62,9 @@
                 @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
                 {
                     <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Rediger</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Detaljer</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Slett</a>
                     </td>
                 }
             </tr>

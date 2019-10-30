@@ -1,4 +1,5 @@
-﻿@inject ApplicationSettings AppSettings
+﻿@using Geonorge.MinSide.Services.Authorization;
+@inject ApplicationSettings AppSettings
 
 <!DOCTYPE html>
 <html>
@@ -32,15 +33,21 @@
                     @RenderSection("breadcrumb", false)
                 </ul>
             </div>
+            @if (User.IsAuthenticated()) { 
             <div class="container panel panel-default" style="padding: 10px;">
                 <div id="Tabs" role="tabpanel">
                     <ul class="nav nav-tabs" role="tablist">
                         <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Home" ? "active" : "")"><a href="~/" role="tab">Registreringer&nbsp;</a></li>
                         <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Documents" ? "active" : "")"><a href="~/Documents" role="tab">Avtaler&nbsp;</a></li>
                         <li class="@( (ViewContext.RouteData.Values["controller"].ToString() == "Meetings"  || ViewContext.RouteData.Values["controller"].ToString() == "Todo") ? "active" : "")"><a href="~/Meetings" role="tab">Møter&nbsp;</a></li>
+                        @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
+                        {
+                        <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Admin" ? "active" : "")"><a href="~/Admin/Edit" role="tab">Admin</a></li>  
+                        }
                     </ul>
                 </div>
             </div>
+            }
         </div>
         @RenderBody()
     </div>

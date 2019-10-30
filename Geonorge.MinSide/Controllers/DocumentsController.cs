@@ -9,6 +9,7 @@ using Geonorge.MinSide.Infrastructure.Context;
 using Geonorge.MinSide.Services;
 using Microsoft.AspNetCore.Authorization;
 using Geonorge.MinSide.Services.Authorization;
+using Microsoft.AspNetCore.Http;
 
 namespace Geonorge.MinSide.Web.Controllers
 {
@@ -16,7 +17,6 @@ namespace Geonorge.MinSide.Web.Controllers
     public class DocumentsController : Controller
     {
         private readonly IDocumentService _documentService;
-        string _orgNumber = "999601391"; // Todo create security service
 
         public DocumentsController(IDocumentService documentService)
         {
@@ -26,7 +26,7 @@ namespace Geonorge.MinSide.Web.Controllers
         // GET: Documents
         public async Task<IActionResult> Index()
         {
-            return View(await _documentService.GetAll(_orgNumber));
+            return View(await _documentService.GetAll(HttpContext.Session.GetString("OrganizationNumber")));
         }
 
         // GET: Documents/Details/5
