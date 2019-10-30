@@ -1,9 +1,11 @@
 using System;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Geonorge.MinSide.Models;
+using Geonorge.MinSide.Services.Authorization;
 using Newtonsoft.Json;
 using Serilog;
 
@@ -16,6 +18,8 @@ namespace Geonorge.MinSide.Utils
         /// </summary>
         /// <param name="username"></param>
         Task<BaatAuthzUserInfoResponse> Info(string username);
+
+        Task<BaatAuthzUserRolesResponse> GetRoles(string username);
     }
 
     /// <summary>
@@ -59,6 +63,32 @@ namespace Geonorge.MinSide.Utils
             
             return JsonConvert.DeserializeObject<BaatAuthzUserInfoResponse>(json);
         
+        }
+
+        public async Task<BaatAuthzUserRolesResponse> GetRoles(string username)
+        {
+            var url = $"{_apiUrl}authzlist/{username}";
+            Log.Debug("Fetching data from {url}", url);
+
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+            var res = await GetClient().GetAsync(url);
+            stopwatch.Stop();
+
+            Log.Information("Http call to {url} with response code {statuscode} executed in {millis}", url, res.StatusCode, stopwatch.ElapsedMilliseconds);
+
+            if (!res.IsSuccessStatusCode)
+            {
+                Log.Error("Looking up {user} from BaatAuthzApi failed with status code: {code}", username, res.StatusCode);
+                return BaatAuthzUserRolesResponse.Empty;
+            }
+
+            var json = await res.Content.ReadAsStringAsync();
+
+            Log.Debug("Response from BaatAuthzApi: {json}", json);
+
+            return JsonConvert.DeserializeObject<BaatAuthzUserRolesResponse>(json);
+
         }
 
         private HttpClient GetClient()

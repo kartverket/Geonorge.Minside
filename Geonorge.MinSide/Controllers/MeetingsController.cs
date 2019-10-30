@@ -6,9 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Geonorge.MinSide.Infrastructure.Context;
+using Microsoft.AspNetCore.Authorization;
+using Geonorge.MinSide.Services.Authorization;
 
 namespace Geonorge.MinSide.Web.Controllers
 {
+    [Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
     public class MeetingsController : Controller
     {
         private readonly OrganizationContext _context;

@@ -5,10 +5,13 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using System.Security.Claims;
+using Geonorge.MinSide.Services.Authorization;
+using Geonorge.MinSide.Web.Controllers;
 
 namespace Geonorge.MinSide.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         public IActionResult Index()
         {
@@ -17,14 +20,8 @@ namespace Geonorge.MinSide.Controllers
                 return View("LogIn");
             }
 
-            foreach (var claim in User.Claims)
-            {
-                if (claim.Type == "OrganizationName" && claim.Value.Length > 0)
-                    ViewData["OrganizationName"] = claim.Value;
-
-                if (claim.Type == "OrganizationOrgnr" && claim.Value.Length > 1)
-                    ViewData["OrganizationOrgnr"] = claim.Value;
-            }
+            ViewData["OrganizationName"] = HttpContext.User.GetOrganizationName();
+            ViewData["OrganizationOrgnr"] = HttpContext.User.GetOrganizationOrgnr();
 
             return View();
         }

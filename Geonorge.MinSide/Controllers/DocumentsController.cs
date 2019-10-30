@@ -7,9 +7,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Geonorge.MinSide.Infrastructure.Context;
 using Geonorge.MinSide.Services;
+using Microsoft.AspNetCore.Authorization;
+using Geonorge.MinSide.Services.Authorization;
 
 namespace Geonorge.MinSide.Web.Controllers
 {
+    [Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
     public class DocumentsController : Controller
     {
         private readonly IDocumentService _documentService;
