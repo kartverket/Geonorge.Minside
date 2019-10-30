@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Geonorge.MinSide.Infrastructure.Context;
+using Geonorge.MinSide.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
@@ -10,7 +11,7 @@ namespace Geonorge.MinSide.Services
 {
     public interface IDocumentService
     {
-        Task<IEnumerable<Document>> GetAll(string organizationNumber);
+        Task<DocumentViewModel> GetAll(string organizationNumber);
         Task<Document> Get(int documentId);
         Task<Document> Create(Document document);
         Task Update(Document updatedDocument, int documentId);
@@ -26,9 +27,14 @@ namespace Geonorge.MinSide.Services
             _context = context;
         }
 
-        public async Task<IEnumerable<Document>> GetAll(string organizationNumber)
+        public async Task<DocumentViewModel> GetAll(string organizationNumber)
         {
-            return await _context.Documents.Where(d => d.OrganizationNumber.Equals(organizationNumber)).ToListAsync();
+            DocumentViewModel documentViewModel = new DocumentViewModel();
+            documentViewModel.Drafts = await _context.Documents.Where(d => d.OrganizationNumber.Equals(organizationNumber) && d.Status == "Forslag").ToListAsync();
+            documentViewModel.Valid = await _context.Documents.Where(d => d.OrganizationNumber.Equals(organizationNumber) && d.Status == "Gyldig").ToListAsync();
+            documentViewModel.Superseded = await _context.Documents.Where(d => d.OrganizationNumber.Equals(organizationNumber) && d.Status == "Utgått").ToListAsync();
+
+            return documentViewModel;
         }
 
         public async Task<Document> Get(int documentId)

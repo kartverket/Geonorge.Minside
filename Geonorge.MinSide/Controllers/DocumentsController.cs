@@ -29,22 +29,6 @@ namespace Geonorge.MinSide.Web.Controllers
             return View(await _documentService.GetAll(HttpContext.Session.GetString("OrganizationNumber")));
         }
 
-        // GET: Documents/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var document = await _documentService.Get(id.Value);
-            if (document == null)
-            {
-                return NotFound();
-            }
-
-            return View(document);
-        }
 
         // GET: Documents/Create
         public IActionResult Create()
