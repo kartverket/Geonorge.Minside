@@ -16,7 +16,7 @@ using Geonorge.MinSide.Models;
 
 namespace Geonorge.MinSide.Web.Controllers
 {
-    [Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
+    [Authorize]
     public class DocumentsController : Controller
     {
         private readonly IDocumentService _documentService;
@@ -33,7 +33,29 @@ namespace Geonorge.MinSide.Web.Controllers
             return View(await _documentService.GetAll(HttpContext.Session.GetString("OrganizationNumber")));
         }
 
+        // GET: Documents
+        public async Task<IActionResult> Download(int id)
+        {
+            var document = await _documentService.Get(id);
+            if(document == null)
+                return Content("Fil finnes ikke");
 
+            if (document.OrganizationNumber == HttpContext.Session.GetString("OrganizationNumber"))
+            {
+                string path = _applicationSettings.FilePath + "\\" + document.FileName;
+                var memory = new MemoryStream();
+                using (var stream = new FileStream(path, FileMode.Open))
+                {
+                    await stream.CopyToAsync(memory);
+                }
+                memory.Position = 0;
+                return File(memory, Helper.GetContentType(path), Path.GetFileName(path));
+            }
+
+            return NotFound();
+        }
+
+        [Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
         // GET: Documents/Create
         public IActionResult Create()
         {
@@ -45,6 +67,7 @@ namespace Geonorge.MinSide.Web.Controllers
         // POST: Documents/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,OrganizationNumber,Type,Name,FileName,Date,Status")] Document document, IFormFile file)
@@ -66,6 +89,7 @@ namespace Geonorge.MinSide.Web.Controllers
             return View(document);
         }
 
+        [Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
         // GET: Documents/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -82,6 +106,7 @@ namespace Geonorge.MinSide.Web.Controllers
             return View(document);
         }
 
+        [Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
         // POST: Documents/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -116,6 +141,7 @@ namespace Geonorge.MinSide.Web.Controllers
             return View(document);
         }
 
+        [Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
         // GET: Documents/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -134,6 +160,7 @@ namespace Geonorge.MinSide.Web.Controllers
         }
 
         // POST: Documents/Delete/5
+        [Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
