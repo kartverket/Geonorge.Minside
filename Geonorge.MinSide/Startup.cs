@@ -111,6 +111,7 @@ namespace Geonorge.MinSide
             services.AddTransient<IBaatAuthzApi, BaatAuthzApi>();
 
             services.AddTransient<IDocumentService, DocumentService>();
+            services.AddTransient<IMeetingService, MeetingService>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

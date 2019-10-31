@@ -29,6 +29,9 @@ namespace Geonorge.MinSide.Infrastructure.Context
 
             modelBuilder.Entity<Meeting>()
                 .HasIndex(b => b.OrganizationNumber);
+
+            modelBuilder.Entity<Meeting>()
+                .HasIndex(b => b.Date);
         }
 
     }

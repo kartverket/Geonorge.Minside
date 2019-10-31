@@ -1,64 +1,84 @@
 ﻿@using Geonorge.MinSide.Services.Authorization;
-@model IEnumerable<Geonorge.MinSide.Infrastructure.Context.Meeting>
+@using Microsoft.AspNetCore.Http;
+@model MeetingViewModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Møter";
 }
+<div class="container">
+    <h2>Møter  @Context.Session.GetString("OrganizationName")</h2>
+    @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
+    {
+        <p>
+            <a asp-action="Create">Nytt møte</a>
+        </p>
+    }
 
-<h2>Index</h2>
+    @if (Model.Last != null)
+    {
+        <div class="row">
+            <div class="col-2"><b>Sist møte:</b></div>
+            <div class="col-10">
+                <b>@Model.Last.Date.ToString("dd.MM.yyyy") @Html.DisplayFor(modelItem => Model.Last.Type)</b>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2"></div>
+            <div class="col-10">@Model.Last.Description</div>
+        </div>
+        <div class="row">
+            <div class="col-2"></div>
+            <div class="col-10">
+                <b>Dokumenter:</b>
+                <ul>
+                    @foreach (var files in Model.Last.Documents)
+                    {
+                        <li>@files.Name</li>
+                    }
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2"><b>Oppfølgingspunkter:</b></div>
+            <div class="col-10">
+                <table>
+                    <tr>
+                        <th>Nr</th>
+                        <th>Hva</th>
+                        <th>Ansvarlig</th>
+                        <th>Frist</th>
+                        <th>Utført</th>
+                        <th>Kommentar</th>
+                    </tr>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.OrganizationNumber)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Date)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Type)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Conclusion)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.OrganizationNumber)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Date)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Type)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Conclusion)
-                </td>
-                @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
+                    @foreach (var todo in Model.Last.ToDo)
+                    {
+                        <tr>
+                            <td>@todo.Number</td>
+                            <td>@todo.Description</td>
+                            <td>@todo.ResponsibleOrganization</td>
+                            <td>@todo.Deadline.ToString("dd.MM.yyyy")</td>
+                            <td>@todo.Done.ToString("dd.MM.yyyy")</td>
+                            <td>@todo.Comment</td>
+                        </tr>
+                    }
+                </table>
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2"><b>Konklusjon:</b></div>
+            <div class="col-10">@Model.Last.Conclusion</div>
+        </div>
+        <p></p>
+        <div class="row">
+            <div class="col-2"><b>Arkiv:</b></div>
+            <div class="col-10">
+                @foreach (var meeting in Model.Archive)
                 {
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                    </td>
-                }
-            </tr>
-        }
-    </tbody>
-</table>
+                <b>@meeting.Date.ToString("dd.MM.yyyy") @Html.DisplayFor(modelItem => meeting.Type)</b>
+                 }
+            </div>
+        </div>
+    }
+</div>
