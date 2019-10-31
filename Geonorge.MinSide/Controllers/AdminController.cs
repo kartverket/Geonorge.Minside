@@ -16,6 +16,7 @@ namespace Geonorge.MinSide.Web.Controllers
         // GET: Admin
         public ActionResult Edit()
         {
+            CodeList.UpdateOrganizations();
             return View();
         }
 
