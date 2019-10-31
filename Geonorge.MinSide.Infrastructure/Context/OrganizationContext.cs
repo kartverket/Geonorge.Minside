@@ -17,6 +17,16 @@ namespace Geonorge.MinSide.Infrastructure.Context
             modelBuilder.Entity<Document>()
                 .HasIndex(b => b.OrganizationNumber);
 
+            modelBuilder.Entity<Document>()
+            .HasIndex(b => b.Date);
+
+            modelBuilder.Entity<Document>()
+            .HasIndex(b => b.Name);
+
+            modelBuilder.Entity<Document>()
+            .HasIndex(u => u.FileName)
+                .IsUnique();
+
             modelBuilder.Entity<Meeting>()
                 .HasIndex(b => b.OrganizationNumber);
         }
