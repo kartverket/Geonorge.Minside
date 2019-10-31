@@ -33,7 +33,9 @@ namespace Geonorge.MinSide.Web.Controllers
         // GET: Documents/Create
         public IActionResult Create()
         {
-            return View();
+            Document document = new Document();
+            document.Date = DateTime.Today;
+            return View(document);
         }
 
         // POST: Documents/Create

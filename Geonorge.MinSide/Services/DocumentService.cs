@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Geonorge.MinSide.Infrastructure.Context;
 using Geonorge.MinSide.Models;
+using Geonorge.MinSide.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
@@ -44,8 +45,19 @@ namespace Geonorge.MinSide.Services
 
         public async Task<Document> Create(Document document)
         {
+            if (string.IsNullOrEmpty(document.Name))
+                document.Name = document.Type;
+            
+            //Get file ext
+
+            string organizationName = CodeList.Organizations[document.OrganizationNumber].ToString();
+            document.FileName = Helper.CreateFileName("pdf", document.Name, document.Date, organizationName);
+
             _context.Documents.Add(document);
             await SaveChanges();
+
+            //save file
+
             return document;
         }
 
