@@ -30,9 +30,9 @@ namespace Geonorge.MinSide.Services
         public async Task<DocumentViewModel> GetAll(string organizationNumber)
         {
             DocumentViewModel documentViewModel = new DocumentViewModel();
-            documentViewModel.Drafts = await _context.Documents.Where(d => d.OrganizationNumber.Equals(organizationNumber) && d.Status == "Forslag").ToListAsync();
-            documentViewModel.Valid = await _context.Documents.Where(d => d.OrganizationNumber.Equals(organizationNumber) && d.Status == "Gyldig").ToListAsync();
-            documentViewModel.Superseded = await _context.Documents.Where(d => d.OrganizationNumber.Equals(organizationNumber) && d.Status == "Utgått").ToListAsync();
+            documentViewModel.Drafts = await _context.Documents.Where(d => d.OrganizationNumber.Equals(organizationNumber) && d.Status == "Forslag").OrderBy(d => d.Name).ToListAsync();
+            documentViewModel.Valid = await _context.Documents.Where(d => d.OrganizationNumber.Equals(organizationNumber) && d.Status == "Gyldig").OrderBy(d => d.Name).ToListAsync();
+            documentViewModel.Superseded = await _context.Documents.Where(d => d.OrganizationNumber.Equals(organizationNumber) && d.Status == "Utgått").OrderByDescending(d => d.Date).ToListAsync();
 
             return documentViewModel;
         }
