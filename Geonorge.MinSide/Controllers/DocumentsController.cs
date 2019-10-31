@@ -10,6 +10,9 @@ using Geonorge.MinSide.Services;
 using Microsoft.AspNetCore.Authorization;
 using Geonorge.MinSide.Services.Authorization;
 using Microsoft.AspNetCore.Http;
+using System.IO;
+using Geonorge.MinSide.Utils;
+using Geonorge.MinSide.Models;
 
 namespace Geonorge.MinSide.Web.Controllers
 {
@@ -17,10 +20,11 @@ namespace Geonorge.MinSide.Web.Controllers
     public class DocumentsController : Controller
     {
         private readonly IDocumentService _documentService;
-
-        public DocumentsController(IDocumentService documentService)
+        ApplicationSettings _applicationSettings;
+        public DocumentsController(IDocumentService documentService, ApplicationSettings applicationSettings)
         {
             _documentService = documentService;
+            _applicationSettings = applicationSettings;
         }
 
         // GET: Documents
@@ -43,11 +47,20 @@ namespace Geonorge.MinSide.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,OrganizationNumber,Type,Name,FileName,Date,Status")] Document document)
+        public async Task<IActionResult> Create([Bind("Id,OrganizationNumber,Type,Name,FileName,Date,Status")] Document document, IFormFile file)
         {
+
+            var ext = Helper.GetFileExtension(file.FileName);
+
+            if (string.IsNullOrEmpty(ext) || !Helper.PermittedFileExtensions.Contains(ext))
+            {
+                ModelState.AddModelError("FileName", "Ugyldig filendelse");
+            }
+
             if (ModelState.IsValid)
             {
-                await _documentService.Create(document);
+                await _documentService.Create(document, file);
+
                 return RedirectToAction(nameof(Index));
             }
             return View(document);

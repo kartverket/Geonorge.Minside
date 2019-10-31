@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -14,7 +15,7 @@ namespace Geonorge.MinSide.Utils
             organizationName = FriendlyString(organizationName);
             string dateString = date.Day.ToString("00") + date.Month.ToString("00") + date.Year.ToString("0000");
 
-            string filename = $"{name}_{dateString}_{organizationName}.{fileExtension}";
+            string filename = $"{name}_{dateString}_{organizationName}{fileExtension}";
 
             return filename;
         }
@@ -23,5 +24,12 @@ namespace Geonorge.MinSide.Utils
         {
             return Regex.Replace(value, @"[^A-Za-z0-9_\.~]+", "-");
         }
+
+        public static string GetFileExtension(string FileName)
+        {
+            return Path.GetExtension(FileName).ToLowerInvariant();
+        }
+
+        public static string[] PermittedFileExtensions = { ".pdf", ".doc", ".xls", ".docx", ".xlsx" };
     }
 }

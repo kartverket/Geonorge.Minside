@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Geonorge.MinSide.Infrastructure.Context;
 using Geonorge.MinSide.Models;
 using Geonorge.MinSide.Utils;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
@@ -14,7 +16,7 @@ namespace Geonorge.MinSide.Services
     {
         Task<DocumentViewModel> GetAll(string organizationNumber);
         Task<Document> Get(int documentId);
-        Task<Document> Create(Document document);
+        Task<Document> Create(Document document, IFormFile file);
         Task Update(Document updatedDocument, int documentId);
         Task Delete(Document document);
     }
@@ -22,10 +24,12 @@ namespace Geonorge.MinSide.Services
     public class DocumentService : IDocumentService
     {
         private readonly OrganizationContext _context;
+        ApplicationSettings _applicationSettings;
 
-        public DocumentService(OrganizationContext context)
+        public DocumentService(OrganizationContext context, ApplicationSettings applicationSettings)
         {
             _context = context;
+            _applicationSettings = applicationSettings;
         }
 
         public async Task<DocumentViewModel> GetAll(string organizationNumber)
@@ -43,20 +47,21 @@ namespace Geonorge.MinSide.Services
             return await _context.Documents.FirstOrDefaultAsync(d => d.Id == documentId);
         }
 
-        public async Task<Document> Create(Document document)
+        public async Task<Document> Create(Document document, IFormFile file)
         {
             if (string.IsNullOrEmpty(document.Name))
                 document.Name = document.Type;
-            
-            //Get file ext
 
             string organizationName = CodeList.Organizations[document.OrganizationNumber].ToString();
-            document.FileName = Helper.CreateFileName("pdf", document.Name, document.Date, organizationName);
+            document.FileName = Helper.CreateFileName(Helper.GetFileExtension(file.FileName), document.Name, document.Date, organizationName);
 
             _context.Documents.Add(document);
             await SaveChanges();
 
-            //save file
+            using (var fileStream = new FileStream(_applicationSettings.FilePath + "\\" + document.FileName, FileMode.Create))
+            {
+                await file.CopyToAsync(fileStream);
+            }
 
             return document;
         }
