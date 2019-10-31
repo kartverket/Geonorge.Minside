@@ -58,12 +58,17 @@ namespace Geonorge.MinSide.Services
             _context.Documents.Add(document);
             await SaveChanges();
 
+            await SaveFile(document, file);
+
+            return document;
+        }
+
+        private async Task SaveFile(Document document, IFormFile file)
+        {
             using (var fileStream = new FileStream(_applicationSettings.FilePath + "\\" + document.FileName, FileMode.Create))
             {
                 await file.CopyToAsync(fileStream);
             }
-
-            return document;
         }
 
         public async Task Update(Document updatedDocument, int documentId)
@@ -82,6 +87,9 @@ namespace Geonorge.MinSide.Services
         {
             _context.Documents.Remove(document);
             await SaveChanges();
+            string file = _applicationSettings.FilePath + "\\" + document.FileName;
+            if (File.Exists(file))
+                File.Delete(file);
         }
     }
 }

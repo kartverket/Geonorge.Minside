@@ -1,4 +1,5 @@
-﻿@model Geonorge.MinSide.Infrastructure.Context.Document
+﻿@using Microsoft.AspNetCore.Http;
+@model Geonorge.MinSide.Infrastructure.Context.Document
 
 @{
     ViewData["Title"] = "Rediger dokument";
@@ -10,14 +11,11 @@
             <form asp-action="Edit">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <input type="hidden" asp-for="Id" />
-                <div class="form-group">
-                    <label asp-for="OrganizationNumber" class="control-label"></label>
-                    <input asp-for="OrganizationNumber" class="form-control" />
-                    <span asp-validation-for="OrganizationNumber" class="text-danger"></span>
-                </div>
+                <input asp-for="OrganizationNumber" type="hidden" value="@Context.Session.GetString("OrganizationNumber")" class="form-control" />
                 <div class="form-group">
                     <label asp-for="Type" class="control-label"></label>
-                    <input asp-for="Type" class="form-control" />
+                    @{var Types = new SelectList(CodeList.DocumentTypes, "Key", "Value", Model.Type);}
+                    <select name="Type" class="form-control" asp-items="Types"></select>
                     <span asp-validation-for="Type" class="text-danger"></span>
                 </div>
                 <div class="form-group">
@@ -27,7 +25,7 @@
                 </div>
                 <div class="form-group">
                     <label asp-for="FileName" class="control-label"></label>
-                    <input asp-for="FileName" class="form-control" />
+                    <input asp-for="FileName" readonly class="form-control" />
                     <span asp-validation-for="FileName" class="text-danger"></span>
                 </div>
                 <div class="form-group">
@@ -37,7 +35,8 @@
                 </div>
                 <div class="form-group">
                     <label asp-for="Status" class="control-label"></label>
-                    <input asp-for="Status" class="form-control" />
+                    @{var Statuses = new SelectList(CodeList.DocumentStatus, "Key", "Value", Model.Status);}
+                    <select name="Status" class="form-control" asp-items="Statuses"></select>
                     <span asp-validation-for="Status" class="text-danger"></span>
                 </div>
                 <div class="form-group">
