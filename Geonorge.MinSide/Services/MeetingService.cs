@@ -17,7 +17,7 @@ namespace Geonorge.MinSide.Services
         Task<MeetingViewModel> GetAll(string organizationNumber);
         Task<Meeting> Create(Meeting meeting);
         Task<Meeting> Get(int meetingId);
-        Task Update(Meeting updatedMeeting, int meetingId);
+        Task Update(Meeting updatedMeeting, int meetingId, List<IFormFile> files);
     }
 
     public class MeetingService : IMeetingService
@@ -63,11 +63,38 @@ namespace Geonorge.MinSide.Services
             return meetingViewModel;
         }
 
-        public async Task Update(Meeting updatedMeeting, int meetingId)
+        public async Task Update(Meeting updatedMeeting, int meetingId, List<IFormFile> files)
         {
             var currentMeeting = await Get(meetingId);
+
+            if (currentMeeting.Documents == null)
+                currentMeeting.Documents = new List<Document>();
+
+            foreach (var file in files)
+            {
+                string organizationName = CodeList.Organizations[updatedMeeting.OrganizationNumber].ToString();
+
+                Document meetingDocument = new Document();
+                meetingDocument.Name = Path.GetFileNameWithoutExtension(file.FileName);
+                meetingDocument.Date = DateTime.Today;
+                meetingDocument.OrganizationNumber = updatedMeeting.OrganizationNumber;
+
+                meetingDocument.FileName = Helper.CreateFileName(Helper.GetFileExtension(file.FileName), meetingDocument.Name, meetingDocument.Date, organizationName);
+                currentMeeting.Documents.Add(meetingDocument);
+
+                await SaveFile(meetingDocument, file);
+            }
+
             _context.Entry(currentMeeting).CurrentValues.SetValues(updatedMeeting);
             await _context.SaveChangesAsync();
+        }
+
+        private async Task SaveFile(Document document, IFormFile file)
+        {
+            using (var fileStream = new FileStream(_applicationSettings.FilePath + "\\" + document.FileName, FileMode.Create))
+            {
+                await file.CopyToAsync(fileStream);
+            }
         }
 
     }

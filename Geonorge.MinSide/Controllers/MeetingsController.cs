@@ -11,6 +11,7 @@ using Geonorge.MinSide.Services.Authorization;
 using Geonorge.MinSide.Services;
 using Geonorge.MinSide.Models;
 using Microsoft.AspNetCore.Http;
+using Geonorge.MinSide.Utils;
 
 namespace Geonorge.MinSide.Web.Controllers
 {
@@ -95,8 +96,19 @@ namespace Geonorge.MinSide.Web.Controllers
         [Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,OrganizationNumber,Date,Type,Description,Conclusion")] Meeting meeting)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,OrganizationNumber,Date,Type,Description,Conclusion")] Meeting meeting, List<IFormFile> files)
         {
+            foreach(var file in files)
+            { 
+                var ext = Helper.GetFileExtension(file.FileName);
+
+                if (string.IsNullOrEmpty(ext) || !Helper.PermittedFileExtensions.Contains(ext))
+                {
+                    ModelState.AddModelError("Documents", "Ugyldig filendelse");
+                    break;
+                }
+            }
+
             if (id != meeting.Id)
             {
                 return NotFound();
@@ -106,7 +118,7 @@ namespace Geonorge.MinSide.Web.Controllers
             {
                 try
                 {
-                    await _meetingService.Update(meeting, id);
+                    await _meetingService.Update(meeting, id, files);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
