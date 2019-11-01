@@ -31,23 +31,23 @@ namespace Geonorge.MinSide.Web.Controllers
             return View(await _meetingService.GetAll(HttpContext.Session.GetString("OrganizationNumber")));
         }
 
-        //// GET: Meetings/Details/5
-        //public async Task<IActionResult> Details(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
+        // GET: Meetings/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
-        //    var meeting = await _context.Meetings
-        //        .FirstOrDefaultAsync(m => m.Id == id);
-        //    if (meeting == null)
-        //    {
-        //        return NotFound();
-        //    }
+            var meeting = await _meetingService.Get(id.Value);
+               
+            if (meeting == null)
+            {
+                return NotFound();
+            }
 
-        //    return View(meeting);
-        //}
+            return View(meeting);
+        }
 
         // GET: Meetings/Create
         [Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
@@ -66,64 +66,63 @@ namespace Geonorge.MinSide.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _meetingService.Create(meeting);
-                return RedirectToAction(nameof(Index));
+                var createdMeeting = await _meetingService.Create(meeting);
+                return RedirectToAction(nameof(Edit), new { id = createdMeeting.Id} );
             }
             return View(meeting);
         }
 
-        //// GET: Meetings/Edit/5
-        //[Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
-        //public async Task<IActionResult> Edit(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
+        // GET: Meetings/Edit/5
+        [Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
-        //    var meeting = await _context.Meetings.FindAsync(id);
-        //    if (meeting == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    return View(meeting);
-        //}
+            var meeting = await _meetingService.Get(id.Value);
+            if (meeting == null)
+            {
+                return NotFound();
+            }
+            return View(meeting);
+        }
 
-        //// POST: Meetings/Edit/5
-        //// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        //// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Edit(int id, [Bind("Id,OrganizationNumber,Date,Type,Description,Conclusion")] Meeting meeting)
-        //{
-        //    if (id != meeting.Id)
-        //    {
-        //        return NotFound();
-        //    }
+        // POST: Meetings/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("Id,OrganizationNumber,Date,Type,Description,Conclusion")] Meeting meeting)
+        {
+            if (id != meeting.Id)
+            {
+                return NotFound();
+            }
 
-        //    if (ModelState.IsValid)
-        //    {
-        //        try
-        //        {
-        //            _context.Update(meeting);
-        //            await _context.SaveChangesAsync();
-        //        }
-        //        catch (DbUpdateConcurrencyException)
-        //        {
-        //            if (!MeetingExists(meeting.Id))
-        //            {
-        //                return NotFound();
-        //            }
-        //            else
-        //            {
-        //                throw;
-        //            }
-        //        }
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    return View(meeting);
-        //}
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    await _meetingService.Update(meeting, id);
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!MeetingExists(meeting.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(meeting);
+        }
 
         //// GET: Meetings/Delete/5
         //[Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
@@ -156,9 +155,10 @@ namespace Geonorge.MinSide.Web.Controllers
         //    return RedirectToAction(nameof(Index));
         //}
 
-        //private bool MeetingExists(int id)
-        //{
-        //    return _context.Meetings.Any(e => e.Id == id);
-        //}
+        private bool MeetingExists(int id)
+        {
+            var meeting = _meetingService.Get(id);
+            return meeting != null;
+        }
     }
 }

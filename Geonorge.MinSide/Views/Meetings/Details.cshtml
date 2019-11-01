@@ -1,48 +1,48 @@
 ﻿@model Geonorge.MinSide.Infrastructure.Context.Meeting
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Møte detaljer";
 }
+<div class="container">
+    <h2>Møte detaljer</h2>
 
-<h2>Details</h2>
-
-<div>
-    <h4>Meeting</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.OrganizationNumber)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.OrganizationNumber)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Date)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Date)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Type)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Type)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Conclusion)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Conclusion)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <div>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.OrganizationNumber)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.OrganizationNumber)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Date)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Date)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Type)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Type)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Description)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Description)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Conclusion)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Conclusion)
+            </dd>
+        </dl>
+    </div>
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model.Id">Rediger</a> |
+        <a asp-action="Index">Tilbake</a>
+    </div>
 </div>

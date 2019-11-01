@@ -9,9 +9,12 @@
     <h2>Møter  @Context.Session.GetString("OrganizationName")</h2>
     @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
     {
-        <p>
-            <a asp-action="Create">Nytt møte</a>
-        </p>
+    <p>
+        <a asp-action="Create">Nytt møte</a>
+        @if (Model.Last != null) {
+            <span>|</span> <a asp-action="Edit" asp-route-id="@Model.Last.Id">Rediger</a>
+        }
+    </p>
     }
 
     @if (Model.Last != null)
@@ -76,8 +79,14 @@
             <div class="col-10">
                 @foreach (var meeting in Model.Archive)
                 {
-                <b>@meeting.Date.ToString("dd.MM.yyyy") @Html.DisplayFor(modelItem => meeting.Type)</b><br />
-                 }
+                    <b>@meeting.Date.ToString("dd.MM.yyyy") @Html.DisplayFor(modelItem => meeting.Type)</b>
+                    <span>|</span> <a asp-action="Details" asp-route-id="@meeting.Id">Detaljer</a>
+                    @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
+                    {
+                        <span>|</span> <a asp-action="Edit" asp-route-id="@meeting.Id">Rediger</a>
+                    }
+                    <br />
+                }
             </div>
         </div>
     }
