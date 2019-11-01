@@ -49,29 +49,28 @@ namespace Geonorge.MinSide.Web.Controllers
         //    return View(meeting);
         //}
 
-        //// GET: Meetings/Create
-        //[Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
-        //public IActionResult Create()
-        //{
-        //    return View();
-        //}
+        // GET: Meetings/Create
+        [Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
+        public IActionResult Create()
+        {
+            return View();
+        }
 
-        //// POST: Meetings/Create
-        //// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        //// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create([Bind("Id,OrganizationNumber,Date,Type,Description,Conclusion")] Meeting meeting)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        _context.Add(meeting);
-        //        await _context.SaveChangesAsync();
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    return View(meeting);
-        //}
+        // POST: Meetings/Create
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("Id,OrganizationNumber,Date,Type,Description,Conclusion")] Meeting meeting)
+        {
+            if (ModelState.IsValid)
+            {
+                await _meetingService.Create(meeting);
+                return RedirectToAction(nameof(Index));
+            }
+            return View(meeting);
+        }
 
         //// GET: Meetings/Edit/5
         //[Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
