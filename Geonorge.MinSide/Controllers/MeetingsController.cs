@@ -136,24 +136,23 @@ namespace Geonorge.MinSide.Web.Controllers
             return View(meeting);
         }
 
-        //// GET: Meetings/Delete/5
-        //[Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
-        //public async Task<IActionResult> Delete(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
+        // GET: Meetings/Delete/5
+        [Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
-        //    var meeting = await _context.Meetings
-        //        .FirstOrDefaultAsync(m => m.Id == id);
-        //    if (meeting == null)
-        //    {
-        //        return NotFound();
-        //    }
+            var meeting = await _meetingService.Get(id.Value);
+            if (meeting == null)
+            {
+                return NotFound();
+            }
 
-        //    return View(meeting);
-        //}
+            return View(meeting);
+        }
 
         //// POST: Meetings/Delete/5
         //[Authorize(Roles = GeonorgeRoles.MetadataAdmin)]

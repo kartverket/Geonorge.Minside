@@ -29,7 +29,14 @@
                     <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
                 <div class="form-group">
-                    <label for="Documents">Dokumenter:</label>
+                    <div>
+                        Valgte dokumenter:<br />
+                        @foreach (var file in Model.Documents)
+                        {
+                            <span>@file.Name</span> <span>| Slett</span><br />
+                        }
+                    </div>
+                    <label for="Documents">Legg til flere dokumenter:</label>
                     <input asp-for="Documents" name="files" type="file" multiple>
                     <span asp-validation-for="Documents"></span>
                 </div>
@@ -40,6 +47,7 @@
                     <span asp-validation-for="Conclusion" class="text-danger"></span>
                 </div>
                 <div class="form-group">
+                    <a asp-action="Delete" asp-route-id="@Model.Id">Slett</a>
                     <input type="submit" value="Lagre" class="btn btn-default" />
                 </div>
             </form>

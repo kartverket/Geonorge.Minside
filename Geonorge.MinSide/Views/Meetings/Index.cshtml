@@ -12,7 +12,7 @@
     <p>
         <a asp-action="Create">Nytt møte</a>
         @if (Model.Last != null) {
-            <span>|</span> <a asp-action="Edit" asp-route-id="@Model.Last.Id">Rediger</a>
+            <span>|</span> <a asp-action="Edit" asp-route-id="@Model.Last.Id">Rediger siste</a>
         }
     </p>
     }
@@ -34,9 +34,9 @@
             <div class="col-10">
                 <b>Dokumenter:</b>
                 <ul>
-                    @foreach (var files in Model.Last.Documents)
+                    @foreach (var file in Model.Last.Documents)
                     {
-                        <li>@files.Name</li>
+                        <li><a asp-action="Download" asp-controller="Documents" asp-route-id="@file.Id">@Html.DisplayFor(modelItem => file.Name)</a></li>
                     }
                 </ul>
             </div>
