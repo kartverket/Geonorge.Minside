@@ -33,6 +33,7 @@ namespace Geonorge.MinSide.Infrastructure.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     OrganizationNumber = table.Column<string>(nullable: true),
                     Type = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(nullable: true),
                     FileName = table.Column<string>(nullable: true),
                     Date = table.Column<DateTime>(nullable: false),
                     Status = table.Column<string>(nullable: true),
@@ -46,7 +47,7 @@ namespace Geonorge.MinSide.Infrastructure.Migrations
                         column: x => x.MeetingId,
                         principalTable: "Meetings",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -61,7 +62,7 @@ namespace Geonorge.MinSide.Infrastructure.Migrations
                     Deadline = table.Column<DateTime>(nullable: false),
                     Status = table.Column<string>(nullable: true),
                     Comment = table.Column<string>(nullable: true),
-                    Done = table.Column<DateTime>(nullable: false),
+                    Done = table.Column<DateTime>(nullable: true),
                     MeetingId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
@@ -72,8 +73,20 @@ namespace Geonorge.MinSide.Infrastructure.Migrations
                         column: x => x.MeetingId,
                         principalTable: "Meetings",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Documents_Date",
+                table: "Documents",
+                column: "Date");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Documents_FileName",
+                table: "Documents",
+                column: "FileName",
+                unique: true,
+                filter: "[FileName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Documents_MeetingId",
@@ -81,9 +94,19 @@ namespace Geonorge.MinSide.Infrastructure.Migrations
                 column: "MeetingId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Documents_Name",
+                table: "Documents",
+                column: "Name");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Documents_OrganizationNumber",
                 table: "Documents",
                 column: "OrganizationNumber");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Meetings_Date",
+                table: "Meetings",
+                column: "Date");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Meetings_OrganizationNumber",

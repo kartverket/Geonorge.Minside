@@ -93,7 +93,7 @@ namespace Geonorge.MinSide.Infrastructure.Migrations
 
                     b.Property<string>("Description");
 
-                    b.Property<DateTime>("Done");
+                    b.Property<DateTime?>("Done");
 
                     b.Property<int?>("MeetingId");
 

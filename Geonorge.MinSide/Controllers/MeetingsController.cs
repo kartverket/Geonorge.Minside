@@ -155,16 +155,14 @@ namespace Geonorge.MinSide.Web.Controllers
         }
 
         //// POST: Meetings/Delete/5
-        //[Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
-        //[HttpPost, ActionName("Delete")]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> DeleteConfirmed(int id)
-        //{
-        //    var meeting = await _context.Meetings.FindAsync(id);
-        //    _context.Meetings.Remove(meeting);
-        //    await _context.SaveChangesAsync();
-        //    return RedirectToAction(nameof(Index));
-        //}
+        [Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            await _meetingService.Delete(id);
+            return RedirectToAction(nameof(Index));
+        }
 
         private bool MeetingExists(int id)
         {

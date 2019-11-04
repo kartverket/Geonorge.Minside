@@ -61,7 +61,7 @@
                             <td>@todo.Description</td>
                             <td>@todo.ResponsibleOrganization</td>
                             <td>@todo.Deadline.ToString("dd.MM.yyyy")</td>
-                            <td>@todo.Done.ToString("dd.MM.yyyy")</td>
+                            <td>@todo.Done?.ToString("dd.MM.yyyy")</td>
                             <td>@todo.Comment</td>
                         </tr>
                     }

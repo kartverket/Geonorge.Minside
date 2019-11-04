@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Geonorge.MinSide.Infrastructure.Migrations
 {
     [DbContext(typeof(OrganizationContext))]
-    [Migration("20191025064815_DocumentName")]
-    partial class DocumentName
+    [Migration("20191104124545_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -43,7 +43,15 @@ namespace Geonorge.MinSide.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Date");
+
+                    b.HasIndex("FileName")
+                        .IsUnique()
+                        .HasFilter("[FileName] IS NOT NULL");
+
                     b.HasIndex("MeetingId");
+
+                    b.HasIndex("Name");
 
                     b.HasIndex("OrganizationNumber");
 
@@ -68,6 +76,8 @@ namespace Geonorge.MinSide.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Date");
+
                     b.HasIndex("OrganizationNumber");
 
                     b.ToTable("Meetings");
@@ -85,7 +95,7 @@ namespace Geonorge.MinSide.Infrastructure.Migrations
 
                     b.Property<string>("Description");
 
-                    b.Property<DateTime>("Done");
+                    b.Property<DateTime?>("Done");
 
                     b.Property<int?>("MeetingId");
 
