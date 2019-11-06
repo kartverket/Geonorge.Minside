@@ -58,7 +58,7 @@ namespace Geonorge.MinSide.Utils
 
             await AppendRoles(usernameClaim.Value, claims);
 
-            AppendFakeRolesForDemoUser(usernameClaim.Value, claims); 
+            //AppendFakeRolesForDemoUser(usernameClaim.Value, claims); 
 
             return claims;
         }
