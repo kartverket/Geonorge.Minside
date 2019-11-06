@@ -24,6 +24,7 @@ namespace Geonorge.MinSide.Services
         Task<ToDo> GetToDo(int? id);
         void UpdateToDo(ToDo toDo);
         Task DeleteToDo(int id);
+        Task UpdateToDoList(int meetingId, List<ToDo> toDo);
     }
 
     public class MeetingService : IMeetingService
@@ -169,6 +170,20 @@ namespace Geonorge.MinSide.Services
             var toDo = await _context.Todo.FindAsync(id);
             _context.Todo.Remove(toDo);
             await SaveChanges();
+        }
+
+        public async Task UpdateToDoList(int meetingId, List<ToDo> toDoes)
+        {
+            foreach (var todo in toDoes)
+            {
+                var updatedTodo = await GetToDo(todo.Id);
+
+                updatedTodo.Done = todo?.Done;
+                updatedTodo.Comment = todo?.Comment;
+
+                _context.Todo.Update(updatedTodo);
+                await SaveChanges();
+            }
         }
     }
 }

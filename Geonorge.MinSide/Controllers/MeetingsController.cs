@@ -164,6 +164,19 @@ namespace Geonorge.MinSide.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // POST: Meetings/EditToDo/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditToDoList(int MeetingId, List<ToDo> ToDo)
+        {
+              await _meetingService.UpdateToDoList(MeetingId, ToDo);
+
+             return RedirectToAction(nameof(Index), new { meetingId = MeetingId });
+        }
+
         private bool MeetingExists(int id)
         {
             var meeting = _meetingService.Get(id);
