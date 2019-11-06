@@ -58,6 +58,8 @@ namespace Geonorge.MinSide.Utils
 
             await AppendRoles(usernameClaim.Value, claims);
 
+            AppendFakeRolesForDemoUser(usernameClaim.Value, claims); 
+
             return claims;
         }
 
@@ -65,10 +67,30 @@ namespace Geonorge.MinSide.Utils
         {
             BaatAuthzUserRolesResponse response = await _baatAuthzApi.GetRoles(username);
 
+            if(response.Services != null) { 
             response.Services
                 .Where(role => role.StartsWith(GeonorgeRoleNamePrefix))
                 .ToList()
                 .ForEach(role => claims.Add(new Claim(ClaimIdentifierRole, role)));
+            }
+        }
+
+        private void AppendFakeRolesForDemoUser(string username, List<Claim> claims)
+        {
+            if (username == "esk_demobruker")
+            {
+                claims.Add(new Claim(ClaimIdentifierRole, GeonorgeRoles.MetadataAdmin));
+                claims.Add(new Claim(ClaimIdentifierRole, GeonorgeRoles.MetadataEditor));
+                claims.Add(new Claim("Name", "Dag Olav Dahle"));
+                claims.Add(new Claim("Email", "dagolav@arkitektum.no"));
+                claims.Add(new Claim("AuthorizedFrom", ""));
+                claims.Add(new Claim("AuthorizedUntil", ""));
+                claims.Add(new Claim("OrganizationName", "Kartverket"));
+                claims.Add(new Claim("OrganizationOrgnr", "971040238"));
+                claims.Add(new Claim("OrganizationContactName", ""));
+                claims.Add(new Claim("OrganizationContactEmail", ""));
+                claims.Add(new Claim("OrganizationContactPhone", ""));
+            }
         }
     }
 }

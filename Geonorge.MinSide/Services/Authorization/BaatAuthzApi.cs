@@ -87,6 +87,9 @@ namespace Geonorge.MinSide.Utils
 
             Log.Debug("Response from BaatAuthzApi: {json}", json);
 
+            if (json.Contains("\"services\": false"))
+                json = json.Replace("\"services\": false", "\"services\": \"\"");
+
             return JsonConvert.DeserializeObject<BaatAuthzUserRolesResponse>(json);
 
         }
