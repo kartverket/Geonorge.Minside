@@ -27,24 +27,6 @@ namespace Geonorge.MinSide.Web.Controllers
             return View(await _context.Todo.ToListAsync());
         }
 
-        // GET: ToDo/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var toDo = await _context.Todo
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (toDo == null)
-            {
-                return NotFound();
-            }
-
-            return View(toDo);
-        }
-
         // GET: ToDo/Create
         public IActionResult Create()
         {
@@ -58,11 +40,12 @@ namespace Geonorge.MinSide.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Number,Description,ResponsibleOrganization,Deadline,Status,Comment,Done")] ToDo toDo)
         {
+            var meetingId = HttpContext.Request.Form["meetingId"];
             if (ModelState.IsValid)
             {
                 _context.Add(toDo);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new { meetingId = meetingId });
             }
             return View(toDo);
         }
@@ -113,7 +96,7 @@ namespace Geonorge.MinSide.Web.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new { meetingId = HttpContext.Request.Form["meetingId"] });
             }
             return View(toDo);
         }
@@ -144,7 +127,7 @@ namespace Geonorge.MinSide.Web.Controllers
             var toDo = await _context.Todo.FindAsync(id);
             _context.Todo.Remove(toDo);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new { meetingId = HttpContext.Request.Form["meetingId"] });
         }
 
         private bool ToDoExists(int id)
