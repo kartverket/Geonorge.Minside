@@ -16,9 +16,14 @@ namespace Geonorge.MinSide.Services
     {
         Task<MeetingViewModel> GetAll(string organizationNumber);
         Task<Meeting> Create(Meeting meeting);
+        Task<ToDo> CreateToDo(ToDo todo);
         Task<Meeting> Get(int meetingId);
         Task Update(Meeting updatedMeeting, int meetingId, List<IFormFile> files);
         Task Delete(int meetingId);
+        Task<List<ToDo>> GetAllTodo(int meetingId);
+        Task<ToDo> GetToDo(int? id);
+        void UpdateToDo(ToDo toDo);
+        Task DeleteToDo(int id);
     }
 
     public class MeetingService : IMeetingService
@@ -120,5 +125,50 @@ namespace Geonorge.MinSide.Services
             }
         }
 
+        public async Task<ToDo> CreateToDo(ToDo todo)
+        {
+            todo.Number = await GetNextNumber(todo.MeetingId);
+            _context.Todo.Add(todo);
+            await SaveChanges();
+            return todo;
+        }
+
+        private async Task<int> GetNextNumber(int meetingId)
+        {
+            var query = _context.Todo.Where(m => m.MeetingId == meetingId);
+
+            var itemsExist = await query.AnyAsync();
+            int maxNumberIndex = 0;
+
+            if (itemsExist)
+            {
+                maxNumberIndex = await query.MaxAsync(x => x.Number);
+            }
+
+            return maxNumberIndex + 1;
+        }
+
+        public async Task<List<ToDo>> GetAllTodo(int meetingId)
+        {
+            return await _context.Todo.Where(m => m.MeetingId == meetingId).ToListAsync();
+        }
+
+        public async Task<ToDo> GetToDo(int? id)
+        {
+            return await _context.Todo.FindAsync(id);
+        }
+
+        public async void UpdateToDo(ToDo toDo)
+        {
+            _context.Update(toDo);
+            await SaveChanges();
+        }
+
+        public async Task DeleteToDo(int id)
+        {
+            var toDo = await _context.Todo.FindAsync(id);
+            _context.Todo.Remove(toDo);
+            await SaveChanges();
+        }
     }
 }

@@ -10,7 +10,7 @@
             <form asp-action="Edit">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <input type="hidden" asp-for="Id" />
-                <input type="hidden" name="meetingId" value="@Context.Request.Query["meetingId"]" />
+                <input type="hidden" name="MeetingId" value="@Context.Request.Query["meetingId"]" />
                 <div class="form-group">
                     <label asp-for="Number" class="control-label"></label>
                     <input asp-for="Number" class="form-control" />

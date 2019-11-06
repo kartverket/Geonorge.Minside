@@ -14,5 +14,6 @@ namespace Geonorge.MinSide.Infrastructure.Context
         public string Status { get; set; }  
         public string Comment { get; set; }
         public DateTime? Done { get; set; }
+        public int MeetingId { get; set; }
     }
 }

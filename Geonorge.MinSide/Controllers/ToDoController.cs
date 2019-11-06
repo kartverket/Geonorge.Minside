@@ -8,23 +8,26 @@ using Microsoft.EntityFrameworkCore;
 using Geonorge.MinSide.Infrastructure.Context;
 using Microsoft.AspNetCore.Authorization;
 using Geonorge.MinSide.Services.Authorization;
+using Geonorge.MinSide.Services;
+using Geonorge.MinSide.Models;
 
 namespace Geonorge.MinSide.Web.Controllers
 {
     [Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
     public class ToDoController : Controller
     {
-        private readonly OrganizationContext _context;
-
-        public ToDoController(OrganizationContext context)
+        private readonly IMeetingService _meetingService;
+        ApplicationSettings _applicationSettings;
+        public ToDoController(IMeetingService meeetingService, ApplicationSettings applicationSettings)
         {
-            _context = context;
+            _meetingService = meeetingService;
+            _applicationSettings = applicationSettings;
         }
 
         // GET: ToDo
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int meetingId)
         {
-            return View(await _context.Todo.ToListAsync());
+            return View(await _meetingService.GetAllTodo(meetingId));
         }
 
         // GET: ToDo/Create
@@ -38,14 +41,12 @@ namespace Geonorge.MinSide.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Number,Description,ResponsibleOrganization,Deadline,Status,Comment,Done")] ToDo toDo)
+        public async Task<IActionResult> Create([Bind("Id,Description,ResponsibleOrganization,Deadline,Status,Comment,Done,MeetingId")] ToDo toDo)
         {
-            var meetingId = HttpContext.Request.Form["meetingId"];
             if (ModelState.IsValid)
             {
-                _context.Add(toDo);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index), new { meetingId = meetingId });
+                await _meetingService.CreateToDo(toDo);
+                return RedirectToAction(nameof(Index), new { meetingId = toDo.MeetingId });
             }
             return View(toDo);
         }
@@ -58,7 +59,7 @@ namespace Geonorge.MinSide.Web.Controllers
                 return NotFound();
             }
 
-            var toDo = await _context.Todo.FindAsync(id);
+            var toDo = await _meetingService.GetToDo(id);
             if (toDo == null)
             {
                 return NotFound();
@@ -71,7 +72,7 @@ namespace Geonorge.MinSide.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Number,Description,ResponsibleOrganization,Deadline,Status,Comment,Done")] ToDo toDo)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Number,Description,ResponsibleOrganization,Deadline,Status,Comment,Done,MeetingId")] ToDo toDo)
         {
             if (id != toDo.Id)
             {
@@ -82,8 +83,7 @@ namespace Geonorge.MinSide.Web.Controllers
             {
                 try
                 {
-                    _context.Update(toDo);
-                    await _context.SaveChangesAsync();
+                    _meetingService.UpdateToDo(toDo);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -96,7 +96,7 @@ namespace Geonorge.MinSide.Web.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index), new { meetingId = HttpContext.Request.Form["meetingId"] });
+                return RedirectToAction(nameof(Index), new { meetingId = toDo.MeetingId });
             }
             return View(toDo);
         }
@@ -109,8 +109,7 @@ namespace Geonorge.MinSide.Web.Controllers
                 return NotFound();
             }
 
-            var toDo = await _context.Todo
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var toDo = await _meetingService.GetToDo(id.Value);
             if (toDo == null)
             {
                 return NotFound();
@@ -124,15 +123,13 @@ namespace Geonorge.MinSide.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var toDo = await _context.Todo.FindAsync(id);
-            _context.Todo.Remove(toDo);
-            await _context.SaveChangesAsync();
+            await _meetingService.DeleteToDo(id);
             return RedirectToAction(nameof(Index), new { meetingId = HttpContext.Request.Form["meetingId"] });
         }
 
         private bool ToDoExists(int id)
         {
-            return _context.Todo.Any(e => e.Id == id);
+            return _meetingService.GetToDo(id) != null;
         }
     }
 }
