@@ -45,33 +45,39 @@
             <div class="col-2"><b>Oppfølgingspunkter:</b></div>
             <div class="col-10">
                 <form asp-action="EditToDoList">
-                    <table>
-                        <tr>
-                            <th>Nr</th>
-                            <th>Hva</th>
-                            <th>Ansvarlig</th>
-                            <th>Frist</th>
-                            <th>Utført</th>
-                            <th>Kommentar</th>
-                        </tr>
-
-                        @{int i = 0;}
-                        @foreach (var todo in Model.Last.ToDo)
-                        {
+                    <table class="table">
+                        <thead class="thead-light">
                             <tr>
-                                <td>@todo.Number</td>
-                                <td>@todo.Description</td>
-                                <td>@todo.ResponsibleOrganization</td>
-                                <td>@todo.Deadline.ToString("dd.MM.yyyy")</td>
-                                <td><input type="datetime" class="form-control" name="ToDo[@i].Done" value="@(todo.Done.HasValue ? todo.Done.Value.ToString("dd.MM.yyyy") : "")" /></td>
-                                <td><input type="text" class="form-control" name="ToDo[@i].Comment" value="@todo.Comment" /></td>
+                                <th>Nr</th>
+                                <th>Hva</th>
+                                <th>Ansvarlig</th>
+                                <th>Frist</th>
+                                <th>Utført</th>
+                                <th>Kommentar</th>
                             </tr>
-                            <input type="hidden" name="ToDo[@i].Id" value="@todo.Id" />
-                            i++;
-                        }
+                            </thead>
+                        <tbody>
+                            @{int i = 0;}
+                            @foreach (var todo in Model.Last.ToDo)
+                            {
+                                <tr>
+                                    <td>@todo.Number</td>
+                                    <td>@todo.Description</td>
+                                    <td>@todo.ResponsibleOrganization</td>
+                                    <td>@todo.Deadline.ToString("dd.MM.yyyy")</td>
+                                    <td><input type="datetime" class="form-control" name="ToDo[@i].Done" value="@(todo.Done.HasValue ? todo.Done.Value.ToString("dd.MM.yyyy") : "")" /></td>
+                                    <td><input type="text" class="form-control" name="ToDo[@i].Comment" value="@todo.Comment" /></td>
+                                </tr>
+                                <input type="hidden" name="ToDo[@i].Id" value="@todo.Id" />
+                                i++;
+                            }
+                            <tr>
+                                <td colspan="5"></td>
+                                <td><input type="submit" value="Lagre" class="btn btn-default" /></td>
+                            </tr>
+                        </tbody>
                     </table>
                     <input type="hidden" name="MeetingId" value="@Model.Last.Id" />
-                    <input type="submit" value="Lagre" class="btn btn-default" />
                  </form>
             </div>
         </div>
