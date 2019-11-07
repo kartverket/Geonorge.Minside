@@ -1,0 +1,105 @@
+﻿@using Geonorge.MinSide.Services.Authorization;
+@using Microsoft.AspNetCore.Http;
+@model MeetingViewModel
+
+@{
+    ViewData["Title"] = "Møter";
+}
+<div class="container">
+    <h2>Møter  @Context.Session.GetString("OrganizationName")</h2>
+    @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
+    {
+    <p>
+        <a asp-action="Create">Nytt møte</a>
+        @if (Model.Last != null) {
+            <span>|</span> <a asp-action="Edit" asp-route-id="@Model.Last.Id">Rediger siste</a>
+        }
+    </p>
+    }
+
+    @if (Model.Last != null)
+    {
+        <div class="row">
+            <div class="col-2"><b>Sist møte:</b></div>
+            <div class="col-10">
+                <b>@Model.Last.Date.ToString("dd.MM.yyyy") @Html.DisplayFor(modelItem => Model.Last.Type)</b>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2"></div>
+            <div class="col-10">@Model.Last.Description</div>
+        </div>
+        <div class="row">
+            <div class="col-2"></div>
+            <div class="col-10">
+                <b>Dokumenter:</b>
+                <ul>
+                    @foreach (var file in Model.Last.Documents)
+                    {
+                        <li><a asp-action="Download" asp-controller="Documents" asp-route-id="@file.Id">@Html.DisplayFor(modelItem => file.Name)</a></li>
+                    }
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2"><b>Oppfølgingspunkter:</b></div>
+            <div class="col-10">
+                <form asp-action="EditToDoList">
+                    <table class="table">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Nr</th>
+                                <th>Hva</th>
+                                <th>Ansvarlig</th>
+                                <th>Frist</th>
+                                <th>Utført</th>
+                                <th>Kommentar</th>
+                            </tr>
+                            </thead>
+                        <tbody>
+                            @{int i = 0;}
+                            @foreach (var todo in Model.Last.ToDo)
+                            {
+                                <tr>
+                                    <td>@todo.Number</td>
+                                    <td>@todo.Description</td>
+                                    <td>@todo.ResponsibleOrganization</td>
+                                    <td>@todo.Deadline.ToString("dd.MM.yyyy")</td>
+                                    <td><input type="datetime" class="form-control" name="ToDo[@i].Done" value="@(todo.Done.HasValue ? todo.Done.Value.ToString("dd.MM.yyyy") : "")" /></td>
+                                    <td><input type="text" class="form-control" name="ToDo[@i].Comment" value="@todo.Comment" /></td>
+                                </tr>
+                                <input type="hidden" name="ToDo[@i].Id" value="@todo.Id" />
+                                i++;
+                            }
+                            <tr>
+                                <td colspan="5"></td>
+                                <td><input type="submit" value="Lagre" class="btn btn-default" /></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <input type="hidden" name="MeetingId" value="@Model.Last.Id" />
+                 </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2"><b>Konklusjon:</b></div>
+            <div class="col-10">@Model.Last.Conclusion</div>
+        </div>
+        <p></p>
+        <div class="row">
+            <div class="col-2"><b>Arkiv:</b></div>
+            <div class="col-10">
+                @foreach (var meeting in Model.Archive)
+                {
+                    <b>@meeting.Date.ToString("dd.MM.yyyy") @Html.DisplayFor(modelItem => meeting.Type)</b>
+                    <span>|</span> <a asp-action="Details" asp-route-id="@meeting.Id">Detaljer</a>
+                    @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
+                    {
+                        <span>|</span> <a asp-action="Edit" asp-route-id="@meeting.Id">Rediger</a>
+                    }
+                    <br />
+                }
+            </div>
+        </div>
+    }
+</div>

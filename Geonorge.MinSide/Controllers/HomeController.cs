@@ -5,6 +5,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using System.Security.Claims;
+using Geonorge.MinSide.Services.Authorization;
+using Geonorge.MinSide.Web.Controllers;
+using System;
+using Microsoft.AspNetCore.Http;
 
 namespace Geonorge.MinSide.Controllers
 {
@@ -17,16 +22,29 @@ namespace Geonorge.MinSide.Controllers
                 return View("LogIn");
             }
 
-            foreach (var claim in User.Claims)
-            {
-                if (claim.Type == "OrganizationName" && claim.Value.Length > 0)
-                    ViewData["OrganizationName"] = claim.Value;
-
-                if (claim.Type == "OrganizationOrgnr" && claim.Value.Length > 1)
-                    ViewData["OrganizationOrgnr"] = claim.Value;
-            }
+            GetOrganization();
 
             return View();
+        }
+
+        private void GetOrganization()
+        {
+            var organizationNumber = HttpContext.Session.GetString("OrganizationNumber");
+            var organizationName = HttpContext.Session.GetString("OrganizationName");
+
+            if(!string.IsNullOrEmpty(organizationNumber) && !string.IsNullOrEmpty(organizationName))
+            {
+                ViewData["OrganizationName"] = organizationName;
+                ViewData["OrganizationOrgnr"] = organizationNumber;
+            }
+            else
+            { 
+                ViewData["OrganizationName"] = HttpContext.User.GetOrganizationName();
+                ViewData["OrganizationOrgnr"] = HttpContext.User.GetOrganizationOrgnr();
+
+                HttpContext.Session.SetString("OrganizationNumber", ViewData["OrganizationOrgnr"].ToString());
+                HttpContext.Session.SetString("OrganizationName", ViewData["OrganizationName"].ToString());
+            }
         }
 
         public IActionResult LoggedOut()

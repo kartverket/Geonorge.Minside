@@ -8,7 +8,8 @@
         public Urls Urls { get; set; }
         public string BaatAuthzApiCredentials { get; set; }
         public string RedirectUri { get; set; }
-        public string PostLogoutRedirectUri { get; set; }        
+        public string PostLogoutRedirectUri { get; set; }
+        public string FilePath { get; set; }
     }
 
     public class Urls

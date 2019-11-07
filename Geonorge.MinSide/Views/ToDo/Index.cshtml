@@ -1,0 +1,79 @@
+﻿@using Geonorge.MinSide.Services.Authorization;
+@model IEnumerable<Geonorge.MinSide.Infrastructure.Context.ToDo>
+
+@{
+    ViewData["Title"] = "Oppfølgingspunkter";
+}
+<div class="container">
+    <h2>Oppfølgingspunkter</h2>
+
+    <p>
+        <a href="/ToDo/Create?meetingId=@Context.Request.Query["meetingId"]">Opprett nytt</a>
+    </p>
+    <p>
+        <a href="/Meetings/Edit/@Context.Request.Query["meetingId"]">Tilbake møte</a>
+    </p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Number)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Description)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ResponsibleOrganization)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Deadline)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Status)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Comment)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Done)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Number)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ResponsibleOrganization)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Deadline)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Status)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Comment)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Done)
+                    </td>
+                    @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
+                    {
+                        <td>
+                            <a href="/ToDo/Edit?id=@item.Id&meetingId=@Context.Request.Query["meetingId"]">Rediger</a> |
+                            <a href="/ToDo/Delete?id=@item.Id&meetingId=@Context.Request.Query["meetingId"]">Slett</a>
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
