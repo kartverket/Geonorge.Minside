@@ -63,7 +63,7 @@ namespace Geonorge.MinSide.Infrastructure.Migrations
                     Status = table.Column<string>(nullable: true),
                     Comment = table.Column<string>(nullable: true),
                     Done = table.Column<DateTime>(nullable: true),
-                    MeetingId = table.Column<int>(nullable: true)
+                    MeetingId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {

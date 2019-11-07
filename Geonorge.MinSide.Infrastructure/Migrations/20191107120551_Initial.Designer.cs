@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Geonorge.MinSide.Infrastructure.Migrations
 {
     [DbContext(typeof(OrganizationContext))]
-    [Migration("20191106095303_MeetingIDForeignKey")]
-    partial class MeetingIDForeignKey
+    [Migration("20191107120551_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
