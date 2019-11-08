@@ -59,7 +59,9 @@
 
     <script>
         searchOption.epiBaseUrl = '@AppSettings.Urls.GeonorgeRoot';
+        searchOption.loginUrl = '~/login';
         searchOption.logoutUrl = '@AppSettings.RedirectUri';
+        searchOption.loggedIn = @User.IsAuthenticated().ToString().ToLower();
     </script>
 
     <script src="~/dist/js/geonorge-base/init.js" asp-append-version="true"></script>
