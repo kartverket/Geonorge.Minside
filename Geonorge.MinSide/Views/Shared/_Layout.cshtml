@@ -59,7 +59,7 @@
 
     <script>
         searchOption.epiBaseUrl = '@AppSettings.Urls.GeonorgeRoot';
-        searchOption.loginUrl = '~/login';
+        searchOption.loginUrl = '@AppSettings.RedirectUri.Replace("logout", "login")';
         searchOption.logoutUrl = '@AppSettings.RedirectUri';
         searchOption.loggedIn = @User.IsAuthenticated().ToString().ToLower();
     </script>
