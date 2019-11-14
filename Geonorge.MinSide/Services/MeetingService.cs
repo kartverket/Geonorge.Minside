@@ -129,6 +129,7 @@ namespace Geonorge.MinSide.Services
         public async Task<ToDo> CreateToDo(ToDo todo)
         {
             todo.Number = await GetNextNumber(todo.MeetingId);
+            todo.Status = CodeList.ToDoStatus.First().Key;
             _context.Todo.Add(todo);
             await SaveChanges();
             return todo;
@@ -180,6 +181,7 @@ namespace Geonorge.MinSide.Services
 
                 updatedTodo.Done = todo?.Done;
                 updatedTodo.Comment = todo?.Comment;
+                updatedTodo.Status = todo?.Status;
 
                 _context.Todo.Update(updatedTodo);
                 await SaveChanges();

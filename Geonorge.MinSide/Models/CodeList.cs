@@ -30,6 +30,19 @@ namespace Geonorge.MinSide.Models
             {"Partsoppfølging – web møte", "Partsoppfølging – web møte"},
         };
 
+        public static Dictionary<string, string> ToDoStatus = new Dictionary<string, string>
+        {
+            {"Ikke påbegynt", "Ikke påbegynt"},
+            {"I prosess", "I prosess"},
+            {"Avventer", "Avventer"},
+            {"Utført", "Utført"}
+        };
+
+        
+
+
+
+
         static CodeList() { UpdateOrganizations(); }
 
         public static Dictionary<string, string> Organizations = new Dictionary<string, string>();

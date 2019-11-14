@@ -52,6 +52,7 @@
                                 <th>Hva</th>
                                 <th>Ansvarlig</th>
                                 <th>Frist</th>
+                                <th>Status</th>
                                 <th>Utført</th>
                                 <th>Kommentar</th>
                             </tr>
@@ -65,6 +66,10 @@
                                     <td>@todo.Description</td>
                                     <td>@todo.ResponsibleOrganization</td>
                                     <td>@todo.Deadline.ToString("dd.MM.yyyy")</td>
+                                    <td>
+                                        @{var Status = new SelectList(CodeList.ToDoStatus, "Key", "Value", todo.Status);}
+                                        <select name="ToDo[@i].Status" class="form-control" asp-items="Status"></select>
+                                    </td>
                                     <td><input type="datetime" class="form-control" name="ToDo[@i].Done" value="@(todo.Done.HasValue ? todo.Done.Value.ToString("dd.MM.yyyy") : "")" /></td>
                                     <td><input type="text" class="form-control" name="ToDo[@i].Comment" value="@todo.Comment" /></td>
                                 </tr>
