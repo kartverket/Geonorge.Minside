@@ -134,3 +134,17 @@ aside ul li,
 .loading-animation:before {
     content: url(/dist/images/gif/loading.gif);
 }
+.nav {
+    padding-bottom: 7px;
+    margin-top: 10px;
+}
+.nav > li > a {
+    padding: 10px 20px;
+    margin-right: 5px;
+}
+.nav > li.active > a {
+    background-color: white;
+}
+.nav > li.active > a {
+    color: black;
+}

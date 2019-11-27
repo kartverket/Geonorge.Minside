@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Geonorge.Minside - @ViewData["Title"]</title>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Raleway:100,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/dist/vendor.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/style/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/style/sharedPartialsBootstrapOverride.css" asp-append-version="true" />
@@ -36,7 +37,7 @@
             @if (User.IsAuthenticated()) { 
             <div class="container panel panel-default" style="padding: 10px;">
                 <div id="Tabs" role="tabpanel">
-                    <ul class="nav nav-tabs" role="tablist">
+                    <ul class="nav nav-tabs link-tabs" role="tablist">
                         <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Home" ? "active" : "")"><a href="~/" role="tab">Registreringer&nbsp;</a></li>
                         <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Documents" ? "active" : "")"><a href="~/Documents" role="tab">Avtaler&nbsp;</a></li>
                         <li class="@( (ViewContext.RouteData.Values["controller"].ToString() == "Meetings"  || ViewContext.RouteData.Values["controller"].ToString() == "ToDo") ? "active" : "")"><a href="~/Meetings" role="tab">Møter&nbsp;</a></li>
