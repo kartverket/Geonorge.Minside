@@ -148,3 +148,66 @@ aside ul li,
 .nav > li.active > a {
     color: black;
 }
+.panel-default>.panel-heading {
+    color: #333;
+    background-color: #f5f5f5;
+    border-color: #ddd;
+}
+.panel-heading {
+    font-weight: 600;
+}
+.table .thead-light th {
+    background-color: #f5f5f5;
+}
+i {
+    margin-right: 5px;
+}
+.container article h3 > a, .container h3 {
+    font-weight: 400;
+}
+.list-group-item :first-child >  div.col-12 {    
+    margin-bottom: 10px;
+}
+.form-layout label {
+    display: inline-block;
+    font-weight: bold;
+    margin: 0;
+}
+.form-layout {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+.form-layout textarea {
+    min-height: auto;
+}
+.form-layout::before {
+    font-family: 'Font awesome 5 free';
+    position: absolute;
+    left: 0;
+    font-size: 36px;
+}
+.form-layout.doing::before {
+    content: '\f017';
+    color: orange
+
+}
+.form-layout.waiting::before {
+    content: '\f254';
+    color: red
+
+}
+.form-layout.todo::before {
+    content: '\f044';
+
+}
+.form-layout.done::before {
+    content: '\f058';
+    color: green
+}
+.form-layout input[type="submit"] {
+    margin-top: 10px;
+}
+.form-layout {
+    padding-left: 30px;
+}

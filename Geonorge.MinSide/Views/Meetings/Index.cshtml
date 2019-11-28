@@ -1,5 +1,6 @@
 ﻿@using Geonorge.MinSide.Services.Authorization;
 @using Microsoft.AspNetCore.Http;
+@using Geonorge.MinSide.Utils;
 @model MeetingViewModel
 
 @{
@@ -10,9 +11,9 @@
     @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
     {
     <p>
-        <a asp-action="Create">Nytt møte</a>
+        <a asp-action="Create" class="btn no-margin-bottom show-loading-animation">Nytt møte</a>
         @if (Model.Last != null) {
-            <span>|</span> <a asp-action="Edit" asp-route-id="@Model.Last.Id">Rediger siste</a>
+            <span></span> <a asp-action="Edit" class="btn no-margin-bottom show-loading-animation" asp-route-id="@Model.Last.Id">Rediger dette møtet</a>
         }
     </p>
     }
@@ -47,63 +48,71 @@
         <div class="row">
             <div class="col-12">
                 <form asp-action="EditToDoList">
-                    <table class="table">
-                        <thead class="thead-light">
-                            <tr>
-                                <th>Nr</th>
-                                <th>Hva</th>
-                                <th>Ansvarlig</th>
-                                <th>Frist</th>
-                                <th>Status</th>
-                                <th>Utført</th>
-                                <th>Kommentar</th>
-                            </tr>
-                            </thead>
-                        <tbody>
+                    
+                      
+                       
                             @{int i = 0;}
                             @foreach (var todo in Model.Last.ToDo)
                             {
-                                @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
+                               
+                                
+                                <div class="row form-layout @Helper.GetMeetingStatusClass(todo.Status)">
+                                   
+                                    <div class="col-12">
+                                        <label>Nr  <span>@todo.Number</span> - <span>@todo.Description</span></label>
+            
+                                       <div>
+                                         <label>Ansvarlig:</label>
+                                        <span>@todo.ResponsibleOrganization</span>
+                                         <label>Frist:</label>
+                                        <span>@todo.Deadline.ToString("dd.MM.yyyy")</span>
+                                        </div>
+                                    </div> 
+                                    
+                                    @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
                                 {
-                                    <tr>
-                                        <td>@todo.Number</td>
-                                        <td>@todo.Description</td>
-                                        <td>@todo.ResponsibleOrganization</td>
-                                        <td>@todo.Deadline.ToString("dd.MM.yyyy")</td>
-                                        <td>
-                                            @{var Status = new SelectList(CodeList.ToDoStatus, "Key", "Value", todo.Status);}
-                                            <select name="ToDo[@i].Status" class="form-control" asp-items="Status"></select>
-                                        </td>
-                                        <td><input type="datetime" class="form-control" name="ToDo[@i].Done" value="@(todo.Done.HasValue ? todo.Done.Value.ToString("dd.MM.yyyy") : "")" /></td>
-                                        <td><input type="text" class="form-control" name="ToDo[@i].Comment" value="@todo.Comment" /></td>
-                                    </tr>
+                                    <div class="col-6">
+                                         <label>Status </label>
+                                        @{var Status = new SelectList(CodeList.ToDoStatus, "Key", "Value", todo.Status);}
+                                        <select name="ToDo[@i].Status" class="form-control" asp-items="Status"></select>
+                                        
+                                    </div>
+                                    <div class="col-6">
+                                         <label>Utført dato</label>
+                                        <input type="datetime" class="form-control" name="ToDo[@i].Done" value="@(todo.Done.HasValue ? todo.Done.Value.ToString("dd.MM.yyyy") : "")" />
+                                    </div>
+                                    
+                                    
+                                    
+                                    <div class="col-12">
+                                         <label>Kommentar</label>
+                                        <textarea type="textarea" rows="2" class="form-control" name="ToDo[@i].Comment">@todo.Comment</textarea>
+                                    </div>                                                                                                                                                
+                                
                                     <input type="hidden" name="ToDo[@i].Id" value="@todo.Id" />
-                                    i++;
+                                i++;
+                                
+                            
+                            
+                            
+                                
+                                
+                                <div class="col-12">
+                                    <input type="submit" value="Lagre" class="btn btn-default" />
+                                </div>
+                           
+                           
                                 }
-                                else
-                                {
-                                    <tr>
-                                        <td>@todo.Number</td>
-                                        <td>@todo.Description</td>
-                                        <td>@todo.ResponsibleOrganization</td>
-                                        <td>@todo.Deadline.ToString("dd.MM.yyyy")</td>
-                                        <td>
-                                            @todo.Status
-                                        </td>
-                                        <td>@(todo.Done.HasValue ? todo.Done.Value.ToString("dd.MM.yyyy") : "")</td>
-                                        <td>@todo.Comment</td>
-                                    </tr>
-                                }
+                                     else {
+                               @todo.Comment
+                               @(todo.Done.HasValue ? "Utført den " + todo.Done.Value.ToString("dd.MM.yyyy") : "ikke utført")
                             }
-                            @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
-                            {
-                                <tr>
-                                    <td colspan="6"></td>
-                                    <td align="right"><input type="submit" value="Lagre" class="btn btn-default" /></td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
+                            
+                            </div>
+                                
+                            
+                           
+                        }
                     <input type="hidden" name="MeetingId" value="@Model.Last.Id" />
                  </form>
             </div>
