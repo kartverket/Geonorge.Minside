@@ -63,25 +63,45 @@
                             @{int i = 0;}
                             @foreach (var todo in Model.Last.ToDo)
                             {
-                                <tr>
-                                    <td>@todo.Number</td>
-                                    <td>@todo.Description</td>
-                                    <td>@todo.ResponsibleOrganization</td>
-                                    <td>@todo.Deadline.ToString("dd.MM.yyyy")</td>
-                                    <td>
-                                        @{var Status = new SelectList(CodeList.ToDoStatus, "Key", "Value", todo.Status);}
-                                        <select name="ToDo[@i].Status" class="form-control" asp-items="Status"></select>
-                                    </td>
-                                    <td><input type="datetime" class="form-control" name="ToDo[@i].Done" value="@(todo.Done.HasValue ? todo.Done.Value.ToString("dd.MM.yyyy") : "")" /></td>
-                                    <td><input type="text" class="form-control" name="ToDo[@i].Comment" value="@todo.Comment" /></td>
-                                </tr>
-                                <input type="hidden" name="ToDo[@i].Id" value="@todo.Id" />
-                                i++;
+                                @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
+                                {
+                                    <tr>
+                                        <td>@todo.Number</td>
+                                        <td>@todo.Description</td>
+                                        <td>@todo.ResponsibleOrganization</td>
+                                        <td>@todo.Deadline.ToString("dd.MM.yyyy")</td>
+                                        <td>
+                                            @{var Status = new SelectList(CodeList.ToDoStatus, "Key", "Value", todo.Status);}
+                                            <select name="ToDo[@i].Status" class="form-control" asp-items="Status"></select>
+                                        </td>
+                                        <td><input type="datetime" class="form-control" name="ToDo[@i].Done" value="@(todo.Done.HasValue ? todo.Done.Value.ToString("dd.MM.yyyy") : "")" /></td>
+                                        <td><input type="text" class="form-control" name="ToDo[@i].Comment" value="@todo.Comment" /></td>
+                                    </tr>
+                                    <input type="hidden" name="ToDo[@i].Id" value="@todo.Id" />
+                                    i++;
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td>@todo.Number</td>
+                                        <td>@todo.Description</td>
+                                        <td>@todo.ResponsibleOrganization</td>
+                                        <td>@todo.Deadline.ToString("dd.MM.yyyy")</td>
+                                        <td>
+                                            @todo.Status
+                                        </td>
+                                        <td>@(todo.Done.HasValue ? todo.Done.Value.ToString("dd.MM.yyyy") : "")</td>
+                                        <td>@todo.Comment</td>
+                                    </tr>
+                                }
                             }
-                            <tr>
-                                <td colspan="6"></td>
-                                <td align="right"><input type="submit" value="Lagre" class="btn btn-default" /></td>
-                            </tr>
+                            @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
+                            {
+                                <tr>
+                                    <td colspan="6"></td>
+                                    <td align="right"><input type="submit" value="Lagre" class="btn btn-default" /></td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                     <input type="hidden" name="MeetingId" value="@Model.Last.Id" />
