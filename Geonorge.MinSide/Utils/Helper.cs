@@ -51,5 +51,19 @@ namespace Geonorge.MinSide.Utils
             };
         }
 
+        public static string GetMeetingStatusClass(string status)
+        {
+            if (status == "Ikke påbegynt")
+                return "todo";
+            else if (status == "I prosess")
+                return "doing";
+            else if (status == "Avventer")
+                return "waiting";
+            else if (status == "Utført")
+                return "done";
+            else
+                return status;
+        }
+
     }
 }
