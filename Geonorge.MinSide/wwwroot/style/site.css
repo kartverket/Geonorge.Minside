@@ -173,10 +173,14 @@ i {
     font-weight: bold;
     margin: 0;
 }
+.form-layout label.not-bold {
+    font-weight: normal;
+}
 .form-layout {
     border-bottom: 1px solid #ddd;
-    padding-bottom: 10px;
-    margin-bottom: 10px;
+    padding: 10px;
+    margin-bottom: 10px;    
+    padding-left: 30px;
 }
 .form-layout textarea {
     min-height: auto;
@@ -184,8 +188,8 @@ i {
 .form-layout::before {
     font-family: 'Font awesome 5 free';
     position: absolute;
-    left: 0;
-    font-size: 36px;
+    left: 5px;
+    font-size: 30px;
 }
 .form-layout.doing::before {
     content: '\f017';
@@ -210,4 +214,22 @@ i {
 }
 .form-layout {
     padding-left: 30px;
+}
+.form-layout.done {
+    background-color: rgba(0,128,0, 0.1);
+}
+.form-layout.waiting {
+    background-color: rgba(128, 0, 0, 0.1);
+}
+.form-layout.doing {
+    background-color: rgba(250, 171, 1, 0.1);
+}
+.form-layout.todo {
+    background-color: rgba(1, 121, 250, 0.1);
+}
+.form-layout label {
+    white-space: nowrap;
+}
+.form-layout .datepicker input {
+    max-width: 120px;
 }

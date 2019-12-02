@@ -38,12 +38,12 @@
             <div class="container panel panel-default" style="padding: 10px;">
                 <div id="Tabs" role="tabpanel">
                     <ul class="nav nav-tabs link-tabs" role="tablist">
-                        <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Home" ? "active" : "")"><a href="~/" role="tab">Registreringer&nbsp;</a></li>
-                        <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Documents" ? "active" : "")"><a href="~/Documents" role="tab">Avtaler&nbsp;</a></li>
-                        <li class="@( (ViewContext.RouteData.Values["controller"].ToString() == "Meetings"  || ViewContext.RouteData.Values["controller"].ToString() == "ToDo") ? "active" : "")"><a href="~/Meetings" role="tab">Møter&nbsp;</a></li>
+                        <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Home" ? "active" : "")"><a href="~/" role="tab"><i class="far fa-file-alt"></i>Registreringer&nbsp;</a></li>
+                        <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Documents" ? "active" : "")"><a href="~/Documents" role="tab"><i class="fas fa-file-contract"></i>Avtaler&nbsp;</a></li>
+                        <li class="@( (ViewContext.RouteData.Values["controller"].ToString() == "Meetings"  || ViewContext.RouteData.Values["controller"].ToString() == "ToDo") ? "active" : "")"><a href="~/Meetings" role="tab"><i class="fas fa-clipboard-check"></i>Møter&nbsp;</a></li>
                         @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
                         {
-                        <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Admin" ? "active" : "")"><a href="~/Admin/Edit" role="tab">Admin</a></li>  
+                        <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Admin" ? "active" : "")"><a href="~/Admin/Edit" role="tab"><i class="fas fa-cog"></i>Admin</a></li>  
                         }
                     </ul>
                 </div>

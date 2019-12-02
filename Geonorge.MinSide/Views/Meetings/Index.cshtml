@@ -21,18 +21,16 @@
     @if (Model.Last != null)
     {
         <div class="row">
-            <div class="col-2"><b>Sist møte:</b></div>
-            <div class="col-10">
+            <div class="col-12"><h4>Pågående møte</h4></div>
+            <div class="col-12">
                 <b>@Model.Last.Date.ToString("dd.MM.yyyy") @Html.DisplayFor(modelItem => Model.Last.Type)</b>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-2"></div>
-            <div class="col-10">@Model.Last.Description</div>
-        </div>
-        <div class="row">
-            <div class="col-2"></div>
-            <div class="col-10">
+            <div class="col-12">@Model.Last.Description</div>
+       
+                        
+       
+
+            <div class="col-12">
                 <b>Dokumenter:</b>
                 <ul>
                     @foreach (var file in Model.Last.Documents)
@@ -40,7 +38,7 @@
                         <li><a asp-action="Download" asp-controller="Documents" asp-route-id="@file.Id">@Html.DisplayFor(modelItem => file.Name)</a></li>
                     }
                 </ul>
-            </div>
+           </div> 
         </div>
         <div class="row">
             <div class="col-12"><b>Oppfølgingspunkter:</b></div>
@@ -58,30 +56,33 @@
                                 
                                 <div class="row form-layout @Helper.GetMeetingStatusClass(todo.Status)">
                                    
-                                    <div class="col-12">
-                                        <label>Nr  <span>@todo.Number</span> - <span>@todo.Description</span></label>
-            
-                                       <div>
-                                         <label>Ansvarlig:</label>
-                                        <span>@todo.ResponsibleOrganization</span>
-                                         <label>Frist:</label>
-                                        <span>@todo.Deadline.ToString("dd.MM.yyyy")</span>
-                                        </div>
-                                    </div> 
+                                    
                                     
                                     @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
                                 {
-                                    <div class="col-6">
+                                    <div class="col-4">
+                                        <strong>Nr  <span>@todo.Number</span> - <span>@todo.Description</span></strong>
+            
+                                       <div>
+                                            <label>Frist:</label>
+                                        <span>@todo.Deadline.ToString("dd.MM.yyyy")</span>
+                                         <label>Ansvarlig:</label>
+                                        <span>@todo.ResponsibleOrganization</span>
+                                        
+                                        </div>
+                                    </div>                                     <div class="col-3">
                                          <label>Status </label>
                                         @{var Status = new SelectList(CodeList.ToDoStatus, "Key", "Value", todo.Status);}
                                         <select name="ToDo[@i].Status" class="form-control" asp-items="Status"></select>
                                         
                                     </div>
-                                    <div class="col-6">
-                                         <label>Utført dato</label>
-                                        <input type="datetime" class="form-control" name="ToDo[@i].Done" value="@(todo.Done.HasValue ? todo.Done.Value.ToString("dd.MM.yyyy") : "")" />
+                                    <div class="col-5">
+                                        <div class="datepicker">
+                                            <label>Utført dato</label>
+                                            <input type="datetime" placeholder="dd.mm.yyyy" class="form-control" name="ToDo[@i].Done" value="@(todo.Done.HasValue ? todo.Done.Value.ToString("dd.MM.yyyy") : "")" />
+                                        </div>
                                     </div>
-                                    
+                            
                                     
                                     
                                     <div class="col-12">
@@ -104,8 +105,22 @@
                            
                                 }
                                      else {
-                               @todo.Comment
-                               @(todo.Done.HasValue ? "Utført den " + todo.Done.Value.ToString("dd.MM.yyyy") : "ikke utført")
+                                         <div class="col-12">
+                                        <strong>Nr  <span>@todo.Number</span> </strong> - <span>@todo.Description</span>
+                                        <br /> Status: <strong>@(todo.Done.HasValue ? "Utført den " + todo.Done.Value.ToString("dd.MM.yyyy") : "") @todo.Status</strong>
+                                       <div>
+                                            <label class="not-bold">Frist:</label>
+                                        <span><strong>@todo.Deadline.ToString("dd.MM.yyyy")</strong></span>
+                                         <label class="not-bold">Ansvarlig:</label>
+                                        <span><strong>@todo.ResponsibleOrganization</strong></span>
+                                        
+                                        </div>
+                                    </div> 
+                                    <div class="col-12">
+                                     
+                                        <div>@todo.Comment</div>
+                                    </div>
+                              
                             }
                             
                             </div>
@@ -119,11 +134,15 @@
         </div>
         <div class="row">
             <div class="col-2"><b>Konklusjon:</b></div>
+        </div>
+        <div class="row">
             <div class="col-10">@Model.Last.Conclusion</div>
         </div>
         <p></p>
         <div class="row">
             <div class="col-2"><b>Arkiv:</b></div>
+        </div>
+        <div class="row">
             <div class="col-10">
                 @foreach (var meeting in Model.Archive)
                 {
