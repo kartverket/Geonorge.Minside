@@ -24,7 +24,7 @@
          </div>
          <div class="list-group-item">
             <div class="row">
-                <div class="col-12"><strong>Forslag til nye avtaler</strong></div>
+                <div class="col-12"><h5>Forslag til nye avtaler</h5></div>
             </div>
             <div class="row list-item">
                 @foreach (var item in Model.Drafts)
@@ -49,7 +49,7 @@
          </div>
   <div class="list-group-item">
     <div class="row">
-            <div class="col-12"><strong>Mine avtaler</strong></div>
+            <div class="col-12"><h5>Mine avtaler</h5></div>
     </div>
     <div class="row list-item">
         @foreach (var item in Model.Valid)
@@ -70,11 +70,12 @@
                 }
             </div>
         }
+        <div class="col-12"><a href="https://register.geonorge.no/" target="_blank">Generelle vilkår</a></div>
     </div>
   </div>
 <div class="list-group-item">   
     <div class="row">
-        <div class="col-12"><b>Arkiv:</b></div>
+        <div class="col-12"><h5>Arkiv:</h5></div>
     </div>
         <div class="row list-item">
             @foreach (var item in Model.Superseded)
@@ -96,10 +97,7 @@
                 </div>
             }
         </div>
-      </div>
-       <div class="row">
-        <div class="col-12"><a href="https://register.geonorge.no/" target="_blank"><strong>Generelle vilkår</strong></a></div>
-    </div>
+      </div>       
     </div>
 </div>
   
