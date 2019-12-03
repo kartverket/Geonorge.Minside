@@ -168,10 +168,13 @@ i {
 .list-group-item :first-child >  div.col-12 {    
     margin-bottom: 10px;
 }
-.form-layout label {
+.form-layout label, .labelform label  {
     display: inline-block;
     font-weight: bold;
     margin: 0;
+}
+.labelform {
+    padding: 10px 0;
 }
 .form-layout label.not-bold {
     font-weight: normal;
@@ -215,16 +218,16 @@ i {
 .form-layout {
     padding-left: 30px;
 }
-.form-layout.done {
+.form-layout.done,.resultItemRow.done {
     background-color: rgba(0,128,0, 0.1);
 }
-.form-layout.waiting {
+.form-layout.waiting,.resultItemRow.waiting {
     background-color: rgba(128, 0, 0, 0.1);
 }
-.form-layout.doing {
+.form-layout.doing,.resultItemRow.doing {
     background-color: rgba(250, 171, 1, 0.1);
 }
-.form-layout.todo {
+.form-layout.todo,.resultItemRow.todo {
     background-color: rgba(1, 121, 250, 0.1);
 }
 .form-layout label {
@@ -232,4 +235,23 @@ i {
 }
 .form-layout .datepicker input {
     max-width: 120px;
+}
+.resultItemRow {
+    border-bottom: 1px solid #ccc;
+    padding: 5px 0;
+}
+.form-control.inline {
+    display: inline;
+    width: auto;
+}
+.vis-status {
+    margin: 10px 0;
+    display: block;
+    
+}
+.resultItemRow {
+    PADDING: 10PX;
+}
+table > tbody > tr > td:last-child {
+    white-space: nowrap;
 }

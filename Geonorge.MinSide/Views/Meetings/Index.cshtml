@@ -11,9 +11,9 @@
     @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
     {
     <p>
-        <a asp-action="Create" class="btn no-margin-bottom show-loading-animation">Nytt møte</a>
+        <a asp-action="Create" class="btn no-margin-bottom show-loading-animation"><i class="fas fa-plus"></i>Nytt møte</a>
         @if (Model.Last != null) {
-            <span></span> <a asp-action="Edit" class="btn no-margin-bottom show-loading-animation" asp-route-id="@Model.Last.Id">Rediger dette møtet</a>
+            <span></span> <a asp-action="Edit" class="btn no-margin-bottom show-loading-animation" asp-route-id="@Model.Last.Id"><i class="fas fa-edit"></i>Rediger dette møtet</a>
         }
     </p>
     }
@@ -39,23 +39,22 @@
                     }
                 </ul>
            </div> 
-        </div>
-        <div class="row">
-            <div class="col-12"><b>Oppfølgingspunkter:</b></div>
-        </div>
+        </div>    
         <div class="row">
             <div class="col-12">
                 <form>
+                    <h4>Oppfølgingspunkter</h4>
+                    <div class="vis-status">
                     @{var Status = new SelectList(CodeList.ToDoStatus, "Key", "Value", ViewBag.Status);}
-                    <select name="status" onchange="this.form.submit();" class="form-control" asp-items="Status"><option value="">Viser alle</option></select>
+                  <label>Vis kun med status: </label>  <select name="status" onchange="this.form.submit();" class="form-control inline" asp-items="Status"><option value="">Viser alle</option></select>
+                  </div>
                 </form>
             </div>
         </div>
-        <div class="row">
+        <div class="row">             
             <div class="col-12">
                 <form asp-action="EditToDoList">
                     
-                      
                        
                             @{int i = 0;}
                             @foreach (var todo in Model.Last.ToDo)
@@ -100,42 +99,38 @@
                                 
                                     <input type="hidden" name="ToDo[@i].Id" value="@todo.Id" />
                                 i++;
-                                
-                            
-                            
-                            
-                                
-                                
-                                <div class="col-12">
-                                    <input type="submit" value="Lagre" class="btn btn-default" />
-                                </div>
-                           
                            
                                 }
-                                     else {
-                                         <div class="col-12">
-                                        <strong>Nr  <span>@todo.Number</span> </strong> - <span>@todo.Description</span>
-                                        <br /> Status: <strong>@(todo.Done.HasValue ? "Utført den " + todo.Done.Value.ToString("dd.MM.yyyy") : "") @todo.Status</strong>
-                                       <div>
-                                            <label class="not-bold">Frist:</label>
+                                else {
+                                <div class="col-12">
+                                    <strong>Nr  <span>@todo.Number</span> </strong> - <span>@todo.Description</span>
+                                    <br /> Status: <strong>@(todo.Done.HasValue ? "Utført den " + todo.Done.Value.ToString("dd.MM.yyyy") : "") @todo.Status</strong>
+                                    <div>
+                                        <label class="not-bold">Frist:</label>
                                         <span><strong>@todo.Deadline.ToString("dd.MM.yyyy")</strong></span>
-                                         <label class="not-bold">Ansvarlig:</label>
+                                        <label class="not-bold">Ansvarlig:</label>
                                         <span><strong>@todo.ResponsibleOrganization</strong></span>
                                         
-                                        </div>
                                     </div> 
-                                    <div class="col-12">
-                                     
-                                        <div>@todo.Comment</div>
-                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    
+                                    <div>@todo.Comment</div>
+                                </div>
                               
                             }
                             
-                            </div>
+                                 </div>
                                 
                             
                            
                         }
+                         @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
+                                {
+                          <div class="col-12">
+                                    <input type="submit" value="Lagre" class="btn btn-default" />
+                                </div>
+                                }
                     <input type="hidden" name="MeetingId" value="@Model.Last.Id" />
                  </form>
             </div>
