@@ -43,7 +43,7 @@
         <div class="row">
             <div class="col-12">
                 <form>
-                    <h4>Oppfølgingspunkter</h4>
+                    <h5>Oppfølgingspunkter</h5>
                     <div class="vis-status">
                     @{var Status = new SelectList(CodeList.ToDoStatus, "Key", "Value", ViewBag.Status);}
                   <label>Vis kun med status: </label>  <select name="status" onchange="this.form.submit();" class="form-control inline" asp-items="Status"><option value="">Viser alle</option></select>
@@ -68,7 +68,7 @@
                                     @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
                                 {
                                     <div class="col-4">
-                                        <strong>Nr  <span>@todo.Number</span> - <span>@todo.Description</span></strong>
+                                         <span><strong>Nr @todo.Number</strong></span> - <span>@todo.Description</span>
             
                                        <div>
                                             <label>Frist:</label>
@@ -135,21 +135,22 @@
                  </form>
             </div>
         </div>
+        if(Model.Last.Conclusion != null) {
         <div class="row">
-            <div class="col-2"><b>Konklusjon:</b></div>
+            <div class="col-2"><strong>Konklusjon:</strong></div>
         </div>
         <div class="row">
             <div class="col-10">@Model.Last.Conclusion</div>
         </div>
-        <p></p>
+        }
         <div class="row">
-            <div class="col-2"><b>Arkiv:</b></div>
+            <div class="col-2"><h4>Arkiv</h4></div>
         </div>
         <div class="row">
-            <div class="col-10">
+            <div class="col-12">
                 @foreach (var meeting in Model.Archive)
                 {
-                    <b>@meeting.Date.ToString("dd.MM.yyyy") @Html.DisplayFor(modelItem => meeting.Type)</b>
+                    <strong>@meeting.Date.ToString("dd.MM.yyyy") @Html.DisplayFor(modelItem => meeting.Type)</strong>
                     <span>|</span> <a asp-action="Details" asp-route-id="@meeting.Id">Detaljer</a>
                     @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
                     {

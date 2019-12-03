@@ -170,8 +170,11 @@ i {
 }
 .form-layout label, .labelform label  {
     display: inline-block;
-    font-weight: bold;
+    font-weight: 600;
     margin: 0;
+}
+strong {
+    font-weight: 600;
 }
 .labelform {
     padding: 10px 0;
