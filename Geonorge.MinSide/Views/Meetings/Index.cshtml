@@ -45,6 +45,14 @@
         </div>
         <div class="row">
             <div class="col-12">
+                <form>
+                    @{var Status = new SelectList(CodeList.ToDoStatus, "Key", "Value", ViewBag.Status);}
+                    <select name="status" onchange="this.form.submit();" class="form-control" asp-items="Status"><option value="">Viser alle</option></select>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
                 <form asp-action="EditToDoList">
                     
                       

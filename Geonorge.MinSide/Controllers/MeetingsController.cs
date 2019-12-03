@@ -27,9 +27,10 @@ namespace Geonorge.MinSide.Web.Controllers
         }
 
         // GET: Meetings
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string status = null)
         {
-            return View(await _meetingService.GetAll(HttpContext.Session.GetString("OrganizationNumber")));
+            ViewBag.status = status;
+            return View(await _meetingService.GetAll(HttpContext.Session.GetString("OrganizationNumber"), status));
         }
 
         // GET: Meetings/Details/5

@@ -14,7 +14,7 @@ namespace Geonorge.MinSide.Services
 {
     public interface IMeetingService
     {
-        Task<MeetingViewModel> GetAll(string organizationNumber);
+        Task<MeetingViewModel> GetAll(string organizationNumber, string status = null);
         Task<Meeting> Create(Meeting meeting);
         Task<ToDo> CreateToDo(ToDo todo);
         Task<Meeting> Get(int meetingId);
@@ -76,14 +76,19 @@ namespace Geonorge.MinSide.Services
                           .FirstOrDefaultAsync(d => d.Id == meetingId);
         }
 
-        public async Task<MeetingViewModel> GetAll(string organizationNumber)
+        public async Task<MeetingViewModel> GetAll(string organizationNumber,string status = null)
         {
             MeetingViewModel meetingViewModel = new MeetingViewModel();
-            meetingViewModel.Last =  await _context.Meetings
+            var last  =          await _context.Meetings
                                     .Include(d=> d.Documents)
                                     .Include(d => d.ToDo)
                                     .Where(o => o.OrganizationNumber == organizationNumber)
                                     .OrderByDescending(o => o.Date).FirstOrDefaultAsync();
+
+            if(!string.IsNullOrEmpty(status))
+                last.ToDo = last.ToDo.Where(s => s.Status == status).ToList();
+
+            meetingViewModel.Last = last;
 
             meetingViewModel.Archive = await _context.Meetings
                                     .Where(o => o.OrganizationNumber == organizationNumber)
