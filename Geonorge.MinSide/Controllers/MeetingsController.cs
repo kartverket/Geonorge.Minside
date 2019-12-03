@@ -133,7 +133,7 @@ namespace Geonorge.MinSide.Web.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Details), new { id = meeting.Id });
             }
             return View(meeting);
         }
