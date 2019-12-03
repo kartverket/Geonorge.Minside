@@ -34,14 +34,15 @@ namespace Geonorge.MinSide.Web.Controllers
         }
 
         // GET: Meetings/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id, string status = null)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var meeting = await _meetingService.Get(id.Value);
+            ViewBag.status = status;
+            var meeting = await _meetingService.Get(id.Value, status);
                
             if (meeting == null)
             {

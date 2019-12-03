@@ -17,7 +17,7 @@ namespace Geonorge.MinSide.Services
         Task<MeetingViewModel> GetAll(string organizationNumber, string status = null);
         Task<Meeting> Create(Meeting meeting);
         Task<ToDo> CreateToDo(ToDo todo);
-        Task<Meeting> Get(int meetingId);
+        Task<Meeting> Get(int meetingId, string status = null);
         Task Update(Meeting updatedMeeting, int meetingId, List<IFormFile> files);
         Task Delete(int meetingId);
         Task<List<ToDo>> GetAllTodo(int meetingId);
@@ -68,12 +68,17 @@ namespace Geonorge.MinSide.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Meeting> Get(int meetingId)
+        public async Task<Meeting> Get(int meetingId, string status = null)
         {
-            return await _context.Meetings
+            var meeting = await _context.Meetings
                           .Include(d => d.Documents)
                           .Include(d => d.ToDo)
                           .FirstOrDefaultAsync(d => d.Id == meetingId);
+
+            if (!string.IsNullOrEmpty(status))
+                meeting.ToDo = meeting.ToDo.Where(s => s.Status == status).ToList();
+
+            return meeting;
         }
 
         public async Task<MeetingViewModel> GetAll(string organizationNumber,string status = null)
