@@ -54,67 +54,76 @@
         <div class="row">             
             <div class="col-12">
                 <form asp-action="EditToDoList">
-                    
-                       
-                            @{int i = 0;}
-                            @foreach (var todo in Model.Last.ToDo)
-                            { 
-                                <div class="row form-layout @Helper.GetMeetingStatusClass(todo.Status)">
 
-                                    <div class="col-4">
-                                         <span><strong>Nr @todo.Number</strong></span> - <span>@todo.Description</span>
-            
-                                       <div>
-                                            <label>Frist:</label>
-                                        <span>@todo.Deadline.ToString("dd.MM.yyyy")</span>
-                                         <label>Ansvarlig:</label>
-                                        <span>@todo.ResponsibleOrganization</span>
-                                        
-                                        </div>
-                                    </div>                                     <div class="col-3">
-                                    <label>Status </label>
+
+                    @{int i = 0;}
+                    @foreach (var todo in Model.Last.ToDo)
+                    {
+                        <div class="row form-layout @Helper.GetMeetingStatusClass(todo.Status)">
+
+                            <div class="col-4">
+                                <span><strong>Nr @todo.Number</strong></span> - <span>@todo.Description</span>
+
+                                <div>
+                                    <label>Frist:</label>
+                                    <span>@todo.Deadline.ToString("dd.MM.yyyy")</span>
+                                    <label>Ansvarlig:</label>
+                                    <span>@todo.ResponsibleOrganization</span>
+
+                                </div>
+                            </div>                                     <div class="col-3">
+                                <label>Status </label>
+                                @if (Context.Session.GetString("OrganizationName") != todo.ResponsibleOrganization && !User.IsInRole(GeonorgeRoles.MetadataAdmin))
+                                {
+                                    <input type="hidden" name="ToDo[@i].Status" value="@todo.Status" />
+                                    <span>@todo.Status</span>
+                                }
+                                else
+                                {
+                                    var Status = new SelectList(CodeList.ToDoStatus, "Key", "Value", todo.Status);
+                                    <select name="ToDo[@i].Status" class="form-control" asp-items="Status"></select>
+                                }
+
+                            </div>
+                            <div class="col-5">
+                                <div class="datepicker">
+                                    <label>Utført dato</label>
                                     @if (Context.Session.GetString("OrganizationName") != todo.ResponsibleOrganization && !User.IsInRole(GeonorgeRoles.MetadataAdmin))
                                     {
-                                        <input type="hidden" name="ToDo[@i].Status" value="@todo.Status"  />
-                                        <span>@todo.Status</span>
+                                        <input type="hidden" name="ToDo[@i].Done" value="@todo.Done" />
+                                        <span>@(todo.Done.HasValue ? "Utført den " + todo.Done.Value.ToString("dd.MM.yyyy") : "")</span>
                                     }
                                     else
                                     {
-                                        var Status = new SelectList(CodeList.ToDoStatus, "Key", "Value", todo.Status);
-                                        <select name="ToDo[@i].Status" class="form-control" asp-items="Status"></select>
+                                        <input type="datetime" placeholder="dd.mm.yyyy" class="form-control" name="ToDo[@i].Done" value="@(todo.Done.HasValue ? todo.Done.Value.ToString("dd.MM.yyyy") : "")" />
                                     }
-
-                                    </div>
-                                    <div class="col-5">
-                                        <div class="datepicker">
-                                            <label>Utført dato</label>
-                                            @if (Context.Session.GetString("OrganizationName") != todo.ResponsibleOrganization && !User.IsInRole(GeonorgeRoles.MetadataAdmin))
-                                            {
-                                                <input type="hidden" name="ToDo[@i].Done" value="@todo.Done" />
-                                                <span>@(todo.Done.HasValue ? "Utført den " + todo.Done.Value.ToString("dd.MM.yyyy") : "")</span>
-                                            }
-                                            else
-                                            {
-                                                <input type="datetime" placeholder="dd.mm.yyyy" class="form-control" name="ToDo[@i].Done" value="@(todo.Done.HasValue ? todo.Done.Value.ToString("dd.MM.yyyy") : "")" />
-                                            }
-                                        </div>
-                                    </div>
-                               
-                                    
-                                    <div class="col-12">
-                                         <label>Kommentar</label>
-                                        <textarea type="textarea" rows="2" class="form-control" name="ToDo[@i].Comment">@todo.Comment</textarea>
-                                    </div>                                                                                                                                                
-                                
-                                    <input type="hidden" name="ToDo[@i].Id" value="@todo.Id" />
-                                 </div>
-                             i++;
-                             }           
-                          <div class="col-12">
-                                    <input type="submit" value="Lagre" class="btn btn-default" />
                                 </div>
+                            </div>
+
+
+                            <div class="col-12">
+                                <label>Kommentar</label>
+                                <textarea type="textarea" rows="2" class="form-control" name="ToDo[@i].Comment">@todo.Comment</textarea>
+                            </div>
+
+                            <input type="hidden" name="ToDo[@i].Id" value="@todo.Id" />
+                        </div>
+                        i++;
+                    }
+                    @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
+                    {
+                        <div class="col-12">
+                            <label><strong>Nytt oppfølgingspunkt:</strong></label><br />
+                            <label>Beskrivelse:</label><input type="text" name="ToDo[@i].Description" /><label>Frist:</label>
+                            <input type="datetime" placeholder="dd.mm.yyyy" class="form-control" name="ToDo[@i].Deadline"/>
+                            <input type="hidden" name="ToDo[@i].ResponsibleOrganization" value="@Context.Session.GetString("OrganizationName")" />
+                        </div>
+                    }
+                    <div class="col-12">
+                        <input type="submit" value="Lagre" class="btn btn-default" />
+                    </div>
                     <input type="hidden" name="MeetingId" value="@Model.Last.Id" />
-                 </form>
+                </form>
             </div>
         </div>
         if(Model.Last.Conclusion != null) {

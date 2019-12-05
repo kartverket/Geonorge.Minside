@@ -204,11 +204,20 @@ namespace Geonorge.MinSide.Services
             {
                 var updatedTodo = await GetToDo(todo.Id);
 
+                if(updatedTodo == null)
+                {
+                    todo.MeetingId = meetingId;
+                    todo.Number = await GetNextNumber(meetingId);
+                    _context.Todo.Add(todo);
+                }
+                else { 
                 updatedTodo.Done = todo?.Done;
                 updatedTodo.Comment = todo?.Comment;
                 updatedTodo.Status = todo?.Status;
 
                 _context.Todo.Update(updatedTodo);
+                }
+
                 await SaveChanges();
             }
         }
