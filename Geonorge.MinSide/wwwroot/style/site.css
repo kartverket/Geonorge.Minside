@@ -258,3 +258,6 @@ strong {
 table > tbody > tr > td:last-child {
     white-space: nowrap;
 }
+.btn-group {
+    margin-top: 10px;
+}

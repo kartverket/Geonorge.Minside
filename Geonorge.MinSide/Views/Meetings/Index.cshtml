@@ -110,30 +110,36 @@
                         </div>
                         i++;
                     }
+                    <div class="row">
                     @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
                     {
                         <div class="col-12">
                             <label><strong>Nytt oppfølgingspunkt:</strong></label><br />
                             <label>Beskrivelse:</label><input type="text" name="ToDo[@i].Description" /><label>Frist:</label>
                             <input type="datetime" placeholder="dd.mm.yyyy" class="form-control" name="ToDo[@i].Deadline"/>
-                            <input type="hidden" name="ToDo[@i].ResponsibleOrganization" value="@Context.Session.GetString("OrganizationName")" />
+                            <input type="hidden" name="ToDo[@i].ResponsibleOrganization" value="@Context.Session.GetString("OrganizationName")" />                             
                         </div>
-                    }
-                    <div class="col-12">
-                        <input type="submit" value="Lagre" class="btn btn-default" />
+                    }                
+                    </div>   
+                     <div class="row">
+                        <div class="col-12 btn-group">
+                            <input type="submit" value="Lagre" class="btn btn-default" />
+                        </div>
                     </div>
                     <input type="hidden" name="MeetingId" value="@Model.Last.Id" />
                 </form>
             </div>
         </div>
+        
         if(Model.Last.Conclusion != null) {
         <div class="row">
             <div class="col-2"><strong>Konklusjon:</strong></div>
         </div>
         <div class="row">
             <div class="col-10">@Model.Last.Conclusion</div>
-        </div>
+        </div>        
         }
+       
         <div class="row">
             <div class="col-2"><h4>Arkiv</h4></div>
         </div>
