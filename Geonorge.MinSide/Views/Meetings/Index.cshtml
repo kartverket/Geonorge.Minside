@@ -58,15 +58,9 @@
                        
                             @{int i = 0;}
                             @foreach (var todo in Model.Last.ToDo)
-                            {
-                               
-                                
+                            { 
                                 <div class="row form-layout @Helper.GetMeetingStatusClass(todo.Status)">
-                                   
-                                    
-                                    
-                                    @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
-                                {
+
                                     <div class="col-4">
                                          <span><strong>Nr @todo.Number</strong></span> - <span>@todo.Description</span>
             
@@ -78,19 +72,34 @@
                                         
                                         </div>
                                     </div>                                     <div class="col-3">
-                                         <label>Status </label>
-                                        @{var Status = new SelectList(CodeList.ToDoStatus, "Key", "Value", todo.Status);}
+                                    <label>Status </label>
+                                    @if (Context.Session.GetString("OrganizationName") != todo.ResponsibleOrganization && !User.IsInRole(GeonorgeRoles.MetadataAdmin))
+                                    {
+                                        <input type="hidden" name="ToDo[@i].Status" value="@todo.Status"  />
+                                        <span>@todo.Status</span>
+                                    }
+                                    else
+                                    {
+                                        var Status = new SelectList(CodeList.ToDoStatus, "Key", "Value", todo.Status);
                                         <select name="ToDo[@i].Status" class="form-control" asp-items="Status"></select>
-                                        
+                                    }
+
                                     </div>
                                     <div class="col-5">
                                         <div class="datepicker">
                                             <label>Utført dato</label>
-                                            <input type="datetime" placeholder="dd.mm.yyyy" class="form-control" name="ToDo[@i].Done" value="@(todo.Done.HasValue ? todo.Done.Value.ToString("dd.MM.yyyy") : "")" />
+                                            @if (Context.Session.GetString("OrganizationName") != todo.ResponsibleOrganization && !User.IsInRole(GeonorgeRoles.MetadataAdmin))
+                                            {
+                                                <input type="hidden" name="ToDo[@i].Done" value="@todo.Done" />
+                                                <span>@(todo.Done.HasValue ? "Utført den " + todo.Done.Value.ToString("dd.MM.yyyy") : "")</span>
+                                            }
+                                            else
+                                            {
+                                                <input type="datetime" placeholder="dd.mm.yyyy" class="form-control" name="ToDo[@i].Done" value="@(todo.Done.HasValue ? todo.Done.Value.ToString("dd.MM.yyyy") : "")" />
+                                            }
                                         </div>
                                     </div>
-                            
-                                    
+                               
                                     
                                     <div class="col-12">
                                          <label>Kommentar</label>
@@ -98,39 +107,12 @@
                                     </div>                                                                                                                                                
                                 
                                     <input type="hidden" name="ToDo[@i].Id" value="@todo.Id" />
-                                i++;
-                           
-                                }
-                                else {
-                                <div class="col-12">
-                                    <strong>Nr  <span>@todo.Number</span> </strong> - <span>@todo.Description</span>
-                                    <br /> Status: <strong>@(todo.Done.HasValue ? "Utført den " + todo.Done.Value.ToString("dd.MM.yyyy") : "") @todo.Status</strong>
-                                    <div>
-                                        <label class="not-bold">Frist:</label>
-                                        <span><strong>@todo.Deadline.ToString("dd.MM.yyyy")</strong></span>
-                                        <label class="not-bold">Ansvarlig:</label>
-                                        <span><strong>@todo.ResponsibleOrganization</strong></span>
-                                        
-                                    </div> 
-                                </div>
-                                <div class="col-12">
-                                    
-                                    <div>@todo.Comment</div>
-                                </div>
-                              
-                            }
-                            
                                  </div>
-                                
-                            
-                           
-                        }
-                         @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
-                                {
+                             i++;
+                             }           
                           <div class="col-12">
                                     <input type="submit" value="Lagre" class="btn btn-default" />
                                 </div>
-                                }
                     <input type="hidden" name="MeetingId" value="@Model.Last.Id" />
                  </form>
             </div>
