@@ -20,6 +20,7 @@ namespace Geonorge.MinSide.Services
         Task<Meeting> Get(int meetingId, string status = null);
         Task Update(Meeting updatedMeeting, int meetingId, List<IFormFile> files);
         Task Delete(int meetingId);
+        Task DeleteFile(int id);
         Task<List<ToDo>> GetAllTodo(int meetingId);
         Task<ToDo> GetToDo(int? id);
         void UpdateToDo(ToDo toDo);
@@ -61,6 +62,20 @@ namespace Geonorge.MinSide.Services
 
             _context.Meetings.Remove(meeting);
             await SaveChanges();
+        }
+
+        public async Task DeleteFile(int id)
+        {
+            var document = await _context.Documents.Where(m => m.Id == id)
+                                            .SingleOrDefaultAsync();
+
+            string fileToRemove = _applicationSettings.FilePath + "\\" + document.FileName;
+            if (File.Exists(fileToRemove))
+                File.Delete(fileToRemove);
+
+            _context.Documents.Remove(document);
+            await SaveChanges();
+
         }
 
         private async Task SaveChanges()

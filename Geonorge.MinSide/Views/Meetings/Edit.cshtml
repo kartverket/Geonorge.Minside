@@ -33,7 +33,7 @@
                         Valgte dokumenter:<br />
                         @foreach (var file in Model.Documents)
                         {
-                            <span>@file.Name</span> <span>| Slett</span><br />
+                            <span>@file.Name</span> <span>| <a href="/Meetings/DeleteFile?meetingId=@Model.Id&id=@file.Id">Slett</a></span><br />
                         }
                     </div>
                     <label for="Documents">Legg til flere dokumenter:</label>

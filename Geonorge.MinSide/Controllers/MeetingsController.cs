@@ -156,6 +156,19 @@ namespace Geonorge.MinSide.Web.Controllers
             return View(meeting);
         }
 
+        [Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
+        public async Task<IActionResult> DeleteFile(int meetingId, int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            await _meetingService.DeleteFile(id.Value);
+
+            return RedirectToAction(nameof(Edit), new { id = meetingId });
+        }
+
         //// POST: Meetings/Delete/5
         [Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
         [HttpPost, ActionName("Delete")]
