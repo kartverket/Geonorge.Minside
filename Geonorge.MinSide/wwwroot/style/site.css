@@ -191,27 +191,28 @@ strong {
 .form-layout textarea {
     min-height: auto;
 }
-.form-layout::before {
+.form-layout::before,.resultItemRow::before {
     font-family: 'Font awesome 5 free';
     position: absolute;
     left: 5px;
     font-size: 30px;
 }
-.form-layout.doing::before {
+
+.form-layout.doing::before,.resultItemRow.doing::before  {
     content: '\f017';
     color: orange
 
 }
-.form-layout.waiting::before {
+.form-layout.waiting::before,.resultItemRow.waiting::before {
     content: '\f254';
     color: red
 
 }
-.form-layout.todo::before {
+.form-layout.todo::before,.resultItemRow.todo::before {
     content: '\f044';
 
 }
-.form-layout.done::before {
+.form-layout.done::before,.resultItemRow.done::before {
     content: '\f058';
     color: green
 }
@@ -253,7 +254,8 @@ strong {
     
 }
 .resultItemRow {
-    PADDING: 10PX;
+    PADDING: 10PX 10px 10px 50px;
+    margin-bottom: 5px;
 }
 table > tbody > tr > td:last-child {
     white-space: nowrap;
