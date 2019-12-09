@@ -1,0 +1,103 @@
+﻿@using Geonorge.MinSide.Services.Authorization;
+@using Microsoft.AspNetCore.Http;
+@model DocumentViewModel
+
+@{
+    ViewData["Title"] = "Avtaler";
+}
+
+<div class="container">
+    <h1>Avtaler @Context.Session.GetString("OrganizationName")</h1>
+    @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
+    {
+        <p>
+            <a asp-action="Create" class="btn no-margin-bottom show-loading-animation"><i class="fas fa-plus"></i>Ny avtale</a>
+        </p>
+    }
+     <div class="list-group panel panel-default metadata-list">
+         <div class="list-group-item panel-heading hidden-sm hidden-xs">
+             <div class="row">
+                 <div class="col-6">Tittel</div>
+                 <div class="col-2">Dato</div>
+                 <div class="col-4">Lenker</div>
+             </div>
+         </div>
+         <div class="list-group-item">
+            <div class="row">
+                <div class="col-12"><h5>Forslag til nye avtaler</h5></div>
+            </div>
+            <div class="row list-item">
+                @foreach (var item in Model.Drafts)
+                {
+                    <div class="col-6">
+                        <a asp-action="Download" asp-controller="Documents" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.Name)</a>
+                    </div>
+                    <div class="col-2">
+                        @item.Date.ToString("dd.MM.yyyy")
+                    </div>
+                    <div class="col-4">
+                        @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
+                        {
+                            <div>
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-xs">Rediger</a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-xs">Slett</a>
+                            </div>
+                        }
+                    </div>
+                }
+        </div>
+         </div>
+  <div class="list-group-item">
+    <div class="row">
+            <div class="col-12"><h5>Mine avtaler</h5></div>
+    </div>
+    <div class="row list-item">
+        @foreach (var item in Model.Valid)
+        {
+            <div class="col-6">
+                <a asp-action="Download" asp-controller="Documents" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.Name)</a>
+            </div>
+            <div class="col-2">
+                @item.Date.ToString("dd.MM.yyyy")
+            </div>
+            <div class="col-4">
+                @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
+                {
+                    <div>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-xs">Rediger</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-xs">Slett</a>
+                    </div>
+                }
+            </div>
+        }
+        <div class="col-12"><a href="https://register.geonorge.no/" target="_blank">Generelle vilkår</a></div>
+    </div>
+  </div>
+<div class="list-group-item">   
+    <div class="row">
+        <div class="col-12"><h5>Arkiv:</h5></div>
+    </div>
+        <div class="row list-item">
+            @foreach (var item in Model.Superseded)
+            {
+                <div class="col-6">
+                    <a asp-action="Download" asp-controller="Documents" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.Name)</a>
+                </div>
+                <div class="col-2">
+                    @item.Date.ToString("dd.MM.yyyy")
+                </div>
+                <div class="col-4">
+                    @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
+                    {
+                        <div>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-xs">Rediger</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-xs">Slett</a>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+      </div>       
+    </div>
+</div>
+  

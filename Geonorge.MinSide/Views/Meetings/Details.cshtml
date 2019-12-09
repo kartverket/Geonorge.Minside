@@ -1,0 +1,95 @@
+﻿@model Geonorge.MinSide.Infrastructure.Context.Meeting
+@using Geonorge.MinSide.Utils;
+@{
+    ViewData["Title"] = "Møte detaljer";
+}
+<div class="container">
+    
+
+    <div class="row labelform">
+        <div class="col-12 resultItemRow">
+            <h3>Møtedetaljer</h3>
+        </div>
+        
+        
+        <div class="col-12 resultItemRow">
+            <label>
+                @Html.DisplayNameFor(model => model.OrganizationNumber)
+            </label>
+            <div>
+                @Html.DisplayFor(model => model.OrganizationNumber)
+            </div>
+            <label>
+                @Html.DisplayNameFor(model => model.Date)
+            </label>
+            <div>
+                @Html.DisplayFor(model => model.Date)
+            </div>
+            <label>
+                @Html.DisplayNameFor(model => model.Type)
+            </label>
+            <div>
+                @Html.DisplayFor(model => model.Type)
+            </div>
+            <label>
+                @Html.DisplayNameFor(model => model.Description)
+            </label>
+            <div>
+                @Html.DisplayFor(model => model.Description)
+            </div>
+        
+        </div>
+    </div>
+
+    <div class="row labelform">
+        
+           
+        
+        <form> <h4>Oppfølgingssaker</h4>
+            <div class="vis-status">
+            @{var Status = new SelectList(CodeList.ToDoStatus, "Key", "Value", ViewBag.Status);}
+            <label>Vis kun med status: </label>  <select name="status" onchange="this.form.submit();" class="form-control inline" asp-items="Status"><option value="">Viser alle</option></select>
+            </div>
+        </form>
+    @foreach (var todo in Model.ToDo)
+    {
+
+
+        <div class="resultItemRow col-12 @Helper.GetMeetingStatusClass(todo.Status)">
+            <strong>Nr  <span>@todo.Number</span> </strong> - <span>@todo.Description</span>
+            <br /> Status: <strong>@(todo.Done.HasValue ? "Utført den " + todo.Done.Value.ToString("dd.MM.yyyy") : "") @todo.Status</strong>
+            <div>
+                <label class="not-bold">Frist:</label>
+                <span><strong>@todo.Deadline.ToString("dd.MM.yyyy")</strong></span>
+                <label class="not-bold">Ansvarlig:</label>
+                <span><strong>@todo.ResponsibleOrganization</strong></span>
+                @if (@todo.Comment != null) {
+                <div>
+                     <label class="not-bold">Kommentar:</label>
+                <div>@todo.Comment</div>
+               
+                
+                </div>
+                }
+
+            </div>
+        </div>
+
+
+
+    }</div>
+        
+    <div class="row labelform">
+        @if(Model.Conclusion != null) {
+        <div class="col-12">
+           <label> @Html.DisplayNameFor(model => model.Conclusion) </label> @Html.DisplayFor(model => model.Conclusion) 
+        </div>
+        }
+    </div>
+    <div class="row labelform">
+        <a asp-action="Edit" class="btn no-margin-bottom show-loading-animation" asp-route-id="@Model.Id"><i class="fas fa-edit"></i>Rediger</a>        
+    </div>
+    <div class="row">
+        <a asp-action="Index">Tilbake</a>
+    </div>
+</div>

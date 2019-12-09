@@ -134,3 +134,132 @@ aside ul li,
 .loading-animation:before {
     content: url(/dist/images/gif/loading.gif);
 }
+.nav {
+    padding-bottom: 7px;
+    margin-top: 10px;
+}
+.nav > li > a {
+    padding: 10px 20px;
+    margin-right: 5px;
+}
+.nav > li.active > a {
+    background-color: white;
+}
+.nav > li.active > a {
+    color: black;
+}
+.panel-default>.panel-heading {
+    color: #333;
+    background-color: #f5f5f5;
+    border-color: #ddd;
+}
+.panel-heading {
+    font-weight: 600;
+}
+.table .thead-light th {
+    background-color: #f5f5f5;
+}
+i {
+    margin-right: 5px;
+}
+.container article h3 > a, .container h3 {
+    font-weight: 400;
+}
+.list-group-item :first-child >  div.col-12 {    
+    margin-bottom: 10px;
+}
+.form-layout label, .labelform label  {
+    display: inline-block;
+    font-weight: 600;
+    margin: 0;
+}
+strong {
+    font-weight: 600;
+}
+.labelform {
+    padding: 10px 0;
+}
+.form-layout label.not-bold {
+    font-weight: normal;
+}
+.form-layout {
+    border-bottom: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;    
+    padding-left: 30px;
+}
+.form-layout textarea {
+    min-height: auto;
+}
+.form-layout::before,.resultItemRow::before {
+    font-family: 'Font awesome 5 free';
+    position: absolute;
+    left: 5px;
+    font-size: 30px;
+}
+
+.form-layout.doing::before,.resultItemRow.doing::before  {
+    content: '\f017';
+    color: orange
+
+}
+.form-layout.waiting::before,.resultItemRow.waiting::before {
+    content: '\f254';
+    color: red
+
+}
+.form-layout.todo::before,.resultItemRow.todo::before {
+    content: '\f044';
+
+}
+.form-layout.done::before,.resultItemRow.done::before {
+    content: '\f058';
+    color: green
+}
+.form-layout input[type="submit"] {
+    margin-top: 10px;
+}
+.form-layout {
+    padding-left: 30px;
+}
+.form-layout.done,.resultItemRow.done {
+    background-color: rgba(0,128,0, 0.1);
+}
+.form-layout.waiting,.resultItemRow.waiting {
+    background-color: rgba(128, 0, 0, 0.1);
+}
+.form-layout.doing,.resultItemRow.doing {
+    background-color: rgba(250, 171, 1, 0.1);
+}
+.form-layout.todo,.resultItemRow.todo {
+    background-color: rgba(1, 121, 250, 0.1);
+}
+.form-layout label {
+    white-space: nowrap;
+}
+.form-layout .datepicker input {
+    max-width: 120px;
+}
+.resultItemRow {
+    border-bottom: 1px solid #ccc;
+    padding: 5px 0;
+}
+.form-control.inline {
+    display: inline;
+    width: auto;
+}
+.vis-status {
+    margin: 10px 0;
+    display: block;
+    
+}
+.resultItemRow {
+    PADDING: 10PX 10px 10px 50px;
+    margin-bottom: 5px;
+}
+table > tbody > tr > td:last-child {
+    white-space: nowrap;
+}
+.btn-group {
+    margin-top: 10px;
+}

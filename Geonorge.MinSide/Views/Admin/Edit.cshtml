@@ -1,0 +1,18 @@
+﻿@using Geonorge.MinSide.Services.Authorization;
+@{
+    ViewData["Title"] = "Admin";
+}
+<div class="container">
+    <h2>Admin</h2>
+    <form asp-action="Edit">
+        @{
+            var Organizations = new SelectList(CodeList.Organizations, "Key", "Value");
+        }
+
+        <label>Vis data for organisasjon: </label>
+        <select onchange="this.submit();" name="selectedOrganizationNumber" asp-items="Organizations">
+            <option>Velg</option>
+        </select>
+        <input type="submit" value="Vis" class="btn btn-default" />
+    </form>
+</div>

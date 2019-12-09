@@ -1,7 +1,10 @@
+using System;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using Geonorge.MinSide.Infrastructure.Context;
 using Geonorge.MinSide.Models;
+using Geonorge.MinSide.Services;
 using Geonorge.MinSide.Utils;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -14,6 +17,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor.Compilation;
 using Microsoft.AspNetCore.SpaServices.Webpack;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
@@ -34,6 +38,13 @@ namespace Geonorge.MinSide
 
         public void ConfigureServices(IServiceCollection services)
         {
+
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromHours(8);
+            });
+
+
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -49,6 +60,8 @@ namespace Geonorge.MinSide
                     manager.FeatureProviders.Remove(oldMetadataReferenceFeatureProvider);
                     manager.FeatureProviders.Add(new ReferencesMetadataReferenceFeatureProvider());
                 });
+
+            services.AddHttpContextAccessor();
 
             services
                 .AddAuthentication(options => {
@@ -90,10 +103,15 @@ namespace Geonorge.MinSide
             Configuration.Bind(applicationSettings);
             services.AddSingleton<ApplicationSettings>(applicationSettings);
             services.AddHttpClient();
-            
+
+            services.AddDbContext<OrganizationContext>(item => item.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
             services.AddScoped<GeonorgeOpenIdConnectEvents>();
             services.AddTransient<IGeonorgeAuthorizationService, GeonorgeAuthorizationService>();
             services.AddTransient<IBaatAuthzApi, BaatAuthzApi>();
+
+            services.AddTransient<IDocumentService, DocumentService>();
+            services.AddTransient<IMeetingService, MeetingService>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -143,28 +161,29 @@ namespace Geonorge.MinSide
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-/*
-            // Debug Proxy headers
-            app.Use(async (context, next) =>
-            {
-                // Request method, scheme, and path
-                Log.Debug("Request Method: {METHOD}", context.Request.Method);
-                Log.Debug("Request Scheme: {SCHEME}", context.Request.Scheme);
-                Log.Debug("Request Path: {PATH}", context.Request.Path);
+            app.UseSession();
+            /*
+                        // Debug Proxy headers
+                        app.Use(async (context, next) =>
+                        {
+                            // Request method, scheme, and path
+                            Log.Debug("Request Method: {METHOD}", context.Request.Method);
+                            Log.Debug("Request Scheme: {SCHEME}", context.Request.Scheme);
+                            Log.Debug("Request Path: {PATH}", context.Request.Path);
 
-                // Headers
-                foreach (var header in context.Request.Headers)
-                {
-                    Log.Debug("Header: {KEY}: {VALUE}", header.Key, header.Value);
-                }
+                            // Headers
+                            foreach (var header in context.Request.Headers)
+                            {
+                                Log.Debug("Header: {KEY}: {VALUE}", header.Key, header.Value);
+                            }
 
-                // Connection: RemoteIp
-                Log.Debug("Request RemoteIp: {REMOTE_IP_ADDRESS}",
-                    context.Connection.RemoteIpAddress);
+                            // Connection: RemoteIp
+                            Log.Debug("Request RemoteIp: {REMOTE_IP_ADDRESS}",
+                                context.Connection.RemoteIpAddress);
 
-                await next();
-            });
-*/
+                            await next();
+                        });
+            */
             app.UseAuthentication();
 
             app.UseMvc(routes =>

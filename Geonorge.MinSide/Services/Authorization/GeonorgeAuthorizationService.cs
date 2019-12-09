@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Geonorge.MinSide.Services.Authorization;
 using Serilog;
 
 namespace Geonorge.MinSide.Utils
@@ -12,6 +14,10 @@ namespace Geonorge.MinSide.Utils
     public class GeonorgeAuthorizationService : IGeonorgeAuthorizationService
     {
         private static readonly ILogger Log = Serilog.Log.ForContext(MethodBase.GetCurrentMethod().DeclaringType);
+
+        public const string ClaimIdentifierRole = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
+        public const string ClaimIdentifierUsername = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier";
+        private const string GeonorgeRoleNamePrefix = "nd.";
 
         private readonly IBaatAuthzApi _baatAuthzApi;
 
@@ -50,7 +56,41 @@ namespace Geonorge.MinSide.Utils
                     new Claim("OrganizationContactPhone", response.Organization?.ContactPhone)
                 });
 
+            await AppendRoles(usernameClaim.Value, claims);
+
+            //AppendFakeRolesForDemoUser(usernameClaim.Value, claims); 
+
             return claims;
+        }
+
+        private async Task AppendRoles(string username, List<Claim> claims)
+        {
+            BaatAuthzUserRolesResponse response = await _baatAuthzApi.GetRoles(username);
+
+            if(response.Services != null) { 
+            response.Services
+                .Where(role => role.StartsWith(GeonorgeRoleNamePrefix))
+                .ToList()
+                .ForEach(role => claims.Add(new Claim(ClaimIdentifierRole, role)));
+            }
+        }
+
+        private void AppendFakeRolesForDemoUser(string username, List<Claim> claims)
+        {
+            if (username == "esk_demobruker")
+            {
+                claims.Add(new Claim(ClaimIdentifierRole, GeonorgeRoles.MetadataAdmin));
+                claims.Add(new Claim(ClaimIdentifierRole, GeonorgeRoles.MetadataEditor));
+                claims.Add(new Claim("Name", "Dag Olav Dahle"));
+                claims.Add(new Claim("Email", "dagolav@arkitektum.no"));
+                claims.Add(new Claim("AuthorizedFrom", ""));
+                claims.Add(new Claim("AuthorizedUntil", ""));
+                claims.Add(new Claim("OrganizationName", "Kartverket"));
+                claims.Add(new Claim("OrganizationOrgnr", "971040238"));
+                claims.Add(new Claim("OrganizationContactName", ""));
+                claims.Add(new Claim("OrganizationContactEmail", ""));
+                claims.Add(new Claim("OrganizationContactPhone", ""));
+            }
         }
     }
 }

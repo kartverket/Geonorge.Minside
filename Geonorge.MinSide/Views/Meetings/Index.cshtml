@@ -1,0 +1,161 @@
+﻿@using Geonorge.MinSide.Services.Authorization;
+@using Microsoft.AspNetCore.Http;
+@using Geonorge.MinSide.Utils;
+@model MeetingViewModel
+
+@{
+    ViewData["Title"] = "Møter";
+}
+<div class="container">
+    <h2>Møter  @Context.Session.GetString("OrganizationName")</h2>
+    @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
+    {
+    <p>
+        <a asp-action="Create" class="btn no-margin-bottom show-loading-animation"><i class="fas fa-plus"></i>Nytt møte</a>
+        @if (Model.Last != null) {
+            <span></span> <a asp-action="Edit" class="btn no-margin-bottom show-loading-animation" asp-route-id="@Model.Last.Id"><i class="fas fa-edit"></i>Rediger dette møtet</a>
+        }
+    </p>
+    }
+
+    @if (Model.Last != null)
+    {
+        <div class="row">
+            <div class="col-12"><h4>Pågående møte</h4></div>
+            <div class="col-12">
+                <b>@Model.Last.Date.ToString("dd.MM.yyyy") @Html.DisplayFor(modelItem => Model.Last.Type)</b>
+            </div>
+            <div class="col-12">@Model.Last.Description</div>
+       
+                        
+       
+
+            <div class="col-12">
+                <b>Dokumenter:</b>
+                <ul>
+                    @foreach (var file in Model.Last.Documents)
+                    {
+                        <li><a asp-action="Download" asp-controller="Documents" asp-route-id="@file.Id">@Html.DisplayFor(modelItem => file.Name)</a></li>
+                    }
+                </ul>
+           </div> 
+        </div>    
+        <div class="row">
+            <div class="col-12">
+                <form>
+                    <h5>Oppfølgingspunkter</h5>
+                    <div class="vis-status">
+                    @{var Status = new SelectList(CodeList.ToDoStatus, "Key", "Value", ViewBag.Status);}
+                  <label>Vis kun med status: </label>  <select name="status" onchange="this.form.submit();" class="form-control inline" asp-items="Status"><option value="">Viser alle</option></select>
+                  </div>
+                </form>
+            </div>
+        </div>
+        <div class="row">             
+            <div class="col-12">
+                <form asp-action="EditToDoList">
+
+
+                    @{int i = 0;}
+                    @foreach (var todo in Model.Last.ToDo)
+                    {
+                        <div class="row form-layout @Helper.GetMeetingStatusClass(todo.Status)">
+
+                            <div class="col-4">
+                                <span><strong>Nr @todo.Number</strong></span> - <span>@todo.Description</span>
+
+                                <div>
+                                    <label>Frist:</label>
+                                    <span>@todo.Deadline.ToString("dd.MM.yyyy")</span>
+                                    <label>Ansvarlig:</label>
+                                    <span>@todo.ResponsibleOrganization</span>
+
+                                </div>
+                            </div>                                     <div class="col-3">
+                                <label>Status </label>
+                                @if (Context.Session.GetString("OrganizationName") != todo.ResponsibleOrganization && !User.IsInRole(GeonorgeRoles.MetadataAdmin))
+                                {
+                                    <input type="hidden" name="ToDo[@i].Status" value="@todo.Status" />
+                                    <span>@todo.Status</span>
+                                }
+                                else
+                                {
+                                    var Status = new SelectList(CodeList.ToDoStatus, "Key", "Value", todo.Status);
+                                    <select name="ToDo[@i].Status" class="form-control" asp-items="Status"></select>
+                                }
+
+                            </div>
+                            <div class="col-5">
+                                <div class="datepicker">
+                                    <label>Utført dato</label>
+                                    @if (Context.Session.GetString("OrganizationName") != todo.ResponsibleOrganization && !User.IsInRole(GeonorgeRoles.MetadataAdmin))
+                                    {
+                                        <input type="hidden" name="ToDo[@i].Done" value="@todo.Done" />
+                                        <span>@(todo.Done.HasValue ? "Utført den " + todo.Done.Value.ToString("dd.MM.yyyy") : "")</span>
+                                    }
+                                    else
+                                    {
+                                        <input type="datetime" placeholder="dd.mm.yyyy" class="form-control" name="ToDo[@i].Done" value="@(todo.Done.HasValue ? todo.Done.Value.ToString("dd.MM.yyyy") : "")" />
+                                    }
+                                </div>
+                            </div>
+
+
+                            <div class="col-12">
+                                <label>Kommentar</label>
+                                <textarea type="textarea" rows="2" class="form-control" name="ToDo[@i].Comment">@todo.Comment</textarea>
+                            </div>
+
+                            <input type="hidden" name="ToDo[@i].Id" value="@todo.Id" />
+                        </div>
+                        i++;
+                    }
+                    <div class="row">
+                    @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
+                    {
+                        <div class="col-12">
+                            <label><strong>Nytt oppfølgingspunkt:</strong></label><br />
+                            <label>Beskrivelse:</label><input type="text" name="ToDo[@i].Description" /><label>Frist:</label>
+                            <input type="datetime" placeholder="dd.mm.yyyy" class="form-control" name="ToDo[@i].Deadline"/>
+                            <input type="hidden" name="ToDo[@i].ResponsibleOrganization" value="@Context.Session.GetString("OrganizationName")" />                             
+                        </div>
+                    }                
+                    </div>   
+                     <div class="row">
+                        <div class="col-12 btn-group">
+                            <input type="submit" value="Lagre" class="btn btn-default" />
+                        </div>
+                    </div>
+                    <input type="hidden" name="MeetingId" value="@Model.Last.Id" />
+                </form>
+            </div>
+        </div>
+        
+        if(Model.Last.Conclusion != null) {
+        <div class="row">
+            <div class="col-2"><strong>Konklusjon:</strong></div>
+        </div>
+        <div class="row">
+            <div class="col-10">@Model.Last.Conclusion</div>
+        </div>        
+        }
+       
+        <div class="row">
+            <div class="col-2"><h4>Arkiv</h4></div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                @foreach (var meeting in Model.Archive)
+                {
+                    <strong>@meeting.Date.ToString("dd.MM.yyyy") @Html.DisplayFor(modelItem => meeting.Type)</strong>
+                    <span>|</span> <a asp-action="Details" asp-route-id="@meeting.Id">Detaljer</a>
+                    @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
+                    {
+                        <span>|</span> <a asp-action="Edit" asp-route-id="@meeting.Id">Rediger</a>
+                    }
+                    <br />
+                }
+            </div>
+        </div>
+    }
+</div>

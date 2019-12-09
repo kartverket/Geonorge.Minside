@@ -4,9 +4,12 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Geonorge.MinSide.Infrastructure.Context;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Events;
@@ -32,7 +35,11 @@ namespace Geonorge.MinSide
             {
                 Log.Information("Application is starting up...");
 
-                BuildWebHost(args).Run();
+                var host = BuildWebHost(args);
+
+                MigrateAndSeedDatabase(host);
+
+                host.Run();
 
                 return 0;
             }
@@ -46,6 +53,28 @@ namespace Geonorge.MinSide
                 Log.CloseAndFlush();
             }
         }
+
+        private static void MigrateAndSeedDatabase(IWebHost host)
+        {
+            Log.Information("Running migrations and seeding data");
+            using (var scope = host.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                try
+                {
+                    var context = services.GetRequiredService<OrganizationContext>();
+
+                    context.Database.Migrate();
+
+                }
+                catch (Exception ex)
+                {
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(ex, "An error occurred while seeding the database.");
+                }
+            }
+        }
+
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
