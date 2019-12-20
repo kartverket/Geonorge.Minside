@@ -19,6 +19,7 @@ namespace Geonorge.MinSide.Controllers
         {
             if (!User.Identity.IsAuthenticated)
             {
+                HttpContext.Session.Clear();
                 return View("LogIn");
             }
 
@@ -49,6 +50,7 @@ namespace Geonorge.MinSide.Controllers
 
         public IActionResult LoggedOut()
         {
+            HttpContext.Session.Clear();
             return View();
         }
 
