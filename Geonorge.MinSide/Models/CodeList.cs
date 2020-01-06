@@ -35,7 +35,8 @@ namespace Geonorge.MinSide.Models
             {"Ikke påbegynt", "Ikke påbegynt"},
             {"I prosess", "I prosess"},
             {"Avventer", "Avventer"},
-            {"Utført", "Utført"}
+            {"Utført", "Utført"},
+            {"Utgår", "Utgår"},
         };
 
         

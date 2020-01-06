@@ -6,13 +6,18 @@
 }
 <div class="container">
     <h2>Oppfølgingspunkter</h2>
-
+    @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
+    {
     <p>
         <a href="/ToDo/Create?meetingId=@Context.Request.Query["meetingId"]">Opprett nytt</a>
     </p>
+    }
+    @if(Context.Request.Query["meetingId"].ToString() != "")
+    {
     <p>
         <a href="/Meetings/Edit/@Context.Request.Query["meetingId"]">Tilbake møte</a>
     </p>
+    }
     <table class="table">
         <thead>
             <tr>

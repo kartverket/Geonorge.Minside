@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Geonorge.MinSide.Services.Authorization;
 using Geonorge.MinSide.Services;
 using Geonorge.MinSide.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace Geonorge.MinSide.Web.Controllers
 {
@@ -27,7 +28,8 @@ namespace Geonorge.MinSide.Web.Controllers
         // GET: ToDo
         public async Task<IActionResult> Index(int meetingId)
         {
-            return View(await _meetingService.GetAllTodo(meetingId));
+            var organizationNumber = HttpContext.Session.GetString("OrganizationNumber");
+            return View(await _meetingService.GetAllTodo(organizationNumber, meetingId));
         }
 
         // GET: ToDo/Create
@@ -45,6 +47,7 @@ namespace Geonorge.MinSide.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                toDo.OrganizationNumber = HttpContext.Session.GetString("OrganizationNumber");
                 await _meetingService.CreateToDo(toDo);
                 return RedirectToAction(nameof(Index), new { meetingId = toDo.MeetingId });
             }
@@ -83,6 +86,7 @@ namespace Geonorge.MinSide.Web.Controllers
             {
                 try
                 {
+                    toDo.OrganizationNumber = HttpContext.Session.GetString("OrganizationNumber");
                     _meetingService.UpdateToDo(toDo);
                 }
                 catch (DbUpdateConcurrencyException)

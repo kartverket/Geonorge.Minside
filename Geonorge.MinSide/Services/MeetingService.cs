@@ -21,7 +21,7 @@ namespace Geonorge.MinSide.Services
         Task Update(Meeting updatedMeeting, int meetingId, List<IFormFile> files);
         Task Delete(int meetingId);
         Task DeleteFile(int id);
-        Task<List<ToDo>> GetAllTodo(int meetingId);
+        Task<List<ToDo>> GetAllTodo(string organizationNumber, int? meetingId);
         Task<ToDo> GetToDo(int? id);
         void UpdateToDo(ToDo toDo);
         Task DeleteToDo(int id);
@@ -153,16 +153,16 @@ namespace Geonorge.MinSide.Services
 
         public async Task<ToDo> CreateToDo(ToDo todo)
         {
-            todo.Number = await GetNextNumber(todo.MeetingId);
+            todo.Number = await GetNextNumber(todo.OrganizationNumber);
             todo.Status = CodeList.ToDoStatus.First().Key;
             _context.Todo.Add(todo);
             await SaveChanges();
             return todo;
         }
 
-        private async Task<int> GetNextNumber(int meetingId)
+        private async Task<int> GetNextNumber(string organizationNumber)
         {
-            var query = _context.Todo.Where(m => m.MeetingId == meetingId);
+            var query = _context.Todo.Where(m => m.OrganizationNumber == organizationNumber);
 
             var itemsExist = await query.AnyAsync();
             int maxNumberIndex = 0;
@@ -175,9 +175,12 @@ namespace Geonorge.MinSide.Services
             return maxNumberIndex + 1;
         }
 
-        public async Task<List<ToDo>> GetAllTodo(int meetingId)
+        public async Task<List<ToDo>> GetAllTodo(string organizationNumber, int? meetingId)
         {
-            return await _context.Todo.Where(m => m.MeetingId == meetingId).ToListAsync();
+            if(meetingId.HasValue && meetingId.Value > 0)
+                return await _context.Todo.Where(m => m.MeetingId == meetingId).ToListAsync();
+            else
+                return await _context.Todo.Where(m => m.OrganizationNumber == organizationNumber).ToListAsync();
         }
 
         public async Task<ToDo> GetToDo(int? id)
@@ -207,7 +210,7 @@ namespace Geonorge.MinSide.Services
                 if(updatedTodo == null && !string.IsNullOrEmpty(todo.Description))
                 {
                     todo.MeetingId = meetingId;
-                    todo.Number = await GetNextNumber(meetingId);
+                    todo.Number = await GetNextNumber(updatedTodo.OrganizationNumber);
                     _context.Todo.Add(todo);
                 }
                 else if(updatedTodo != null) { 
