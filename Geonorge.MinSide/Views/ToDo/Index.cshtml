@@ -9,55 +9,65 @@
     <h2>Oppfølgingspunkter</h2>
     @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
     {
-    <p>
-        <a href="/ToDo/Create?meetingId=@Context.Request.Query["meetingId"]">Opprett nytt</a>
-    </p>
+        <p>
+            <a href="/ToDo/Create?meetingId=@Context.Request.Query["meetingId"]">Opprett nytt</a>
+        </p>
     }
-    @if(Context.Request.Query["meetingId"].ToString() != "")
+    @if (Context.Request.Query["meetingId"].ToString() != "")
     {
-    <p>
-        <a href="/Meetings/Edit/@Context.Request.Query["meetingId"]">Tilbake møte</a>
-    </p>
+        <p>
+            <a href="/Meetings/Edit/@Context.Request.Query["meetingId"]">Tilbake møte</a>
+        </p>
     }
-    
-            @foreach (var item in Model)
-            {
+    <form asp-action="Index" method="get">
+        @{var Status = new MultiSelectList(CodeList.ToDoStatus, "Key", "Value", ViewBag.Status); }
+        @foreach (var status in Status)
+        {
+            <span>
+                <input type="checkbox" name="status" value="@status.Value" @(status.Selected ? "checked" : "" ) />
+                <label>@status.Value</label>
+            </span>
+        }
+        <button type="submit" name="action">Filtrer</button>
+    </form>
+    @foreach (var item in Model)
+    {
 
 
-    <div class="resultItemRow col-12 @Helper.GetMeetingStatusClass(item.Status)">
-        <strong>Nr  <span>@item.Number</span> </strong> - <span>@item.Description</span>
-        <br /> Status: <strong>@(item.Done.HasValue ? "Utført den " + item.Done.Value.ToString("dd.MM.yyyy") : "") @item.Status</strong>
-        <div>
-            <label class="not-bold">Frist:</label>
-            <span><strong>@item.Deadline.ToString("dd.MM.yyyy")</strong></span>
-            <label class="not-bold">Ansvarlig:</label>
-            <span><strong>@item.ResponsibleOrganization</strong></span>
-            @if (item.Comment != null)
-            {
-                <div>
-                    <label class="not-bold">Kommentar:</label>
-                    <div>@item.Comment</div>
+        <div class="resultItemRow col-12 @Helper.GetMeetingStatusClass(item.Status)">
+            <strong>Nr  <span>@item.Number</span> </strong> - <span>@item.Description</span>
+            <br /> Status: <strong>@(item.Done.HasValue ? "Utført den " + item.Done.Value.ToString("dd.MM.yyyy") : "") @item.Status</strong>
+            <div>
+                <label class="not-bold">Frist:</label>
+                <span><strong>@item.Deadline.ToString("dd.MM.yyyy")</strong></span>
+                <label class="not-bold">Ansvarlig:</label>
+                <span><strong>@item.ResponsibleOrganization</strong></span>
+                @if (item.Comment != null)
+                {
+                    <div>
+                        <label class="not-bold">Kommentar:</label>
+                        <div>@item.Comment</div>
 
 
-                </div>
-            }
+                    </div>
+                }
 
+            </div>
+            <div>
+                @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
+                {
+
+                    <a href="/ToDo/Edit?id=@item.Id&meetingId=@Context.Request.Query["meetingId"]">Rediger</a>
+                    <a href="/ToDo/Delete?id=@item.Id&meetingId=@Context.Request.Query["meetingId"]"> Slett </a>
+
+
+
+                }
+            </div>
         </div>
-        <div>
-            @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
-            {
-
-                <a href="/ToDo/Edit?id=@item.Id&meetingId=@Context.Request.Query["meetingId"]">Rediger</a>
-                <a href="/ToDo/Delete?id=@item.Id&meetingId=@Context.Request.Query["meetingId"]"> Slett </a>
 
 
 
-            }
-        </div>
-    </div>
-
-  
-  
     }
 
 </div>
