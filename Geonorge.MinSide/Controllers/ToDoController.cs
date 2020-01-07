@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Geonorge.MinSide.Web.Controllers
 {
-    [Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
+    [Authorize]
     public class ToDoController : Controller
     {
         private readonly IMeetingService _meetingService;
@@ -33,6 +33,7 @@ namespace Geonorge.MinSide.Web.Controllers
         }
 
         // GET: ToDo/Create
+        [Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
         public IActionResult Create()
         {
             return View();
@@ -41,6 +42,7 @@ namespace Geonorge.MinSide.Web.Controllers
         // POST: ToDo/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Description,ResponsibleOrganization,Deadline,Status,Comment,Done,MeetingId")] ToDo toDo)
@@ -55,6 +57,7 @@ namespace Geonorge.MinSide.Web.Controllers
         }
 
         // GET: ToDo/Edit/5
+        [Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -73,6 +76,7 @@ namespace Geonorge.MinSide.Web.Controllers
         // POST: ToDo/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Number,Description,ResponsibleOrganization,Deadline,Status,Comment,Done,MeetingId")] ToDo toDo)
@@ -106,6 +110,7 @@ namespace Geonorge.MinSide.Web.Controllers
         }
 
         // GET: ToDo/Delete/5
+        [Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -123,6 +128,7 @@ namespace Geonorge.MinSide.Web.Controllers
         }
 
         // POST: ToDo/Delete/5
+        [Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
