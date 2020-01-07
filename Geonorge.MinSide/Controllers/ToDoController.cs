@@ -26,15 +26,22 @@ namespace Geonorge.MinSide.Web.Controllers
         }
 
         // GET: ToDo
-        public async Task<IActionResult> Index(string[] status, int? meetingId)
+        public async Task<IActionResult> Index(bool? initial, string[] status, int? meetingId)
         {
-            if (status == null || status.Length == 0)
+            var organizationNumber = HttpContext.Session.GetString("OrganizationNumber");
+            List<ToDo> meetingService = null;
+
+            if (initial ?? false) 
                 status = new string[] { "I prosess", "Ikke påbegynt", "Avventer" };
+
+            if (status == null || status.Length == 0)
+                meetingService = new List<ToDo>();
+            else
+                meetingService = await _meetingService.GetAllTodo(organizationNumber, status, meetingId);
 
             ViewBag.Status = status;
 
-            var organizationNumber = HttpContext.Session.GetString("OrganizationNumber");
-            return View(await _meetingService.GetAllTodo(organizationNumber, status, meetingId));
+            return View(meetingService);
         }
 
         // GET: ToDo/Create
