@@ -21,7 +21,7 @@ namespace Geonorge.MinSide.Services
         Task Update(Meeting updatedMeeting, int meetingId, List<IFormFile> files);
         Task Delete(int meetingId);
         Task DeleteFile(int id);
-        Task<List<ToDo>> GetAllTodo(string organizationNumber, int? meetingId);
+        Task<List<ToDo>> GetAllTodo(string organizationNumber, string[] statuses, int? meetingId);
         Task<ToDo> GetToDo(int? id);
         void UpdateToDo(ToDo toDo);
         Task DeleteToDo(int id);
@@ -175,12 +175,16 @@ namespace Geonorge.MinSide.Services
             return maxNumberIndex + 1;
         }
 
-        public async Task<List<ToDo>> GetAllTodo(string organizationNumber, int? meetingId)
+        public async Task<List<ToDo>> GetAllTodo(string organizationNumber, string[] statuses, int? meetingId)
         {
-            if(meetingId.HasValue && meetingId.Value > 0)
+            if(statuses == null || statuses.Length == 0) { 
+                statuses = new string[] { "I prosess", "Ikke påbegynt", "Avventer" };
+            }
+
+            if (meetingId.HasValue)
                 return await _context.Todo.Where(m => m.MeetingId == meetingId).ToListAsync();
             else
-                return await _context.Todo.Where(m => m.OrganizationNumber == organizationNumber).ToListAsync();
+                return await _context.Todo.Where(m => m.OrganizationNumber == organizationNumber && statuses.Contains(m.Status)).OrderBy(o => o.Deadline).ToListAsync();
         }
 
         public async Task<ToDo> GetToDo(int? id)

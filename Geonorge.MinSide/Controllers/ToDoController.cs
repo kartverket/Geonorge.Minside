@@ -26,10 +26,10 @@ namespace Geonorge.MinSide.Web.Controllers
         }
 
         // GET: ToDo
-        public async Task<IActionResult> Index(int meetingId)
+        public async Task<IActionResult> Index(string[] status, int? meetingId)
         {
             var organizationNumber = HttpContext.Session.GetString("OrganizationNumber");
-            return View(await _meetingService.GetAllTodo(organizationNumber, meetingId));
+            return View(await _meetingService.GetAllTodo(organizationNumber, status, meetingId));
         }
 
         // GET: ToDo/Create
