@@ -28,6 +28,11 @@ namespace Geonorge.MinSide.Web.Controllers
         // GET: ToDo
         public async Task<IActionResult> Index(string[] status, int? meetingId)
         {
+            if (status == null || status.Length == 0)
+                status = new string[] { "I prosess", "Ikke påbegynt", "Avventer" };
+
+            ViewBag.Status = status;
+
             var organizationNumber = HttpContext.Session.GetString("OrganizationNumber");
             return View(await _meetingService.GetAllTodo(organizationNumber, status, meetingId));
         }
