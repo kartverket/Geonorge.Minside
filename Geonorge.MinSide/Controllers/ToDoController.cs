@@ -31,8 +31,8 @@ namespace Geonorge.MinSide.Web.Controllers
             var organizationNumber = HttpContext.Session.GetString("OrganizationNumber");
             List<ToDo> meetingService = null;
 
-            if (initial ?? false) 
-                status = new string[] { "I prosess", "Ikke påbegynt", "Avventer" };
+            if (initial ?? false)
+                status = CodeList.DefaultStatus;
 
             if (status == null || status.Length == 0)
                 meetingService = new List<ToDo>();

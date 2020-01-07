@@ -8,6 +8,14 @@ namespace Geonorge.MinSide.Models
 {
     public class CodeList
     {
+        public const string InProgressStatus = "Pågående";
+        public const string NotStartedStatus = "Ikke påbegynt";
+        public const string PendingStatus = "Avventer";
+        public const string DoneStatus = "Utført";
+        public const string ExpiresStatus = "Utgår";
+
+        public static string[] DefaultStatus = new string[] { InProgressStatus, NotStartedStatus, PendingStatus };
+
         public static Dictionary<string, string> DocumentStatus = new Dictionary<string, string>
         {
             {"Forslag", "Forslag"},
@@ -32,11 +40,11 @@ namespace Geonorge.MinSide.Models
 
         public static Dictionary<string, string> ToDoStatus = new Dictionary<string, string>
         {
-            {"Ikke påbegynt", "Ikke påbegynt"},
-            {"I prosess", "I prosess"},
-            {"Avventer", "Avventer"},
-            {"Utført", "Utført"},
-            {"Utgår", "Utgår"},
+            {NotStartedStatus, NotStartedStatus},
+            {InProgressStatus, InProgressStatus},
+            {PendingStatus, PendingStatus},
+            {DoneStatus, DoneStatus},
+            {ExpiresStatus, ExpiresStatus},
         };
 
         

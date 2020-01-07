@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Geonorge.MinSide.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -53,14 +54,16 @@ namespace Geonorge.MinSide.Utils
 
         public static string GetMeetingStatusClass(string status)
         {
-            if (status == "Ikke påbegynt")
+            if (status == CodeList.NotStartedStatus)
                 return "todo";
-            else if (status == "I prosess")
+            else if (status == CodeList.InProgressStatus)
                 return "doing";
-            else if (status == "Avventer")
+            else if (status == CodeList.PendingStatus)
                 return "waiting";
-            else if (status == "Utført")
+            else if (status == CodeList.DoneStatus)
                 return "done";
+            else if (status == CodeList.ExpiresStatus)
+                return "expires";
             else
                 return status;
         }

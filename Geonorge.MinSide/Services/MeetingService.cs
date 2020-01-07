@@ -178,7 +178,7 @@ namespace Geonorge.MinSide.Services
         public async Task<List<ToDo>> GetAllTodo(string organizationNumber, string[] statuses, int? meetingId)
         {
             if(statuses == null || statuses.Length == 0) { 
-                statuses = new string[] { "I prosess", "Ikke påbegynt", "Avventer" };
+                statuses = CodeList.DefaultStatus;
             }
 
             if (meetingId.HasValue)
