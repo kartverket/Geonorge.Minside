@@ -35,6 +35,9 @@ namespace Geonorge.MinSide.Infrastructure.Context
 
             modelBuilder.Entity<ToDo>()
                 .HasIndex(b => b.OrganizationNumber);
+
+            modelBuilder.Entity<ToDo>()
+                .HasIndex(b => b.Status);
         }
 
     }
