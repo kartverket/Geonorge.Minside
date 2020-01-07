@@ -33,7 +33,8 @@
                 </div>
                 <div class="form-group">
                     <label asp-for="Status" class="control-label"></label>
-                    <input asp-for="Status" class="form-control" />
+                    @{var Statuses = new SelectList(CodeList.ToDoStatus, "Key", "Value", Model.Status);}
+                    <select name="Status" class="form-control" asp-items="Statuses"></select>
                     <span asp-validation-for="Status" class="text-danger"></span>
                 </div>
                 <div class="form-group">

@@ -116,7 +116,7 @@ namespace Geonorge.MinSide.Web.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index), new { meetingId = toDo.MeetingId });
+                return RedirectToAction(nameof(Index), new { meetingId = toDo.MeetingId, status = toDo.Status });
             }
             return View(toDo);
         }
@@ -146,7 +146,7 @@ namespace Geonorge.MinSide.Web.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _meetingService.DeleteToDo(id);
-            return RedirectToAction(nameof(Index), new { meetingId = HttpContext.Request.Form["meetingId"] });
+            return RedirectToAction(nameof(Index), new { meetingId = HttpContext.Request.Form["meetingId"], initial = true });
         }
 
         private bool ToDoExists(int id)
