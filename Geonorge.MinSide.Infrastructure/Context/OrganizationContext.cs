@@ -38,6 +38,9 @@ namespace Geonorge.MinSide.Infrastructure.Context
 
             modelBuilder.Entity<ToDo>()
                 .HasIndex(b => b.Status);
+
+            modelBuilder.Entity<ToDo>()
+                .HasIndex(b => b.Deadline);
         }
 
     }
