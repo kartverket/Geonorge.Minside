@@ -63,7 +63,7 @@ namespace Geonorge.MinSide.Web.Controllers
             {
                 toDo.OrganizationNumber = HttpContext.Session.GetString("OrganizationNumber");
                 await _meetingService.CreateToDo(toDo);
-                return RedirectToAction(nameof(Index), new { meetingId = toDo.MeetingId });
+                return RedirectToAction(nameof(Index), new { meetingId = toDo.MeetingId, status= toDo.Status });
             }
             return View(toDo);
         }
