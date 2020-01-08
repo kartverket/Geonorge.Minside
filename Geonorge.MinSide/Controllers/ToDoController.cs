@@ -159,7 +159,7 @@ namespace Geonorge.MinSide.Web.Controllers
         {
             await _meetingService.UpdateToDoList(MeetingId, ToDo);
 
-            return RedirectToAction(nameof(Index), new { meetingId = MeetingId, initial = true });
+            return RedirectToAction(nameof(Index), new {initial = true });
         }
 
         private bool ToDoExists(int id)
