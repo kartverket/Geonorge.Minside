@@ -1,73 +1,98 @@
 ﻿@using Geonorge.MinSide.Services.Authorization;
 @using Geonorge.MinSide.Utils;
+@using Microsoft.AspNetCore.Http;
 @model IEnumerable<Geonorge.MinSide.Infrastructure.Context.ToDo>
 
 @{
     ViewData["Title"] = "Oppfølgingspunkter";
 }
-<div class="container">
-    <h2>Oppfølgingspunkter</h2>
-    @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
-    {
-        <p>
-            <a href="/ToDo/Create?meetingId=@Context.Request.Query["meetingId"]">Opprett nytt</a>
-        </p>
-    }
-    @if (Context.Request.Query["meetingId"].ToString() != "")
-    {
-        <p>
-            <a href="/Meetings/Edit/@Context.Request.Query["meetingId"]">Tilbake møte</a>
-        </p>
-    }
-    <form asp-action="Index" method="get">
-        @{var Status = new MultiSelectList(CodeList.ToDoStatus, "Key", "Value", ViewBag.Status); }
-        @foreach (var status in Status)
+    <div class="container">
+        <h2>Oppfølgingspunkter</h2>
+        @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
         {
-            <span>
-                <input type="checkbox" name="status" value="@status.Value" @(status.Selected ? "checked" : "" ) />
-                <label>@status.Value</label>
-            </span>
+            <p>
+                <a href="/ToDo/Create?meetingId=@Context.Request.Query["meetingId"]">Opprett nytt</a>
+            </p>
         }
-        <button type="submit" name="action">Filtrer</button>
-    </form>
-    @foreach (var item in Model)
-    {
+        @if (Context.Request.Query["meetingId"].ToString() != "")
+        {
+            <p>
+                <a href="/Meetings/Edit/@Context.Request.Query["meetingId"]">Tilbake møte</a>
+            </p>
+        }
+        <form asp-action="Index" method="get">
+            @{var Status = new MultiSelectList(CodeList.ToDoStatus, "Key", "Value", ViewBag.Status); }
+            <span>Status: </span>
+            @foreach (var status in Status)
+            {
+                <span>
+                    <input onchange="this.form.submit()" id="@Helper.GetMeetingStatusClass(status.Value)" type="checkbox" name="status" value="@status.Value" @(status.Selected ? "checked" : "") />
+                    <label for="@Helper.GetMeetingStatusClass(status.Value)">@status.Value</label>
+                </span>
+            }
+        </form>
+        <div class="row">
+            <div class="col-12">
+                <form asp-action="EditToDoList">
+                    @{int i = 0;}
+                    @foreach (var todo in Model)
+                    {
+                        <div class="row form-layout @Helper.GetMeetingStatusClass(todo.Status)">
+
+                            <div class="col-4">
+                                <span><strong>Nr @todo.Number</strong></span> - <span>@todo.Description</span>
+
+                                <div>
+                                    <label>Frist:</label>
+                                    <span>@todo.Deadline.ToString("dd.MM.yyyy")</span>
+                                    <label>Ansvarlig:</label>
+                                    <span>@todo.ResponsibleOrganization</span>
+
+                                </div>
+                            </div>                                     <div class="col-3">
+                                <label>Status </label>
+                                @if (Context.Session.GetString("OrganizationName") != todo.ResponsibleOrganization && !User.IsInRole(GeonorgeRoles.MetadataAdmin))
+                                {
+                                    <input type="hidden" name="ToDo[@i].Status" value="@todo.Status" />
+                                    <span>@todo.Status</span>
+                                }
+                                else
+                                {
+                                    var Status = new SelectList(CodeList.ToDoStatus, "Key", "Value", todo.Status);
+                                    <select name="ToDo[@i].Status" class="form-control" asp-items="Status"></select>
+                                }
+
+                            </div>
+                            <div class="col-5">
+                                <div class="datepicker">
+                                    <label>Utført dato</label>
+                                    @if (Context.Session.GetString("OrganizationName") != todo.ResponsibleOrganization && !User.IsInRole(GeonorgeRoles.MetadataAdmin))
+                                    {
+                                        <input type="hidden" name="ToDo[@i].Done" value="@todo.Done" />
+                                        <span>@(todo.Done.HasValue ? "Utført den " + todo.Done.Value.ToString("dd.MM.yyyy") : "")</span>
+                                    }
+                                    else
+                                    {
+                                        <input type="datetime" placeholder="dd.mm.yyyy" class="form-control" name="ToDo[@i].Done" value="@(todo.Done.HasValue ? todo.Done.Value.ToString("dd.MM.yyyy") : "")" />
+                                    }
+                                </div>
+                            </div>
 
 
-        <div class="resultItemRow col-12 @Helper.GetMeetingStatusClass(item.Status)">
-            <strong>Nr  <span>@item.Number</span> </strong> - <span>@item.Description</span>
-            <br /> Status: <strong>@(item.Done.HasValue ? "Utført den " + item.Done.Value.ToString("dd.MM.yyyy") : "") @item.Status</strong>
-            <div>
-                <label class="not-bold">Frist:</label>
-                <span><strong>@item.Deadline.ToString("dd.MM.yyyy")</strong></span>
-                <label class="not-bold">Ansvarlig:</label>
-                <span><strong>@item.ResponsibleOrganization</strong></span>
-                @if (item.Comment != null)
-                {
-                    <div>
-                        <label class="not-bold">Kommentar:</label>
-                        <div>@item.Comment</div>
-
-
-                    </div>
-                }
-
-            </div>
-            <div>
-                @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
-                {
-
-                    <a href="/ToDo/Edit?id=@item.Id&meetingId=@Context.Request.Query["meetingId"]">Rediger</a>
-                    <a href="/ToDo/Delete?id=@item.Id&meetingId=@Context.Request.Query["meetingId"]"> Slett </a>
-
-
-
-                }
+                            <div class="col-12">
+                                <label>Kommentar</label>
+                                <textarea type="textarea" rows="2" class="form-control" name="ToDo[@i].Comment">@todo.Comment</textarea>
+                            </div>
+                            <div class="btn-group">
+                                <button type="submit" class="btn btn-default"><i class="fas fa-save"></i>Lagre</button>
+                                <a class="btn btn-default" href="/ToDo/Edit?id=@todo.Id&meetingId=@Context.Request.Query["meetingId"]"><i class="fas fa-edit"></i>Rediger</a>
+                                <a class="btn btn-default" href="/ToDo/Delete?id=@todo.Id&meetingId=@Context.Request.Query["meetingId"]"><i class="fas fa-trash"></i> Slett </a>
+                            </div>
+                            <input type="hidden" name="ToDo[@i].Id" value="@todo.Id" />
+                        </div>
+                        i++;
+                    }
+                    </form>
             </div>
         </div>
-
-
-
-    }
-
-</div>
+    </div>

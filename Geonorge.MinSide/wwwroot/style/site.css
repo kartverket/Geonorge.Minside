@@ -263,3 +263,6 @@ table > tbody > tr > td:last-child {
 .btn-group {
     margin-top: 10px;
 }
+.btn-group > .btn {
+    margin: 10px;
+}
