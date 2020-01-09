@@ -23,7 +23,7 @@ namespace Geonorge.MinSide.Services
         Task DeleteFile(int id);
         Task<List<ToDo>> GetAllTodo(string organizationNumber, string[] statuses, int? meetingId);
         Task<ToDo> GetToDo(int? id);
-        void UpdateToDo(ToDo toDo);
+        Task UpdateToDo(ToDo toDo);
         Task DeleteToDo(int id);
         Task UpdateToDoList(int meetingId, List<ToDo> toDo);
     }
@@ -192,7 +192,7 @@ namespace Geonorge.MinSide.Services
             return await _context.Todo.FindAsync(id);
         }
 
-        public async void UpdateToDo(ToDo toDo)
+        public async Task UpdateToDo(ToDo toDo)
         {
             _context.Update(toDo);
             await SaveChanges();

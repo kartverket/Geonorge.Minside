@@ -103,7 +103,7 @@ namespace Geonorge.MinSide.Web.Controllers
                 try
                 {
                     toDo.OrganizationNumber = HttpContext.Session.GetString("OrganizationNumber");
-                    _meetingService.UpdateToDo(toDo);
+                    await _meetingService.UpdateToDo(toDo);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
