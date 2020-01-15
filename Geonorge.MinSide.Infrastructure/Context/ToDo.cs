@@ -22,6 +22,8 @@ namespace Geonorge.MinSide.Infrastructure.Context
         public string Comment { get; set; }
         [Display(Name = "Done", ResourceType = typeof(Resources))]
         public DateTime? Done { get; set; }
-        public int MeetingId { get; set; }
+        [Display(Name = "OrganizationNumber", ResourceType = typeof(Resources))]
+        public string OrganizationNumber { get; set; }
+        public int? MeetingId { get; set; }
     }
 }

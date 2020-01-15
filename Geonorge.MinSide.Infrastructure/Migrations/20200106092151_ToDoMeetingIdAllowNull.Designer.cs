@@ -4,14 +4,16 @@ using Geonorge.MinSide.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Geonorge.MinSide.Infrastructure.Migrations
 {
     [DbContext(typeof(OrganizationContext))]
-    partial class OrganizationContextModelSnapshot : ModelSnapshot
+    [Migration("20200106092151_ToDoMeetingIdAllowNull")]
+    partial class ToDoMeetingIdAllowNull
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -107,13 +109,7 @@ namespace Geonorge.MinSide.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Deadline");
-
                     b.HasIndex("MeetingId");
-
-                    b.HasIndex("OrganizationNumber");
-
-                    b.HasIndex("Status");
 
                     b.ToTable("Todo");
                 });
