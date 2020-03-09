@@ -11,7 +11,7 @@
     "bootstrap": "^4.3.1",
     "font-awesome": "^4.6.3",
     "geonorge-base": "^9.0.4",
-    "geonorge-shared-partials": "0.0.66",
+    "geonorge-shared-partials": "^0.0.67",
     "popper.js": "^1.14.6"
   },
   "devDependencies": {
