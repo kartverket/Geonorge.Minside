@@ -92,7 +92,7 @@
             getItems: function () {
                 var itemsPerRequest = 10;
                 var offsetParameter = this.numberOfVisibleItems ? "&offset=" + this.numberOfVisibleItems : "";
-                var organizationNameParameter = '?owner=' + this.$root.OrganizationName;
+                var organizationNameParameter = '?filterOrganization=' + this.$root.OrganizationName;
                 var environmentParameter = this.$root.Environment;
 
                 var apiURL = this.loadAllApiData
