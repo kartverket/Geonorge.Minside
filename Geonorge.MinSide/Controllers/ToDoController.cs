@@ -26,6 +26,7 @@ namespace Geonorge.MinSide.Web.Controllers
         }
 
         // GET: ToDo
+        [Authorize(Roles = GeonorgeRoles.MetadataAdmin + "," + GeonorgeRoles.MetadataEditor + "," + GeonorgeRoles.ContactPerson)]
         public async Task<IActionResult> Index(bool? initial, string[] status, int? meetingId)
         {
             var organizationNumber = HttpContext.Session.GetString("OrganizationNumber");

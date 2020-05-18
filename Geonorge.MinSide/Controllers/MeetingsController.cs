@@ -27,6 +27,7 @@ namespace Geonorge.MinSide.Web.Controllers
         }
 
         // GET: Meetings
+        [Authorize(Roles = GeonorgeRoles.MetadataAdmin + "," + GeonorgeRoles.MetadataEditor + "," + GeonorgeRoles.ContactPerson)]
         public async Task<IActionResult> Index(string status = null)
         {
             ViewBag.status = status;
@@ -34,6 +35,7 @@ namespace Geonorge.MinSide.Web.Controllers
         }
 
         // GET: Meetings/Details/5
+        [Authorize(Roles = GeonorgeRoles.MetadataAdmin + "," + GeonorgeRoles.MetadataEditor + "," + GeonorgeRoles.ContactPerson)]
         public async Task<IActionResult> Details(int? id, string status = null)
         {
             if (id == null)
@@ -182,7 +184,7 @@ namespace Geonorge.MinSide.Web.Controllers
         // POST: Meetings/EditToDo/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize (Roles = GeonorgeRoles.MetadataAdmin + "," + GeonorgeRoles.MetadataEditor)]
+        [Authorize (Roles = GeonorgeRoles.MetadataAdmin + "," + GeonorgeRoles.MetadataEditor + "," + GeonorgeRoles.ContactPerson)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditToDoList(int MeetingId, List<ToDo> ToDo)
