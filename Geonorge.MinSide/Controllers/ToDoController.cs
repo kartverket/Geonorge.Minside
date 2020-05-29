@@ -153,7 +153,7 @@ namespace Geonorge.MinSide.Web.Controllers
         // POST: Meetings/EditToDo/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Roles = GeonorgeRoles.MetadataAdmin + "," + GeonorgeRoles.MetadataEditor)]
+        [Authorize(Roles = GeonorgeRoles.MetadataAdmin + "," + GeonorgeRoles.MetadataEditor + "," + GeonorgeRoles.ContactPerson)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditToDoList(int MeetingId, List<ToDo> ToDo)
