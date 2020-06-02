@@ -11,5 +11,6 @@ namespace Geonorge.MinSide.Services.Authorization
         public const string MetadataEditor = "nd.metadata_editor";
         public const string DokAdmin = "nd.dok_admin";
         public const string DokEditor = "nd.dok_editor";
+        public const string ContactPerson = "nd.kontaktpunkt";
     }
 }
