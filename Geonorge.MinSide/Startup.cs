@@ -112,6 +112,7 @@ namespace Geonorge.MinSide
 
             services.AddTransient<IDocumentService, DocumentService>();
             services.AddTransient<IMeetingService, MeetingService>();
+            services.AddHostedService<Services.Tasks.TimedHostedService>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
