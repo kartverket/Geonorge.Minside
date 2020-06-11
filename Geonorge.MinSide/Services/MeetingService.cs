@@ -9,6 +9,13 @@ using Geonorge.MinSide.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using MailKit.Net.Smtp;
+using MimeKit;
+using Ical.Net.CalendarComponents;
+using Ical.Net.DataTypes;
+using Ical.Net;
+using Ical.Net.Serialization;
+using System.Text;
 
 namespace Geonorge.MinSide.Services
 {
@@ -157,7 +164,85 @@ namespace Geonorge.MinSide.Services
             todo.Status = CodeList.ToDoStatus.First().Key;
             _context.Todo.Add(todo);
             await SaveChanges();
+            await SendNotification(todo);
             return todo;
+        }
+
+        private Task SendNotification(ToDo todo)
+        {
+            MimeMessage message = new MimeMessage();
+
+            MailboxAddress from = new MailboxAddress("Admin",
+            "dev@arkitektum.no");
+            message.From.Add(from);
+
+            MailboxAddress to = new MailboxAddress("Dag",
+            "dagolav@arkitektum.no");
+            message.To.Add(to);
+
+            message.Subject = "Oppfølgingspunkt: " + todo.Description;
+
+            BodyBuilder bodyBuilder = new BodyBuilder();
+            bodyBuilder.HtmlBody = todo.Comment;
+            bodyBuilder.TextBody = todo.Comment;
+
+
+
+            var attendee = new Ical.Net.DataTypes.Attendee()
+            {
+                CommonName = "Dag",
+                ParticipationStatus = "REQ-PARTICIPANT",
+                Rsvp = true,
+                Value = new Uri($"mailto:dev@arkitektum.no")
+            };
+
+            List<Attendee> attendees = new List<Attendee>();
+            attendees.Add(attendee);
+
+            var e = new CalendarEvent
+            {
+                Summary = todo.Description,
+                IsAllDay = true,
+                Organizer = new Organizer()
+                {
+                    CommonName = "Geonorge MinSide",
+                    Value = new Uri($"mailto:post@kartverket.no")
+                },
+                Attendees = attendees,
+                Start = new CalDateTime(todo.Deadline),
+                Transparency = TransparencyType.Transparent,
+                Location = "Teams",
+                Description = todo.Description,
+                Uid = todo.Id.ToString()
+            };
+
+            var calendar = new Calendar();
+            calendar.Events.Add(e);
+
+            var serializer = new CalendarSerializer();
+            var serializedCalendar = serializer.SerializeToString(calendar);
+
+            var bytesCalendar = Encoding.ASCII.GetBytes(serializedCalendar);
+            MemoryStream ms = new MemoryStream(bytesCalendar);
+            using (ms)
+            {
+                ms.Position = 0;
+
+                var fileName = "oppfølging.ics";
+
+                bodyBuilder.Attachments.Add(fileName, ms); 
+            }
+
+            message.Body = bodyBuilder.ToMessageBody();
+
+            SmtpClient client = new SmtpClient();
+            client.Connect(_applicationSettings.SmtpHost);
+
+            client.Send(message);
+            client.Disconnect(true);
+            client.Dispose();
+
+            return Task.CompletedTask;
         }
 
         private async Task<int> GetNextNumber(string organizationNumber)

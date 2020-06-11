@@ -10,6 +10,7 @@
         public string RedirectUri { get; set; }
         public string PostLogoutRedirectUri { get; set; }
         public string FilePath { get; set; }
+        public string SmtpHost { get; set; }
     }
 
     public class Urls

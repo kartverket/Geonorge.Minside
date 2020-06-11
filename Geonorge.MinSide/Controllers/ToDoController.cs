@@ -11,6 +11,8 @@ using Geonorge.MinSide.Services.Authorization;
 using Geonorge.MinSide.Services;
 using Geonorge.MinSide.Models;
 using Microsoft.AspNetCore.Http;
+using Serilog;
+using System.Reflection;
 
 namespace Geonorge.MinSide.Web.Controllers
 {
@@ -19,6 +21,7 @@ namespace Geonorge.MinSide.Web.Controllers
     {
         private readonly IMeetingService _meetingService;
         ApplicationSettings _applicationSettings;
+        private static readonly ILogger Log = Serilog.Log.ForContext(MethodBase.GetCurrentMethod().DeclaringType);
         public ToDoController(IMeetingService meeetingService, ApplicationSettings applicationSettings)
         {
             _meetingService = meeetingService;
@@ -63,7 +66,10 @@ namespace Geonorge.MinSide.Web.Controllers
             if (ModelState.IsValid)
             {
                 toDo.OrganizationNumber = HttpContext.Session.GetString("OrganizationNumber");
-                await _meetingService.CreateToDo(toDo);
+                try {
+                    await _meetingService.CreateToDo(toDo);
+                }
+                catch (Exception ex) { Log.Error(ex.Message); }
                 return RedirectToAction(nameof(Index), new { meetingId = toDo.MeetingId, status= toDo.Status });
             }
             return View(toDo);
