@@ -199,22 +199,33 @@ namespace Geonorge.MinSide.Services
             List<Attendee> attendees = new List<Attendee>();
             attendees.Add(attendee);
 
+            var dateTime = todo.Deadline;
+            dateTime = dateTime.AddHours(8);
+
             var e = new CalendarEvent
             {
                 Summary = todo.Description,
-                IsAllDay = true,
+                IsAllDay = false,
                 Organizer = new Organizer()
                 {
                     CommonName = "Geonorge MinSide",
                     Value = new Uri($"mailto:post@kartverket.no")
                 },
                 Attendees = attendees,
-                Start = new CalDateTime(todo.Deadline),
+                Start = new CalDateTime(dateTime),
                 Transparency = TransparencyType.Transparent,
                 Location = "Teams",
                 Description = todo.Description,
                 Uid = todo.Id.ToString()
             };
+
+            var alarm = new Alarm()
+            {
+                Summary = "Påminnelse: " + todo.Description,
+                Trigger = new Trigger(TimeSpan.FromDays(-3)),
+                Action = AlarmAction.Display
+            };
+            e.Alarms.Add(alarm);
 
             var calendar = new Calendar();
             calendar.Events.Add(e);
