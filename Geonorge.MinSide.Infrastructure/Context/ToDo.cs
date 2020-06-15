@@ -11,6 +11,8 @@ namespace Geonorge.MinSide.Infrastructure.Context
         public int Id { get; set; }
         [Display(Name = "Number", ResourceType = typeof(Resources))]
         public int Number { get; set; }
+        [Display(Name = "Subject", ResourceType = typeof(Resources))]
+        public string Subject { get; set; }
         [Display(Name = "Description", ResourceType = typeof(Resources))]
         public string Description { get; set; }
         [Display(Name = "ResponsibleOrganization", ResourceType = typeof(Resources))]

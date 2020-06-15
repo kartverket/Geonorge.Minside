@@ -150,4 +150,7 @@
   <data name="ResponsibleOrganization" xml:space="preserve">
     <value>Ansvarlig</value>
   </data>
+  <data name="Subject" xml:space="preserve">
+    <value>Emne</value>
+  </data>
 </root>

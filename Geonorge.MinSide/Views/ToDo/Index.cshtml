@@ -40,8 +40,7 @@
                         <div class="row form-layout @Helper.GetMeetingStatusClass(todo.Status)">
 
                             <div class="col-4">
-                                <span><strong>Nr @todo.Number</strong></span> - <span>@todo.Description</span>
-
+                                <span><strong>Nr @todo.Number</strong></span> - <span>@todo.Subject</span>
                                 <div>
                                     <label>Frist:</label>
                                     <span>@todo.Deadline.ToString("dd.MM.yyyy")</span>
@@ -77,7 +76,10 @@
                                     }
                                 </div>
                             </div>
-
+                            <div class="col-12">
+                                <label>Beskrivelse</label>
+                                <p>@todo.Description</p>
+                            </div>
 
                             <div class="col-12">
                                 <label>Kommentar</label>

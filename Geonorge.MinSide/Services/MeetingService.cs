@@ -221,7 +221,7 @@ namespace Geonorge.MinSide.Services
 
             var alarm = new Alarm()
             {
-                Summary = "Påminnelse: " + todo.Description,
+                Summary = "Påminnelse: " + todo.Subject,
                 Trigger = new Trigger(TimeSpan.FromDays(-3)),
                 Action = AlarmAction.Display
             };
@@ -307,10 +307,10 @@ namespace Geonorge.MinSide.Services
             {
                 var updatedTodo = await GetToDo(todo.Id);
 
-                if(updatedTodo == null && !string.IsNullOrEmpty(todo.Description))
+                if(updatedTodo == null && !string.IsNullOrEmpty(todo.Subject))
                 {
                     todo.MeetingId = meetingId;
-                    todo.Number = await GetNextNumber(updatedTodo.OrganizationNumber);
+                    todo.Number = await GetNextNumber(todo.OrganizationNumber);
                     _context.Todo.Add(todo);
                 }
                 else if(updatedTodo != null) { 
