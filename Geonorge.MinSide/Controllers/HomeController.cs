@@ -10,11 +10,18 @@ using Geonorge.MinSide.Services.Authorization;
 using Geonorge.MinSide.Web.Controllers;
 using System;
 using Microsoft.AspNetCore.Http;
+using Geonorge.MinSide.Infrastructure.Context;
+using System.Linq;
 
 namespace Geonorge.MinSide.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly OrganizationContext _context;
+        public HomeController(OrganizationContext context)
+        {
+            _context = context;
+        }
         public IActionResult Index()
         {
             if (!User.Identity.IsAuthenticated)
@@ -25,7 +32,29 @@ namespace Geonorge.MinSide.Controllers
 
             GetOrganization();
 
+            SetUserSettings();
+
             return View();
+        }
+
+        private void SetUserSettings()
+        {
+            var userName = HttpContext.User.GetUsername();
+            var email = HttpContext.User.GetUserEmail();
+            var organization = HttpContext.User.GetOrganizationName();
+
+            var userSettings = _context.UserSettings.Where(u => u.Username == userName).FirstOrDefault();
+            if (userSettings == null)
+            {
+                _context.UserSettings.Add(new UserSettings { Username = userName, Email = email, Organization = organization });
+                _context.SaveChanges();
+            }
+            else {
+                userSettings.Email = email;
+                userSettings.Organization = organization;
+                _context.UserSettings.Update(userSettings);
+                _context.SaveChanges();
+            }
         }
 
         private void GetOrganization()
