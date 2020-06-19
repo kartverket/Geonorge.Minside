@@ -10,8 +10,8 @@ using Geonorge.MinSide.Services.Authorization;
 using Geonorge.MinSide.Web.Controllers;
 using System;
 using Microsoft.AspNetCore.Http;
-using Geonorge.MinSide.Infrastructure.Context;
 using System.Linq;
+using Geonorge.MinSide.Infrastructure.Context;
 
 namespace Geonorge.MinSide.Controllers
 {
@@ -31,13 +31,36 @@ namespace Geonorge.MinSide.Controllers
             }
 
             GetOrganization();
+            UserSettingsViewModel UserSettings = GetUserSettings();
 
-            SetUserSettings();
-
-            return View();
+            return View(UserSettings);
         }
 
-        private void SetUserSettings()
+        private UserSettingsViewModel GetUserSettings()
+        {
+            var userName = HttpContext.User.GetUsername();
+            var userSettings = _context.UserSettings.Where(u => u.Username == userName).FirstOrDefault();
+
+            if (userSettings == null)
+                return new UserSettingsViewModel { Email = HttpContext.User.GetUserEmail(), TodoReminderTime = 2 };
+
+            UserSettingsViewModel settings = new UserSettingsViewModel();
+            settings.Email = userSettings.Email;
+            settings.TodoNotification = userSettings.TodoNotification.HasValue && userSettings.TodoNotification.Value == true ? true: false;
+            settings.TodoReminder = userSettings.TodoReminder.HasValue && userSettings.TodoReminder.Value == true ? true : false;
+            settings.TodoReminderTime = userSettings.TodoReminderTime.HasValue && userSettings.TodoReminderTime.Value > 0 ? userSettings.TodoReminderTime.Value : 0;
+
+            return settings;
+
+        }
+
+        public IActionResult Settings(bool? TodoNotification, bool? TodoReminder, int? TodoReminderTime)
+        {
+            SetUserSettings(TodoNotification, TodoReminder, TodoReminderTime);
+            return Redirect("Index");
+        }
+
+        private void SetUserSettings(bool? TodoNotification, bool? TodoReminder, int? TodoReminderTime)
         {
             var userName = HttpContext.User.GetUsername();
             var email = HttpContext.User.GetUserEmail();
@@ -46,12 +69,15 @@ namespace Geonorge.MinSide.Controllers
             var userSettings = _context.UserSettings.Where(u => u.Username == userName).FirstOrDefault();
             if (userSettings == null)
             {
-                _context.UserSettings.Add(new UserSettings { Username = userName, Email = email, Organization = organization });
+                _context.UserSettings.Add(new UserSettings { Username = userName, Email = email, Organization = organization, TodoNotification = TodoNotification, TodoReminder = TodoReminder, TodoReminderTime= TodoReminderTime });
                 _context.SaveChanges();
             }
             else {
                 userSettings.Email = email;
                 userSettings.Organization = organization;
+                userSettings.TodoNotification = TodoNotification;
+                userSettings.TodoReminder = TodoReminder;
+                userSettings.TodoReminderTime = TodoReminderTime;
                 _context.UserSettings.Update(userSettings);
                 _context.SaveChanges();
             }

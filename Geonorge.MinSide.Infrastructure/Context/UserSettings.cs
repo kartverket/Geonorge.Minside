@@ -11,5 +11,8 @@ namespace Geonorge.MinSide.Infrastructure.Context
         public string Username { get; set; }
         public string Email { get; set; }
         public string Organization { get; set; }
+        public bool? TodoNotification { get; set; }
+        public bool? TodoReminder { get; set; }
+        public int? TodoReminderTime { get; set; }
     }
 }
