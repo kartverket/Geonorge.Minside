@@ -11,6 +11,7 @@
         public string PostLogoutRedirectUri { get; set; }
         public string FilePath { get; set; }
         public string SmtpHost { get; set; }
+        public string WebmasterEmail { get; set; }      
     }
 
     public class Urls
