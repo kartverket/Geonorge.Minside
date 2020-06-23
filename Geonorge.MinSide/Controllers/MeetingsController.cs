@@ -189,7 +189,10 @@ namespace Geonorge.MinSide.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditToDoList(int MeetingId, List<ToDo> ToDo)
         {
-              await _meetingService.UpdateToDoList(MeetingId, ToDo);
+            Notification notification = new Notification
+            { Send = true, EmailCurrentUser = HttpContext.User.GetUserEmail() };
+
+            await _meetingService.UpdateToDoList(MeetingId, ToDo, notification);
 
              return RedirectToAction(nameof(Index), new { meetingId = MeetingId });
         }

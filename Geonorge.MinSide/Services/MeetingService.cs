@@ -11,11 +11,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using MailKit.Net.Smtp;
 using MimeKit;
-using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net;
 using Ical.Net.Serialization;
 using System.Text;
+using Microsoft.Extensions.Logging;
 
 namespace Geonorge.MinSide.Services
 {
@@ -23,22 +23,23 @@ namespace Geonorge.MinSide.Services
     {
         Task<MeetingViewModel> GetAll(string organizationNumber, string status = null);
         Task<Meeting> Create(Meeting meeting);
-        Task<ToDo> CreateToDo(ToDo todo);
+        Task<ToDo> CreateToDo(ToDo todo, Notification notification);
         Task<Meeting> Get(int meetingId, string status = null);
         Task Update(Meeting updatedMeeting, int meetingId, List<IFormFile> files);
         Task Delete(int meetingId);
         Task DeleteFile(int id);
         Task<List<ToDo>> GetAllTodo(string organizationNumber, string[] statuses, int? meetingId);
         Task<ToDo> GetToDo(int? id);
-        Task UpdateToDo(ToDo toDo);
-        Task DeleteToDo(int id);
-        Task UpdateToDoList(int meetingId, List<ToDo> toDo);
+        Task UpdateToDo(ToDo toDo, Notification notification);
+        Task DeleteToDo(int id, Notification notification);
+        Task UpdateToDoList(int meetingId, List<ToDo> toDo, Notification notification);
     }
 
     public class MeetingService : IMeetingService
     {
         private readonly OrganizationContext _context;
         ApplicationSettings _applicationSettings;
+        private readonly ILogger _logger;
 
         public MeetingService(OrganizationContext context, ApplicationSettings applicationSettings)
         {
@@ -158,102 +159,177 @@ namespace Geonorge.MinSide.Services
             }
         }
 
-        public async Task<ToDo> CreateToDo(ToDo todo)
+        public async Task<ToDo> CreateToDo(ToDo todo, Notification notification)
         {
             todo.Number = await GetNextNumber(todo.OrganizationNumber);
             todo.Status = CodeList.ToDoStatus.First().Key;
             _context.Todo.Add(todo);
             await SaveChanges();
-            await SendNotification(todo);
+            await SendNotificationAdded(todo, notification);
             return todo;
         }
 
-        private Task SendNotification(ToDo todo)
+        private Task SendNotificationAdded(ToDo todo, Notification notification)
         {
-            MimeMessage message = new MimeMessage();
-
-            MailboxAddress from = new MailboxAddress("Admin",
-            "dev@arkitektum.no");
-            message.From.Add(from);
-
-            MailboxAddress to = new MailboxAddress("Dag",
-            "dagolav@arkitektum.no");
-            message.To.Add(to);
-
-            message.Subject = "Oppfølgingspunkt: " + todo.Description;
-
-            BodyBuilder bodyBuilder = new BodyBuilder();
-            bodyBuilder.HtmlBody = todo.Comment;
-            bodyBuilder.TextBody = todo.Comment;
-
-
-
-            var attendee = new Ical.Net.DataTypes.Attendee()
+            if (notification.Send)
             {
-                CommonName = "Dag",
-                ParticipationStatus = "REQ-PARTICIPANT",
-                Rsvp = true,
-                Value = new Uri($"mailto:dev@arkitektum.no")
-            };
+                var emails = GetEmailsToNotify(todo, notification);
 
-            List<Attendee> attendees = new List<Attendee>();
-            attendees.Add(attendee);
-
-            var dateTime = todo.Deadline;
-            dateTime = dateTime.AddHours(8);
-
-            var e = new CalendarEvent
-            {
-                Summary = todo.Description,
-                IsAllDay = false,
-                Organizer = new Organizer()
+                foreach (var email in emails)
                 {
-                    CommonName = "Geonorge MinSide",
-                    Value = new Uri($"mailto:post@kartverket.no")
-                },
-                Attendees = attendees,
-                Start = new CalDateTime(dateTime),
-                Transparency = TransparencyType.Transparent,
-                Location = "Teams",
-                Description = todo.Description,
-                Uid = todo.Id.ToString()
-            };
+                    try
+                    { 
+                        MimeMessage message = new MimeMessage();
+                        MailboxAddress from = MailboxAddress.Parse(_applicationSettings.WebmasterEmail);
+                        message.From.Add(from);
 
-            var alarm = new Alarm()
-            {
-                Summary = "Påminnelse: " + todo.Subject,
-                Trigger = new Trigger(TimeSpan.FromDays(-3)),
-                Action = AlarmAction.Display
-            };
-            e.Alarms.Add(alarm);
+                        MailboxAddress to = MailboxAddress.Parse(email);
+                        message.To.Add(to);
 
-            var calendar = new Calendar();
-            calendar.Events.Add(e);
+                        message.Subject = "Nytt oppfølgingspunkt Geonorge min side: "+ todo.Number + " " + todo.Subject;
 
-            var serializer = new CalendarSerializer();
-            var serializedCalendar = serializer.SerializeToString(calendar);
+                        BodyBuilder bodyBuilder = new BodyBuilder();
+                        bodyBuilder.HtmlBody = todo.Description + "<br>Frist: " + todo.Deadline.ToShortDateString(); 
+                        bodyBuilder.TextBody = todo.Description + Environment.NewLine + "Frist: " + todo.Deadline.ToShortDateString();
 
-            var bytesCalendar = Encoding.ASCII.GetBytes(serializedCalendar);
-            MemoryStream ms = new MemoryStream(bytesCalendar);
-            using (ms)
-            {
-                ms.Position = 0;
+                        message.Body = bodyBuilder.ToMessageBody();
 
-                var fileName = "oppfølging.ics";
+                        SmtpClient client = new SmtpClient();
+                        client.Connect(_applicationSettings.SmtpHost);
 
-                bodyBuilder.Attachments.Add(fileName, ms); 
+                        client.Send(message);
+                        client.Disconnect(true);
+                        client.Dispose();
+                    }
+
+                    catch(Exception ex)
+                    {
+                        _logger.LogError(ex, ex.Message);
+                    }
+                }
             }
 
-            message.Body = bodyBuilder.ToMessageBody();
+            return Task.CompletedTask;
+        }
 
-            SmtpClient client = new SmtpClient();
-            client.Connect(_applicationSettings.SmtpHost);
+        private Task SendNotificationDeleted(Notification notification, string subject, string body, List<string> emails)
+        {
+            if (notification.Send)
+            {
+                foreach (var email in emails)
+                {
+                    try
+                    {
+                        MimeMessage message = new MimeMessage();
+                        MailboxAddress from = MailboxAddress.Parse(_applicationSettings.WebmasterEmail);
+                        message.From.Add(from);
 
-            client.Send(message);
-            client.Disconnect(true);
-            client.Dispose();
+                        MailboxAddress to = MailboxAddress.Parse(email);
+                        message.To.Add(to);
+
+                        message.Subject = subject;
+
+                        BodyBuilder bodyBuilder = new BodyBuilder();
+                        bodyBuilder.HtmlBody = body;
+                        bodyBuilder.TextBody = body;
+
+                        message.Body = bodyBuilder.ToMessageBody();
+
+                        SmtpClient client = new SmtpClient();
+                        client.Connect(_applicationSettings.SmtpHost);
+
+                        client.Send(message);
+                        client.Disconnect(true);
+                        client.Dispose();
+                    }
+
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, ex.Message);
+                    }
+                }
+            }
 
             return Task.CompletedTask;
+        }
+
+        private Task SendNotificationUpdated(ToDo todo, ToDo todoOld, Notification notification)
+        {
+            if (notification.Send)
+            {
+                var emails = GetEmailsToNotify(todo, notification);
+
+                foreach (var email in emails)
+                {
+                    try
+                    {
+                        MimeMessage message = new MimeMessage();
+                        MailboxAddress from = MailboxAddress.Parse(_applicationSettings.WebmasterEmail);
+                        message.From.Add(from);
+
+                        MailboxAddress to = MailboxAddress.Parse(email);
+                        message.To.Add(to);
+
+                        message.Subject = "Endret oppfølgingspunkt Geonorge min side: " + todo.Number + " " + todo.Subject;
+
+                        StringBuilder changes = new StringBuilder();
+
+                        if (todo.Number != todoOld.Number)
+                            changes.Append("Nummer: " + todo.Number + "<br>");
+
+                        if (todo.Subject != todoOld.Subject)
+                            changes.Append("Emne: " + todo.Subject + "<br>");
+
+                        if (todo.Description != todoOld.Description)
+                            changes.Append("Beskrivelse: " + todo.Description + "<br>");
+
+                        if (todo.ResponsibleOrganization != todoOld.ResponsibleOrganization)
+                            changes.Append("Ansvarlig: " + todo.ResponsibleOrganization + "<br>");
+
+                        if (todo.Deadline != todoOld.Deadline)
+                            changes.Append("Frist: " + todo.Deadline.ToShortDateString() + "<br>");
+
+                        if (todo.Status != todoOld.Status)
+                            changes.Append("Status: " + todo.Status + "<br>");
+
+                        if (todo.Comment != todoOld.Comment)
+                            changes.Append("Kommentar: " + todo.Comment + "<br>");
+
+                        if (todo.Done.HasValue && todo.Done != todoOld.Done)
+                            changes.Append("Utført: " + todo.Done.Value.ToShortDateString() + "<br>");
+
+                        if (changes.Length > 0)
+                        {
+                            changes.Insert(0,"Oppfølgingspunkt endret:<br>");
+                            BodyBuilder bodyBuilder = new BodyBuilder();
+                            bodyBuilder.HtmlBody = changes.ToString();
+
+                            message.Body = bodyBuilder.ToMessageBody();
+
+                            SmtpClient client = new SmtpClient();
+                            client.Connect(_applicationSettings.SmtpHost);
+
+                            client.Send(message);
+                            client.Disconnect(true);
+                            client.Dispose();
+                        }
+                    }
+
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, ex.Message);
+                    }
+                }
+            }
+
+            return Task.CompletedTask;
+        }
+
+        private List<string> GetEmailsToNotify(ToDo todo, Notification notification)
+        {
+            var emails = _context.UserSettings.Where(s => s.TodoNotification == true && s.Organization == todo.ResponsibleOrganization && s.Email != notification.EmailCurrentUser).Select(u => u.Email).Distinct().ToList();
+
+            return emails;
         }
 
         private async Task<int> GetNextNumber(string organizationNumber)
@@ -288,20 +364,28 @@ namespace Geonorge.MinSide.Services
             return await _context.Todo.FindAsync(id);
         }
 
-        public async Task UpdateToDo(ToDo toDo)
+        public async Task UpdateToDo(ToDo toDo, Notification notification)
         {
+            ToDo oldTodo = _context.Todo.AsNoTracking().Where(i => i.Id == toDo.Id).FirstOrDefault();
             _context.Update(toDo);
             await SaveChanges();
+            await SendNotificationUpdated(toDo, oldTodo, notification);
         }
 
-        public async Task DeleteToDo(int id)
+        public async Task DeleteToDo(int id, Notification notification)
         {
-            var toDo = await _context.Todo.FindAsync(id);
+
+            ToDo toDo = await _context.Todo.FindAsync(id);
+            var emails = GetEmailsToNotify(toDo, notification);
+            var subject = "Oppfølgingspunkt Geonorge min side er slettet: " + toDo.Number + " " + toDo.Subject;
+            var body = toDo.Number + " " + toDo.Subject + " er slettet";
             _context.Todo.Remove(toDo);
             await SaveChanges();
+            await SendNotificationDeleted(notification, subject, body, emails);
+
         }
 
-        public async Task UpdateToDoList(int meetingId, List<ToDo> toDoes)
+        public async Task UpdateToDoList(int meetingId, List<ToDo> toDoes, Notification notification)
         {
             foreach (var todo in toDoes)
             {
@@ -313,16 +397,79 @@ namespace Geonorge.MinSide.Services
                     todo.Number = await GetNextNumber(todo.OrganizationNumber);
                     _context.Todo.Add(todo);
                 }
-                else if(updatedTodo != null) { 
+                else if(updatedTodo != null) {
+
+                DateTime? doneOld = updatedTodo.Done;
+                string commentOld = updatedTodo.Comment;
+                string statusOld = updatedTodo.Status;
+
                 updatedTodo.Done = todo?.Done;
                 updatedTodo.Comment = todo?.Comment;
                 updatedTodo.Status = todo?.Status;
 
                 _context.Todo.Update(updatedTodo);
+                await SendNotificationUpdatedToDoList(updatedTodo,notification, doneOld, commentOld, statusOld);
                 }
 
                 await SaveChanges();
             }
+        }
+
+        private Task SendNotificationUpdatedToDoList(ToDo todo, Notification notification, DateTime? doneOld, string commentOld, string statusOld)
+        {
+            if (notification.Send)
+            {
+                var emails = GetEmailsToNotify(todo, notification);
+
+                foreach (var email in emails)
+                {
+                    try
+                    {
+                        MimeMessage message = new MimeMessage();
+                        MailboxAddress from = MailboxAddress.Parse(_applicationSettings.WebmasterEmail);
+                        message.From.Add(from);
+
+                        MailboxAddress to = MailboxAddress.Parse(email);
+                        message.To.Add(to);
+
+                        message.Subject = "Endret oppfølgingspunkt Geonorge min side: " + todo.Number + " " + todo.Subject;
+
+                        StringBuilder changes = new StringBuilder();
+
+                        if (todo.Comment != commentOld)
+                            changes.Append("Kommentar: " + todo.Comment + "<br>");
+
+                        if (todo.Done.HasValue && !doneOld.HasValue)
+                            changes.Append("Utført: " + todo.Done.Value.ToShortDateString() + "<br>");
+
+                        if (todo.Status != statusOld)
+                            changes.Append("Status: " + todo.Status + "<br>");
+
+                        if(changes.Length > 0)
+                        {
+                            changes.Insert(0,"Oppfølgingspunkt endret:<br>");
+                            BodyBuilder bodyBuilder = new BodyBuilder();
+                            bodyBuilder.HtmlBody = changes.ToString();
+
+                            message.Body = bodyBuilder.ToMessageBody();
+
+                            SmtpClient client = new SmtpClient();
+                            client.Connect(_applicationSettings.SmtpHost);
+
+                            client.Send(message);
+                            client.Disconnect(true);
+                            client.Dispose();
+                        }
+                    }
+
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, ex.Message);
+                    }
+                }
+            }
+
+            return Task.CompletedTask;
         }
     }
 }

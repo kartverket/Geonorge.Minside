@@ -64,6 +64,7 @@
         <form asp-action="Delete">
             <input type="hidden" asp-for="Id" />
             <input type="hidden" value="@Context.Request.Query["meetingId"]" name="meetingId" />
+            <input type="checkbox" name="sendNotification" value="true" checked /> Send beskjed på epost
             <input type="submit" value="Slett" class="btn btn-default" /> |
             <a href="Index?meetingId=@Context.Request.Query["meetingId"]">Tilbake</a>
         </form>
