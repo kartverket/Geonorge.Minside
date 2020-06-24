@@ -190,7 +190,7 @@ namespace Geonorge.MinSide.Web.Controllers
         public async Task<IActionResult> EditToDoList(int MeetingId, List<ToDo> ToDo)
         {
             Notification notification = new Notification
-            { Send = true, EmailCurrentUser = HttpContext.User.GetUserEmail() };
+            { Send = true, EmailCurrentUser = HttpContext.User.GetUserEmail(), UserNameCurrentUser = HttpContext.User.GetUsername() };
 
             await _meetingService.UpdateToDoList(MeetingId, ToDo, notification);
 

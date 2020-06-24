@@ -16,6 +16,7 @@ using Ical.Net;
 using Ical.Net.Serialization;
 using System.Text;
 using Microsoft.Extensions.Logging;
+using Kartverket.Geonorge.Utilities.LogEntry;
 
 namespace Geonorge.MinSide.Services
 {
@@ -39,12 +40,14 @@ namespace Geonorge.MinSide.Services
     {
         private readonly OrganizationContext _context;
         ApplicationSettings _applicationSettings;
+        ILogEntryService _logEntryService;
         private readonly ILogger _logger;
 
-        public MeetingService(OrganizationContext context, ApplicationSettings applicationSettings)
+        public MeetingService(OrganizationContext context, ApplicationSettings applicationSettings, ILogEntryService logEntryService)
         {
             _context = context;
             _applicationSettings = applicationSettings;
+            _logEntryService = logEntryService;
         }
 
         public async Task<Meeting> Create(Meeting meeting)
@@ -166,6 +169,7 @@ namespace Geonorge.MinSide.Services
             _context.Todo.Add(todo);
             await SaveChanges();
             await SendNotificationAdded(todo, notification);
+            await Task.Run(() => _logEntryService.AddLogEntry(new LogEntry { ElementId = todo.Id.ToString(), Operation = Operation.Added, User = notification.UserNameCurrentUser, Description = "Nytt oppfølgingspunkt: " + todo.Number + " " + todo.Subject }));
             return todo;
         }
 
@@ -255,6 +259,38 @@ namespace Geonorge.MinSide.Services
 
         private Task SendNotificationUpdated(ToDo todo, ToDo todoOld, Notification notification)
         {
+            StringBuilder changes = new StringBuilder();
+
+
+            if (todo.Number != todoOld.Number)
+                changes.Append("Nummer: " + todo.Number + "<br>");
+
+            if (todo.Subject != todoOld.Subject)
+                changes.Append("Emne: " + todo.Subject + "<br>");
+
+            if (todo.Description != todoOld.Description)
+                changes.Append("Beskrivelse: " + todo.Description + "<br>");
+
+            if (todo.ResponsibleOrganization != todoOld.ResponsibleOrganization)
+                changes.Append("Ansvarlig: " + todo.ResponsibleOrganization + "<br>");
+
+            if (todo.Deadline != todoOld.Deadline)
+                changes.Append("Frist: " + todo.Deadline.ToShortDateString() + "<br>");
+
+            if (todo.Status != todoOld.Status)
+                changes.Append("Status: " + todo.Status + "<br>");
+
+            if (todo.Comment != todoOld.Comment)
+                changes.Append("Kommentar: " + todo.Comment + "<br>");
+
+            if (todo.Done.HasValue && todo.Done != todoOld.Done)
+                changes.Append("Utført: " + todo.Done.Value.ToShortDateString() + "<br>");
+
+            if (changes.Length > 0)
+            {
+                changes.Insert(0, "Oppfølgingspunkt " + todo.Number + " " + todo.Subject + " endret:<br>");
+            }
+
             if (notification.Send)
             {
                 var emails = GetEmailsToNotify(todo, notification);
@@ -272,47 +308,17 @@ namespace Geonorge.MinSide.Services
 
                         message.Subject = "Endret oppfølgingspunkt Geonorge min side: " + todo.Number + " " + todo.Subject;
 
-                        StringBuilder changes = new StringBuilder();
+                        BodyBuilder bodyBuilder = new BodyBuilder();
+                        bodyBuilder.HtmlBody = changes.ToString();
 
-                        if (todo.Number != todoOld.Number)
-                            changes.Append("Nummer: " + todo.Number + "<br>");
+                        message.Body = bodyBuilder.ToMessageBody();
 
-                        if (todo.Subject != todoOld.Subject)
-                            changes.Append("Emne: " + todo.Subject + "<br>");
+                        SmtpClient client = new SmtpClient();
+                        client.Connect(_applicationSettings.SmtpHost);
 
-                        if (todo.Description != todoOld.Description)
-                            changes.Append("Beskrivelse: " + todo.Description + "<br>");
-
-                        if (todo.ResponsibleOrganization != todoOld.ResponsibleOrganization)
-                            changes.Append("Ansvarlig: " + todo.ResponsibleOrganization + "<br>");
-
-                        if (todo.Deadline != todoOld.Deadline)
-                            changes.Append("Frist: " + todo.Deadline.ToShortDateString() + "<br>");
-
-                        if (todo.Status != todoOld.Status)
-                            changes.Append("Status: " + todo.Status + "<br>");
-
-                        if (todo.Comment != todoOld.Comment)
-                            changes.Append("Kommentar: " + todo.Comment + "<br>");
-
-                        if (todo.Done.HasValue && todo.Done != todoOld.Done)
-                            changes.Append("Utført: " + todo.Done.Value.ToShortDateString() + "<br>");
-
-                        if (changes.Length > 0)
-                        {
-                            changes.Insert(0,"Oppfølgingspunkt endret:<br>");
-                            BodyBuilder bodyBuilder = new BodyBuilder();
-                            bodyBuilder.HtmlBody = changes.ToString();
-
-                            message.Body = bodyBuilder.ToMessageBody();
-
-                            SmtpClient client = new SmtpClient();
-                            client.Connect(_applicationSettings.SmtpHost);
-
-                            client.Send(message);
-                            client.Disconnect(true);
-                            client.Dispose();
-                        }
+                        client.Send(message);
+                        client.Disconnect(true);
+                        client.Dispose();
                     }
 
                     catch (Exception ex)
@@ -321,6 +327,9 @@ namespace Geonorge.MinSide.Services
                     }
                 }
             }
+
+            if (changes.Length > 0)
+                Task.Run(() => _logEntryService.AddLogEntry(new LogEntry { ElementId = todo.Id.ToString(), Operation = Operation.Modified, User = notification.UserNameCurrentUser, Description = changes.ToString() }));
 
             return Task.CompletedTask;
         }
@@ -382,7 +391,7 @@ namespace Geonorge.MinSide.Services
             _context.Todo.Remove(toDo);
             await SaveChanges();
             await SendNotificationDeleted(notification, subject, body, emails);
-
+            await Task.Run(() => _logEntryService.AddLogEntry(new LogEntry { ElementId = id.ToString(), Operation = Operation.Deleted, User = notification.UserNameCurrentUser, Description = subject }));
         }
 
         public async Task UpdateToDoList(int meetingId, List<ToDo> toDoes, Notification notification)
@@ -417,6 +426,22 @@ namespace Geonorge.MinSide.Services
 
         private Task SendNotificationUpdatedToDoList(ToDo todo, Notification notification, DateTime? doneOld, string commentOld, string statusOld)
         {
+            StringBuilder changes = new StringBuilder();
+
+            if (todo.Comment != commentOld)
+                changes.Append("Kommentar: " + todo.Comment + "<br>");
+
+            if (todo.Done.HasValue && !doneOld.HasValue)
+                changes.Append("Utført: " + todo.Done.Value.ToShortDateString() + "<br>");
+
+            if (todo.Status != statusOld)
+                changes.Append("Status: " + todo.Status + "<br>");
+
+            if (changes.Length > 0)
+            {
+                changes.Insert(0, "Oppfølgingspunkt " + todo.Number + " " + todo.Subject + " endret:<br>");
+            }
+
             if (notification.Send)
             {
                 var emails = GetEmailsToNotify(todo, notification);
@@ -434,32 +459,18 @@ namespace Geonorge.MinSide.Services
 
                         message.Subject = "Endret oppfølgingspunkt Geonorge min side: " + todo.Number + " " + todo.Subject;
 
-                        StringBuilder changes = new StringBuilder();
 
-                        if (todo.Comment != commentOld)
-                            changes.Append("Kommentar: " + todo.Comment + "<br>");
+                        BodyBuilder bodyBuilder = new BodyBuilder();
+                        bodyBuilder.HtmlBody = changes.ToString();
 
-                        if (todo.Done.HasValue && !doneOld.HasValue)
-                            changes.Append("Utført: " + todo.Done.Value.ToShortDateString() + "<br>");
+                        message.Body = bodyBuilder.ToMessageBody();
 
-                        if (todo.Status != statusOld)
-                            changes.Append("Status: " + todo.Status + "<br>");
+                        SmtpClient client = new SmtpClient();
+                        client.Connect(_applicationSettings.SmtpHost);
 
-                        if(changes.Length > 0)
-                        {
-                            changes.Insert(0,"Oppfølgingspunkt endret:<br>");
-                            BodyBuilder bodyBuilder = new BodyBuilder();
-                            bodyBuilder.HtmlBody = changes.ToString();
-
-                            message.Body = bodyBuilder.ToMessageBody();
-
-                            SmtpClient client = new SmtpClient();
-                            client.Connect(_applicationSettings.SmtpHost);
-
-                            client.Send(message);
-                            client.Disconnect(true);
-                            client.Dispose();
-                        }
+                        client.Send(message);
+                        client.Disconnect(true);
+                        client.Dispose();
                     }
 
                     catch (Exception ex)
@@ -468,6 +479,9 @@ namespace Geonorge.MinSide.Services
                     }
                 }
             }
+
+            if (changes.Length > 0)
+                Task.Run(() => _logEntryService.AddLogEntry(new LogEntry { ElementId = todo.Id.ToString(), Operation = Operation.Modified, User = notification.UserNameCurrentUser, Description = changes.ToString() }));
 
             return Task.CompletedTask;
         }

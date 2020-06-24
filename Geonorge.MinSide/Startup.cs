@@ -1,11 +1,13 @@
 using System;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Reflection;
 using Geonorge.MinSide.Infrastructure.Context;
 using Geonorge.MinSide.Models;
 using Geonorge.MinSide.Services;
 using Geonorge.MinSide.Utils;
+using Kartverket.Geonorge.Utilities.LogEntry;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -113,6 +115,7 @@ namespace Geonorge.MinSide
             services.AddTransient<IDocumentService, DocumentService>();
             services.AddTransient<IMeetingService, MeetingService>();
             services.AddHostedService<Services.Tasks.TimedHostedService>();
+            services.AddSingleton<ILogEntryService>(new LogEntryService(applicationSettings.LogApi, applicationSettings.LogApiKey, new Kartverket.Geonorge.Utilities.Organization.HttpClientFactory()));
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

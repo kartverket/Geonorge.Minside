@@ -67,8 +67,7 @@ namespace Geonorge.MinSide.Web.Controllers
             {
                 toDo.OrganizationNumber = HttpContext.Session.GetString("OrganizationNumber");
 
-                Notification notification = new Notification
-                { Send = sendNotification, EmailCurrentUser = HttpContext.User.GetUserEmail() };
+                Notification notification = GetNotificationInfo(sendNotification);
 
                 try {
                     await _meetingService.CreateToDo(toDo, notification);
@@ -114,8 +113,7 @@ namespace Geonorge.MinSide.Web.Controllers
                 try
                 {
                     toDo.OrganizationNumber = HttpContext.Session.GetString("OrganizationNumber");
-                    Notification notification = new Notification
-                    { Send = sendNotification, EmailCurrentUser = HttpContext.User.GetUserEmail() };
+                    Notification notification = GetNotificationInfo(sendNotification);
                     await _meetingService.UpdateToDo(toDo, notification);
                 }
                 catch (DbUpdateConcurrencyException)
@@ -158,8 +156,7 @@ namespace Geonorge.MinSide.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id, bool sendNotification)
         {
-            Notification notification = new Notification
-            { Send = sendNotification, EmailCurrentUser = HttpContext.User.GetUserEmail() };
+            Notification notification = GetNotificationInfo(sendNotification);
 
             await _meetingService.DeleteToDo(id, notification);
             return RedirectToAction(nameof(Index), new { meetingId = HttpContext.Request.Form["meetingId"], initial = true });
@@ -173,8 +170,7 @@ namespace Geonorge.MinSide.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditToDoList(int MeetingId, List<ToDo> ToDo)
         {
-            Notification notification = new Notification
-            { Send = true, EmailCurrentUser = HttpContext.User.GetUserEmail() };
+            Notification notification = GetNotificationInfo(true);
 
             await _meetingService.UpdateToDoList(MeetingId, ToDo, notification);
 
@@ -184,6 +180,12 @@ namespace Geonorge.MinSide.Web.Controllers
         private bool ToDoExists(int id)
         {
             return _meetingService.GetToDo(id) != null;
+        }
+
+        private Notification GetNotificationInfo(bool sendNotification)
+        {
+            return new Notification
+            { Send = sendNotification, EmailCurrentUser = HttpContext.User.GetUserEmail(), UserNameCurrentUser = HttpContext.User.GetUsername() };
         }
     }
 }

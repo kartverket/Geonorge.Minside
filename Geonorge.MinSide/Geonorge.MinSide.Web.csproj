@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <PackageReference Include="Ical.Net" Version="4.1.11" />
+    <PackageReference Include="Kartverket.Geonorge.Utilities" Version="1.0.46" />
     <PackageReference Include="MailKit" Version="2.7.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.11" />

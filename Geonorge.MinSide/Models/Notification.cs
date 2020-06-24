@@ -9,5 +9,6 @@ namespace Geonorge.MinSide.Models
     {
         public bool Send { get; set; }
         public string EmailCurrentUser { get; set; }
+        public string UserNameCurrentUser { get; set; }
     }
 }
