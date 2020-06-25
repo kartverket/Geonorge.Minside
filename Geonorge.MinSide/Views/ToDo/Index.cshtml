@@ -97,11 +97,20 @@
                                     hiddenBodyMarkdown@(i).value = editor@(i).getMarkdown();
                                 }
 
+                                var content@(i) = [
+                                @{ 
+                                    var commentLines = todo.Comment.Split(Environment.NewLine);
+                                    foreach(var comment in commentLines)
+                                    {
+                                        @:'@comment',
+                                    }
+                                }
+                                ].join('\n');
                                 const editor@(i) = new toastui.Editor({
                                     el: document.querySelector('#editor@(i)'),
                                     height: '150px',
                                     events: { "change": onEditorUpdate@(i) },
-                                    initialValue: '@Html.Raw(todo.Comment)',
+                                    initialValue: content@(i),
                                     initialEditType: 'wysiwyg'
                                 });
                             </script>
