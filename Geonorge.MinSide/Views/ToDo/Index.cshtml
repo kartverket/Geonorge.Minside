@@ -99,8 +99,11 @@
 
                                 var content@(i) = [
                                 @{ 
-                                    var commentLines = todo.Comment.Split(Environment.NewLine);
-                                    foreach(var comment in commentLines)
+                                    string[] commentLines = new string[] { };
+                                    if (todo.Comment!= null) {
+                                        commentLines = todo.Comment.Split(Environment.NewLine);
+                                    }
+                                    foreach (var comment in commentLines)
                                     {
                                         @:'@comment',
                                     }
