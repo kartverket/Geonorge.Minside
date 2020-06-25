@@ -17,6 +17,7 @@ using Ical.Net.Serialization;
 using System.Text;
 using Microsoft.Extensions.Logging;
 using Kartverket.Geonorge.Utilities.LogEntry;
+using Markdig;
 
 namespace Geonorge.MinSide.Services
 {
@@ -281,7 +282,7 @@ namespace Geonorge.MinSide.Services
                 changes.Append("Status: " + todo.Status + "<br>");
 
             if (todo.Comment != todoOld.Comment)
-                changes.Append("Kommentar: " + todo.Comment + "<br>");
+                changes.Append("Kommentar: " + Markdown.ToHtml(todo.Comment) + "<br>");
 
             if (todo.Done.HasValue && todo.Done != todoOld.Done)
                 changes.Append("Utført: " + todo.Done.Value.ToShortDateString() + "<br>");
@@ -429,7 +430,7 @@ namespace Geonorge.MinSide.Services
             StringBuilder changes = new StringBuilder();
 
             if (todo.Comment != commentOld)
-                changes.Append("Kommentar: " + todo.Comment + "<br>");
+                changes.Append("Kommentar: " + Markdown.ToHtml(todo.Comment) + "<br>");
 
             if (todo.Done.HasValue && !doneOld.HasValue)
                 changes.Append("Utført: " + todo.Done.Value.ToShortDateString() + "<br>");
