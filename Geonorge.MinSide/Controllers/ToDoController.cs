@@ -168,9 +168,9 @@ namespace Geonorge.MinSide.Web.Controllers
         [Authorize(Roles = GeonorgeRoles.MetadataAdmin + "," + GeonorgeRoles.MetadataEditor + "," + GeonorgeRoles.ContactPerson)]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditToDoList(int MeetingId, List<ToDo> ToDo)
+        public async Task<IActionResult> EditToDoList(int MeetingId, List<ToDo> ToDo, bool sendNotification)
         {
-            Notification notification = GetNotificationInfo(true);
+            Notification notification = GetNotificationInfo(sendNotification);
 
             await _meetingService.UpdateToDoList(MeetingId, ToDo, notification);
 

@@ -98,7 +98,7 @@
                                 }
 
                                 var content@(i) = [
-                                @{ 
+                                @{
                                     string[] commentLines = new string[] { };
                                     if (todo.Comment!= null) {
                                         commentLines = todo.Comment.Split(Environment.NewLine);
@@ -119,7 +119,7 @@
                             </script>
                         </div>
                         <div class="btn-group">
-                            <button type="submit" class="btn btn-default"><i class="fas fa-save"></i>Lagre</button>
+                            <button type="submit" class="btn btn-default" onclick="confirmNotify();"><i class="fas fa-save"></i>Lagre</button>
                             @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
                             {
                                 <a class="btn btn-default" href="/ToDo/Edit?id=@todo.Id&meetingId=@Context.Request.Query["meetingId"]"><i class="fas fa-edit"></i>Rediger</a>
@@ -130,7 +130,18 @@
                     </div>
                     i++;
                 }
+                    <input type="hidden" name="sendNotification" id="sendNotification" value="true" />
             </form>
+            <script>
+                function confirmNotify()
+                {
+                    if (confirm("Send beskjed til andre på epost om endringen")) {
+                        document.getElementById("sendNotification").value = true;
+                    } else {
+                        document.getElementById("sendNotification").value = false;
+                    }
+                }
+            </script>
         </div>
     </div>
 </div>
