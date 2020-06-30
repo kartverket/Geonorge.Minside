@@ -443,7 +443,7 @@ namespace Geonorge.MinSide.Services
                 changes.Insert(0, "Oppfølgingspunkt " + todo.Number + " " + todo.Subject + " endret:<br>");
             }
 
-            if (notification.Send)
+            if (changes.Length > 0 && notification.Send)
             {
                 var emails = GetEmailsToNotify(todo, notification);
 
