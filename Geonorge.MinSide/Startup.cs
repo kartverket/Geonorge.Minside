@@ -119,7 +119,8 @@ namespace Geonorge.MinSide
             services.AddTransient<IDocumentService, DocumentService>();
             services.AddTransient<IMeetingService, MeetingService>();
             services.AddHostedService<Services.Tasks.TimedHostedService>();
-            services.AddSingleton<ILogEntryService>(new LogEntryService(applicationSettings.LogApi, applicationSettings.LogApiKey, new Kartverket.Geonorge.Utilities.Organization.HttpClientFactory()));       
+            services.AddSingleton<ILogEntryService>(new LogEntryService(applicationSettings.LogApi, applicationSettings.LogApiKey, new Kartverket.Geonorge.Utilities.Organization.HttpClientFactory()));
+            ConfigureProxy(applicationSettings);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -205,5 +206,19 @@ namespace Geonorge.MinSide
                     defaults: new { controller = "Home", action = "Index" });
             });
         }
+
+        private static void ConfigureProxy(ApplicationSettings settings)
+        {
+            if (!string.IsNullOrWhiteSpace(settings.ProxyAddress))
+            {
+                WebProxy proxy = new WebProxy(settings.ProxyAddress);
+
+                proxy.Credentials = CredentialCache.DefaultCredentials;
+
+                WebRequest.DefaultWebProxy = proxy;
+                HttpClient.DefaultProxy = proxy;
+            }
+        }
+
     }
 }
