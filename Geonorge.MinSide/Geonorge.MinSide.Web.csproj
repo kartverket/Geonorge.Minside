@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
     <RootNamespace>Geonorge.MinSide</RootNamespace>
     <AssemblyName>Geonorge.MinSide.Web</AssemblyName>
     <UserSecretsId>0eb72c5b-1bfc-4504-b75c-580b7a62f611</UserSecretsId>
