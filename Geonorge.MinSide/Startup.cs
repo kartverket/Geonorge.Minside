@@ -209,9 +209,9 @@ namespace Geonorge.MinSide
 
         private static void ConfigureProxy(ApplicationSettings settings)
         {
-            if (!string.IsNullOrWhiteSpace(settings.ProxyAddress))
+            if (!string.IsNullOrWhiteSpace(settings.UrlProxy))
             {
-                WebProxy proxy = new WebProxy(settings.ProxyAddress);
+                WebProxy proxy = new WebProxy(settings.UrlProxy);
 
                 proxy.Credentials = CredentialCache.DefaultCredentials;
 
