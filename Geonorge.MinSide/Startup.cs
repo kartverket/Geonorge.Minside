@@ -18,10 +18,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor.Compilation;
+using Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation;
 using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Serilog;
 
@@ -40,7 +42,6 @@ namespace Geonorge.MinSide
 
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromHours(8);
@@ -55,16 +56,17 @@ namespace Geonorge.MinSide
             });
 
             services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
-                .ConfigureApplicationPartManager(manager =>
-                {
-                    var oldMetadataReferenceFeatureProvider = manager.FeatureProviders.First(f => f is MetadataReferenceFeatureProvider);
-                    manager.FeatureProviders.Remove(oldMetadataReferenceFeatureProvider);
-                    manager.FeatureProviders.Add(new ReferencesMetadataReferenceFeatureProvider());
-                });
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
+                 .AddMvcOptions(x => { x.EnableEndpointRouting = false; })
+            //.ConfigureApplicationPartManager(manager =>
+            //{
+            //    var oldMetadataReferenceFeatureProvider = manager.FeatureProviders.First(f => f is MetadataReferenceFeatureProvider);
+            //    manager.FeatureProviders.Remove(oldMetadataReferenceFeatureProvider);
+            //    manager.FeatureProviders.Add(new ReferencesMetadataReferenceFeatureProvider());
+            //})
+            ;
 
             services.AddHttpContextAccessor();
-
             services
                 .AddAuthentication(options => {
                     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -106,6 +108,8 @@ namespace Geonorge.MinSide
             services.AddSingleton<ApplicationSettings>(applicationSettings);
             services.AddHttpClient();
 
+            services.AddRazorPages().AddRazorRuntimeCompilation();
+
             services.AddDbContext<OrganizationContext>(item => item.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddScoped<GeonorgeOpenIdConnectEvents>();
@@ -115,7 +119,7 @@ namespace Geonorge.MinSide
             services.AddTransient<IDocumentService, DocumentService>();
             services.AddTransient<IMeetingService, MeetingService>();
             services.AddHostedService<Services.Tasks.TimedHostedService>();
-            services.AddSingleton<ILogEntryService>(new LogEntryService(applicationSettings.LogApi, applicationSettings.LogApiKey, new Kartverket.Geonorge.Utilities.Organization.HttpClientFactory()));
+            services.AddSingleton<ILogEntryService>(new LogEntryService(applicationSettings.LogApi, applicationSettings.LogApiKey, new Kartverket.Geonorge.Utilities.Organization.HttpClientFactory()));       
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -189,6 +193,7 @@ namespace Geonorge.MinSide
                         });
             */
             app.UseAuthentication();
+
 
             app.UseMvc(routes =>
             {
