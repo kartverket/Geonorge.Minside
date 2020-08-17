@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Geonorge.MinSide.Models;
 using Geonorge.MinSide.Services.Authorization;
+using Kartverket.Geonorge.Utilities.LogEntry;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,11 +14,17 @@ namespace Geonorge.MinSide.Web.Controllers
     [Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
     public class AdminController : Controller
     {
+        ILogEntryService _logEntryService;
+        public AdminController(ILogEntryService logEntryService)
+        {
+            _logEntryService = logEntryService;
+        }
         // GET: Admin
         public ActionResult Edit()
         {
+            var logEntries = _logEntryService.GetEntries(100, "", true).Result;
             CodeList.UpdateOrganizations();
-            return View();
+            return View(logEntries);
         }
 
         // POST: Admin/Edit/5

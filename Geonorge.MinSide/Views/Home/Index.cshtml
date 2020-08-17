@@ -1,4 +1,6 @@
 @inject ApplicationSettings AppSettings
+@using Geonorge.MinSide.Services.Authorization;
+@model UserSettingsViewModel
 @{ ViewData["Title"] = "Min side";
     ViewData["Environment"] = !string.IsNullOrEmpty(AppSettings.EnvironmentName) ? AppSettings.EnvironmentName.ToLower() + "." : "";
 }
@@ -19,6 +21,20 @@
 
     <div class="container">
         <div class="section" is="organization-data"></div>
+        @if (User.IsInRole(GeonorgeRoles.MetadataAdmin) || User.IsInRole(GeonorgeRoles.MetadataEditor) || User.IsInRole(GeonorgeRoles.ContactPerson))
+        {
+            <div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <form asp-action="Settings">
+                            <input type="checkbox" asp-for="TodoNotification" /> Ønsker epost til @Model.Email om endringer oppfølgingspunkter,
+                            <input type="checkbox" asp-for="TodoReminder" /> ønsker påminnelse <input asp-for="TodoReminderTime" type="number" /> dager før frist <input type="submit" value="Lagre" />
+                        </form>
+                    </div>
+                </div>
+                <p></p>
+            </div>
+        }
         <div class="section data-search-filter-container">
             <input v-model="searchInput" v-bind:placeholder="getSearchInputPlaceholder()" class="data-search-filter" />
             <img src="/dist/images/search_icon-01.svg" alt="search">

@@ -11,6 +11,7 @@ namespace Geonorge.MinSide.Infrastructure.Context
         public DbSet<Document> Documents { get; set; }
         public DbSet<Meeting> Meetings { get; set; }
         public virtual DbSet<ToDo> Todo { get; set; }
+        public DbSet<UserSettings> UserSettings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -11,6 +11,8 @@ using Geonorge.MinSide.Services.Authorization;
 using Geonorge.MinSide.Services;
 using Geonorge.MinSide.Models;
 using Microsoft.AspNetCore.Http;
+using Serilog;
+using System.Reflection;
 
 namespace Geonorge.MinSide.Web.Controllers
 {
@@ -19,6 +21,7 @@ namespace Geonorge.MinSide.Web.Controllers
     {
         private readonly IMeetingService _meetingService;
         ApplicationSettings _applicationSettings;
+        private static readonly ILogger Log = Serilog.Log.ForContext(MethodBase.GetCurrentMethod().DeclaringType);
         public ToDoController(IMeetingService meeetingService, ApplicationSettings applicationSettings)
         {
             _meetingService = meeetingService;
@@ -58,12 +61,18 @@ namespace Geonorge.MinSide.Web.Controllers
         [Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Description,ResponsibleOrganization,Deadline,Status,Comment,Done,MeetingId")] ToDo toDo)
+        public async Task<IActionResult> Create([Bind("Id,Description,ResponsibleOrganization,Deadline,Status,Comment,Done,MeetingId,Subject")] ToDo toDo, bool sendNotification)
         {
             if (ModelState.IsValid)
             {
                 toDo.OrganizationNumber = HttpContext.Session.GetString("OrganizationNumber");
-                await _meetingService.CreateToDo(toDo);
+
+                Notification notification = GetNotificationInfo(sendNotification);
+
+                try {
+                    await _meetingService.CreateToDo(toDo, notification);
+                }
+                catch (Exception ex) { Log.Error(ex.Message); }
                 return RedirectToAction(nameof(Index), new { meetingId = toDo.MeetingId, status= toDo.Status });
             }
             return View(toDo);
@@ -92,7 +101,7 @@ namespace Geonorge.MinSide.Web.Controllers
         [Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Number,Description,ResponsibleOrganization,Deadline,Status,Comment,Done,MeetingId")] ToDo toDo)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Number,Description,ResponsibleOrganization,Deadline,Status,Comment,Done,MeetingId,Subject")] ToDo toDo, bool sendNotification)
         {
             if (id != toDo.Id)
             {
@@ -104,7 +113,8 @@ namespace Geonorge.MinSide.Web.Controllers
                 try
                 {
                     toDo.OrganizationNumber = HttpContext.Session.GetString("OrganizationNumber");
-                    await _meetingService.UpdateToDo(toDo);
+                    Notification notification = GetNotificationInfo(sendNotification);
+                    await _meetingService.UpdateToDo(toDo, notification);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -144,9 +154,11 @@ namespace Geonorge.MinSide.Web.Controllers
         [Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id, bool sendNotification)
         {
-            await _meetingService.DeleteToDo(id);
+            Notification notification = GetNotificationInfo(sendNotification);
+
+            await _meetingService.DeleteToDo(id, notification);
             return RedirectToAction(nameof(Index), new { meetingId = HttpContext.Request.Form["meetingId"], initial = true });
         }
 
@@ -156,9 +168,11 @@ namespace Geonorge.MinSide.Web.Controllers
         [Authorize(Roles = GeonorgeRoles.MetadataAdmin + "," + GeonorgeRoles.MetadataEditor + "," + GeonorgeRoles.ContactPerson)]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditToDoList(int MeetingId, List<ToDo> ToDo)
+        public async Task<IActionResult> EditToDoList(int MeetingId, List<ToDo> ToDo, bool sendNotification)
         {
-            await _meetingService.UpdateToDoList(MeetingId, ToDo);
+            Notification notification = GetNotificationInfo(sendNotification);
+
+            await _meetingService.UpdateToDoList(MeetingId, ToDo, notification);
 
             return RedirectToAction(nameof(Index), new {initial = true });
         }
@@ -166,6 +180,12 @@ namespace Geonorge.MinSide.Web.Controllers
         private bool ToDoExists(int id)
         {
             return _meetingService.GetToDo(id) != null;
+        }
+
+        private Notification GetNotificationInfo(bool sendNotification)
+        {
+            return new Notification
+            { Send = sendNotification, EmailCurrentUser = HttpContext.User.GetUserEmail(), UserNameCurrentUser = HttpContext.User.GetUsername() };
         }
     }
 }

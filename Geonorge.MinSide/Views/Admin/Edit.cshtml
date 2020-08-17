@@ -1,4 +1,6 @@
 ﻿@using Geonorge.MinSide.Services.Authorization;
+@using Kartverket.Geonorge.Utilities.LogEntry;
+@model List<LogEntry>
 @{
     ViewData["Title"] = "Admin";
 }
@@ -15,4 +17,16 @@
         </select>
         <input type="submit" value="Vis" class="btn btn-default" />
     </form>
+    <b>Logg:</b>
+    <table border="1" width="100%">
+        <tr><th>Date</th><th>User</th><th>Description</th></tr>
+        @foreach (var log in Model)
+        {
+        <tr>
+            <td>@log.DateTime</td>
+            <td>@log.User</td>
+            <td>@Html.Raw(log.Description)</td>
+        </tr>
+        }
+    </table>
 </div>

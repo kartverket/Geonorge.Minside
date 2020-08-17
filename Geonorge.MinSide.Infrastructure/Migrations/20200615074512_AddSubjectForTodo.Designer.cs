@@ -4,14 +4,16 @@ using Geonorge.MinSide.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Geonorge.MinSide.Infrastructure.Migrations
 {
     [DbContext(typeof(OrganizationContext))]
-    partial class OrganizationContextModelSnapshot : ModelSnapshot
+    [Migration("20200615074512_AddSubjectForTodo")]
+    partial class AddSubjectForTodo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -118,26 +120,6 @@ namespace Geonorge.MinSide.Infrastructure.Migrations
                     b.HasIndex("Status");
 
                     b.ToTable("Todo");
-                });
-
-            modelBuilder.Entity("Geonorge.MinSide.Infrastructure.Context.UserSettings", b =>
-                {
-                    b.Property<string>("Username")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Email");
-
-                    b.Property<string>("Organization");
-
-                    b.Property<bool?>("TodoNotification");
-
-                    b.Property<bool?>("TodoReminder");
-
-                    b.Property<int?>("TodoReminderTime");
-
-                    b.HasKey("Username");
-
-                    b.ToTable("UserSettings");
                 });
 
             modelBuilder.Entity("Geonorge.MinSide.Infrastructure.Context.Document", b =>
