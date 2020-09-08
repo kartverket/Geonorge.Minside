@@ -19,6 +19,8 @@ namespace Geonorge.MinSide.Services
         Task<Document> Create(Document document, IFormFile file);
         Task Update(Document updatedDocument, int documentId);
         Task Delete(Document document);
+        Task<InfoText> GetInfoText(string organizationNumber);
+        Task<Task<int>> UpdateInfoText(InfoText text);
     }
     
     public class DocumentService : IDocumentService
@@ -35,6 +37,8 @@ namespace Geonorge.MinSide.Services
         public async Task<DocumentViewModel> GetAll(string organizationNumber)
         {
             DocumentViewModel documentViewModel = new DocumentViewModel();
+            var info = await GetInfoText(organizationNumber);
+            documentViewModel.InfoText = info != null && !string.IsNullOrEmpty(info.Text) ? info.Text : "";
             documentViewModel.Drafts = await _context.Documents.Where(d => d.OrganizationNumber.Equals(organizationNumber) && d.Status == "Forslag").OrderBy(d => d.Name).ToListAsync();
             documentViewModel.Valid = await _context.Documents.Where(d => d.OrganizationNumber.Equals(organizationNumber) && d.Status == "Gyldig").OrderBy(d => d.Name).ToListAsync();
             documentViewModel.Superseded = await _context.Documents.Where(d => d.OrganizationNumber.Equals(organizationNumber) && d.Status == "Utgått").OrderByDescending(d => d.Date).ToListAsync();
@@ -90,6 +94,26 @@ namespace Geonorge.MinSide.Services
             string file = _applicationSettings.FilePath + "\\" + document.FileName;
             if (File.Exists(file))
                 File.Delete(file);
+        }
+
+        public async Task<InfoText> GetInfoText(string organizationNumber) 
+        {
+            return await _context.InfoTexts.Where(o => o.OrganizationNumber == organizationNumber).FirstOrDefaultAsync();
+        }
+
+        public async Task<Task<int>> UpdateInfoText(InfoText text)
+        {
+            var infoText = await GetInfoText(text.OrganizationNumber);
+
+
+            if (infoText == null)
+                _context.Add(text);
+            else {
+                infoText.Text = text.Text;
+                _context.Update(infoText);
+            }
+
+            return _context.SaveChangesAsync();
         }
     }
 }
