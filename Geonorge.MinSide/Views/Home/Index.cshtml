@@ -40,6 +40,7 @@
             <img src="/dist/images/search_icon-01.svg" alt="search">
         </div>
         <div class="section" is="metadata" v-bind:load-all-api-data="loadAllApiData"></div>
+
         <div class="section" is="product-fact-sheets" v-bind:load-all-api-data="loadAllApiData"></div>
         <div class="section" is="cartography" v-bind:load-all-api-data="loadAllApiData"></div>
         <div class="section" is="product-specifications" v-bind:load-all-api-data="loadAllApiData"></div>
@@ -47,12 +48,14 @@
         <div class="section" is="code-lists-sosi" v-bind:load-all-api-data="loadAllApiData"></div>
         <div class="section" is="cartography-specifications" v-bind:load-all-api-data="loadAllApiData"></div>
         <div class="section" is="service-notifications" v-bind:load-all-api-data="loadAllApiData"></div>
+        <div class="section" is="sld" v-bind:load-all-api-data="loadAllApiData"></div>
     </div>
 </div>
 
 @section scripts {
     @await Html.PartialAsync("~/Views/Shared/VueComponents/_OrganizationData.cshtml")
     @await Html.PartialAsync("~/Views/Shared/VueComponents/_Metadata.cshtml")
+    @await Html.PartialAsync("~/Views/Shared/VueComponents/_Sld.cshtml")
     @await Html.PartialAsync("~/Views/Shared/VueComponents/_ProductFactSheets.cshtml")
     @await Html.PartialAsync("~/Views/Shared/VueComponents/_Cartography.cshtml")
     @await Html.PartialAsync("~/Views/Shared/VueComponents/_ProductSpecifications.cshtml")
@@ -67,6 +70,7 @@
             components: {
                 OrganizationData: OrganizationData,
                 Metadata: Metadata,
+                Sld: Sld,
                 ProductFactSheets: ProductFactSheets,
                 Cartography: Cartography,
                 ProductSpecifications: ProductSpecifications,
