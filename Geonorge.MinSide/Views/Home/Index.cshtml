@@ -49,6 +49,7 @@
         <div class="section" is="cartography-specifications" v-bind:load-all-api-data="loadAllApiData"></div>
         <div class="section" is="service-notifications" v-bind:load-all-api-data="loadAllApiData"></div>
         <div class="section" is="sld" v-bind:load-all-api-data="loadAllApiData"></div>
+        <div class="section" is="dokdata" v-bind:load-all-api-data="loadAllApiData"></div>
     </div>
 </div>
 
@@ -63,6 +64,7 @@
     @await Html.PartialAsync("~/Views/Shared/VueComponents/_CodeListsSosi.cshtml")
     @await Html.PartialAsync("~/Views/Shared/VueComponents/_CartographySpecifications.cshtml")
     @await Html.PartialAsync("~/Views/Shared/VueComponents/_ServiceNotifications.cshtml")
+    @await Html.PartialAsync("~/Views/Shared/VueComponents/_Dokdata.cshtml")
 
     <script>
         var app = new Vue({
@@ -77,7 +79,8 @@
                 ReportMeasurment: ReportMeasurment,
                 CodeListsSosi: CodeListsSosi,
                 CartographySpecifications: CartographySpecifications,
-                ServiceNotifications: ServiceNotifications
+                ServiceNotifications: ServiceNotifications,
+                Dokdata: Dokdata
             },
             data: function() {
                 return {
