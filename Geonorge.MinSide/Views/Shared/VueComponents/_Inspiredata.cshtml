@@ -102,8 +102,8 @@ var Inspiredata = {
                     itemsPerRequest = this.items.NumFound;
                 }
                 var apiURL = this.loadAllApiData
-                    ? "https://register." + environmentParameter + "geonorge.no/api/inspire-statusregister?filterOrganization=kartverket" + "&limit=" + itemsPerRequest + orderParameter
-                    : "https://register." + environmentParameter + "geonorge.no/api/inspire-statusregister?filterOrganization=kartverket" + "&limit=" + itemsPerRequest + orderParameter + offsetParameter
+                    ? "https://register." + environmentParameter + "geonorge.no/api/inspire-statusregister" + organizationNameParameter + "&limit=" + itemsPerRequest + orderParameter
+                    : "https://register." + environmentParameter + "geonorge.no/api/inspire-statusregister" + organizationNameParameter  + "&limit=" + itemsPerRequest + orderParameter + offsetParameter
 
                 this.loadingData = true;
                 
@@ -129,7 +129,7 @@ var Inspiredata = {
 
             getCounter: function () {
                 
-                return this.loadAllApiData && this.$root.searchInput ? this.items.Registeritem.length : this.items.ContainedItemsResult.Count;
+                return this.loadAllApiData && this.$root.searchInput ? this.items.Registeritem.length : this.items.ContainedItemsResult.Total;
             }
         },
         mounted: function () {
