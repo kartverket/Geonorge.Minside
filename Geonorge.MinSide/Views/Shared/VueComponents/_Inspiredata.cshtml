@@ -8,30 +8,30 @@
             <div v-show="expanded">
                 <div class="list-header d-none d-md-block">
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-5">
                             Navn
                         </div>
-                        <div class="col-md-4">
-                            Metadata status
+                        <div class="col-md-6">
+                            Temagrupper
                         </div>
-                        <div class="col-md-2">
-                            status
+                        <div class="col-md-1">
+                            Status
                         </div>
                     </div>
                 </div>
                 <div class="list-content" v-bind:class="{'loading-data': loadingData}">
                     <div v-for="item in filteredItems" class="list-item">
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-5">
                                 <a v-bind:href="item.MetadataUrl" v-bind:title="'Vis detaljer for ' + item.Label">{{item.label}}</a>
                             </div>
-                            <div class="col-md-4">
-                                <span class="d-inline-block d-md-none">Metadata status</span>
-                                {{item.MetadataStatus}}
+                            <div class="col-md-6">
+                                <span class="d-inline-block d-md-none">Temagrupper</span>
+                                {{item.InspireTheme}}
                             </div>
-                            <div class="col-md-2">
-                                <span class="d-inline-block d-md-none">Service status</span>
-                                {{item.status}}
+                            <div class="col-md-1">
+                                <span class="d-inline-block d-md-none">Status</span>
+                                {{item.InspireStatus}}
                             </div>
 
                         </div>
