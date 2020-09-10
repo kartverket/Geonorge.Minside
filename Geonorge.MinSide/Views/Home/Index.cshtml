@@ -24,14 +24,29 @@
         @if (User.IsInRole(GeonorgeRoles.MetadataAdmin) || User.IsInRole(GeonorgeRoles.MetadataEditor) || User.IsInRole(GeonorgeRoles.ContactPerson))
         {
             <div>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <form asp-action="Settings">
-                            <input type="checkbox" asp-for="TodoNotification" /> Ønsker epost til @Model.Email om endringer oppfølgingspunkter,
-                            <input type="checkbox" asp-for="TodoReminder" /> ønsker påminnelse <input asp-for="TodoReminderTime" type="number" /> dager før frist <input type="submit" value="Lagre" />
-                        </form>
-                    </div>
-                </div>
+                
+                    <form asp-action="Settings">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <input type="checkbox" asp-for="TodoNotification" id="TodoNotification" /> 
+                                <label for="TodoNotification"> Abonner på endringer om oppfølgingspunkter ( @Model.Email )</label>
+                            </div>
+                        </div>
+                         <div class="row">
+                            <div class="col-sm-6">
+                                <input type="checkbox" asp-for="TodoReminder" id="TodoReminder" />
+                                <label for="TodoReminder"> Ønsker også påminnelse</label> 
+                                 <input asp-for="TodoReminderTime" type="number" min="0" max="100" id="TodoReminderTime" /> 
+                                <label for="TodoReminderTime">dager før frist </label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <input class="btn no-margin-bottom show-loading-animation" type="submit" value="Start abonnement" />
+                            </div>
+                        </div>    
+                    </form>
+                    
                 <p></p>
             </div>
         }
@@ -50,6 +65,8 @@
         <div class="section" is="service-notifications" v-bind:load-all-api-data="loadAllApiData"></div>
         <div class="section" is="sld" v-bind:load-all-api-data="loadAllApiData"></div>
         <div class="section" is="dokdata" v-bind:load-all-api-data="loadAllApiData"></div>
+        <div class="section" is="inspiredata" v-bind:load-all-api-data="loadAllApiData"></div>
+
     </div>
 </div>
 
@@ -65,6 +82,7 @@
     @await Html.PartialAsync("~/Views/Shared/VueComponents/_CartographySpecifications.cshtml")
     @await Html.PartialAsync("~/Views/Shared/VueComponents/_ServiceNotifications.cshtml")
     @await Html.PartialAsync("~/Views/Shared/VueComponents/_Dokdata.cshtml")
+    @await Html.PartialAsync("~/Views/Shared/VueComponents/_Inspiredata.cshtml")
 
     <script>
         var app = new Vue({
@@ -80,7 +98,8 @@
                 CodeListsSosi: CodeListsSosi,
                 CartographySpecifications: CartographySpecifications,
                 ServiceNotifications: ServiceNotifications,
-                Dokdata: Dokdata
+                Dokdata: Dokdata,
+                Inspiredata: Inspiredata
             },
             data: function() {
                 return {

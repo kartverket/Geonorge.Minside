@@ -1,0 +1,143 @@
+<script type="text/x-template" id="inspiredata-template">
+    <div>
+        <div v-if="items && filteredItems.length" class="list">
+            <h3 v-on:click="expanded = !expanded" class="section-title clickable">
+                <span class="expand-arrow clickable" style="vertical-align: middle;" v-bind:class="{active: expanded}"></span>
+                Inspire data ({{ getCounter() }})
+            </h3>
+            <div v-show="expanded">
+                <div class="list-header d-none d-md-block">
+                    <div class="row">
+                        <div class="col-md-6">
+                            Navn
+                        </div>
+                        <div class="col-md-4">
+                            Metadata status
+                        </div>
+                        <div class="col-md-2">
+                            status
+                        </div>
+                    </div>
+                </div>
+                <div class="list-content" v-bind:class="{'loading-data': loadingData}">
+                    <div v-for="item in filteredItems" class="list-item">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <a v-bind:href="item.MetadataUrl" v-bind:title="'Vis detaljer for ' + item.Label">{{item.label}}</a>
+                            </div>
+                            <div class="col-md-4">
+                                <span class="d-inline-block d-md-none">Metadata status</span>
+                                {{item.MetadataStatus}}
+                            </div>
+                            <div class="col-md-2">
+                                <span class="d-inline-block d-md-none">Service status</span>
+                                {{item.status}}
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button v-show="moreItemsAvailable" v-on:click="getItems()" class="icon-button add-more-button" v-bind:class="loadingData ? 'fas fa-spinner fa-pulse' : 'fa fa-plus'"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script>
+var Inspiredata = {
+        name: "Inspiredata",
+        template: "#inspiredata-template",
+        props: ['loadAllApiData'],
+        data: function () {
+            return {
+                loadingData: false,
+                expanded: true,
+                items: null,
+                numberOfVisibleItems: 0,
+                filterProperties: [
+                    'label',
+                ]
+
+            }
+        },
+        computed: {
+            moreItemsAvailable: function () {
+                if (this.loadAllApiData) {
+                    return false;
+                } else {
+                    return this.items && this.items.ContainedItemsResult.Total > this.numberOfVisibleItems;
+                }
+            },
+            filteredItems: function () {
+                var filteredItems = [];
+                if (this.loadAllApiData && this.$root.searchInput) {
+                    this.items.containeditems.forEach(function (item) {
+                        var itemHasMatch = false;
+                        this.filterProperties.forEach(function (filterProperty) {
+                            if (item[filterProperty].toUpperCase().indexOf(this.$root.searchInput.toUpperCase()) > -1) {
+                                itemHasMatch = true;
+                            }
+                        }.bind(this));
+                        if (itemHasMatch) {
+                            filteredItems.push(item);
+                        }
+                    }.bind(this))
+                } else {
+                    filteredItems = this.items.containeditems;
+                }
+                return filteredItems;
+            }
+        },
+        methods: {
+            getItems: function () {
+                var itemsPerRequest = 10;
+                var offsetParameter = this.numberOfVisibleItems ? "&offset=" + this.numberOfVisibleItems : "";
+                var organizationNameParameter = '?filterOrganization=' + this.$root.OrganizationName;
+                var orderParameter = "&orderby=updated";
+                var environmentParameter = this.$root.Environment;
+
+                if (this.loadAllApiData && this.items) {
+                    itemsPerRequest = this.items.NumFound;
+                }
+                var apiURL = this.loadAllApiData
+                    ? "https://register." + environmentParameter + "geonorge.no/api/inspire-statusregister?filterOrganization=kartverket" + "&limit=" + itemsPerRequest + orderParameter
+                    : "https://register." + environmentParameter + "geonorge.no/api/inspire-statusregister?filterOrganization=kartverket" + "&limit=" + itemsPerRequest + orderParameter + offsetParameter
+
+                this.loadingData = true;
+                
+
+                Promise.resolve(this.$root.getApiData(apiURL))
+                    .then((apiData) => {
+                        this.loadingData = false;
+                        if (!this.items || this.loadAllApiData) {
+                            this.items = apiData;
+                        }
+                        else {
+                            this.items.containeditems = this.items.containeditems.concat(apiData.containeditems);
+                        }
+                        this.numberOfVisibleItems += itemsPerRequest;
+                    });
+            },
+            formatDate: function (date) {
+                if (date) {
+                    return moment(date).format('DD.MM.YYYY');
+                }
+            },
+
+
+            getCounter: function () {
+                
+                return this.loadAllApiData && this.$root.searchInput ? this.items.Registeritem.length : this.items.ContainedItemsResult.Count;
+            }
+        },
+        mounted: function () {
+            this.getItems();
+        },
+        watch: {
+            loadAllApiData: function () {
+                this.getItems();
+            }
+        }
+    };</script>

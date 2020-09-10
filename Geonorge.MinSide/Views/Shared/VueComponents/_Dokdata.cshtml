@@ -3,7 +3,7 @@
         <div v-if="items && filteredItems.length" class="list">
             <h3 v-on:click="expanded = !expanded" class="section-title clickable">
                 <span class="expand-arrow clickable" style="vertical-align: middle;" v-bind:class="{active: expanded}"></span>
-                Dok-data ({{ getCounter() }})
+                Det offentlige kartgrunnlaget ({{ getCounter() }}) <a v-bind:href="items.id + '?filterOrganization=' + items.owner">Se alle</a>
             </h3>
             <div v-show="expanded">
                 <div class="list-header d-none d-md-block">
@@ -106,7 +106,7 @@ var Dokdata = {
                     : "https://register." + environmentParameter + "geonorge.no/api/det-offentlige-kartgrunnlaget" + organizationNameParameter + "&limit=" + itemsPerRequest + orderParameter + offsetParameter
 
                 this.loadingData = true;
-                console.log(apiURL);
+                
 
                 Promise.resolve(this.$root.getApiData(apiURL))
                     .then((apiData) => {
@@ -128,7 +128,7 @@ var Dokdata = {
 
 
             getCounter: function () {
-                console.log(this.items.ContainedItemsResult.Total + ' fisk')
+                
                 return this.loadAllApiData && this.$root.searchInput ? this.items.containeditems.length : this.items.ContainedItemsResult.Total;
             }
         },
