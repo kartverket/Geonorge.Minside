@@ -27,13 +27,13 @@
                 
                     <form asp-action="Settings">
                         <div class="row">
-                            <div class="col-sm-6">
+                            <div class="col-sm-12">
                                 <input type="checkbox" asp-for="TodoNotification" id="TodoNotification" /> 
                                 <label for="TodoNotification"> Abonner på endringer om oppfølgingspunkter ( @Model.Email )</label>
                             </div>
                         </div>
                          <div class="row">
-                            <div class="col-sm-6">
+                            <div class="col-sm-12">
                                 <input type="checkbox" asp-for="TodoReminder" id="TodoReminder" />
                                 <label for="TodoReminder"> Ønsker også påminnelse</label> 
                                  <input asp-for="TodoReminderTime" type="number" min="0" max="100" id="TodoReminderTime" /> 
@@ -41,7 +41,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-sm-6">
+                            <div class="col-sm-12">
                                 <input class="btn no-margin-bottom show-loading-animation" type="submit" value="Start abonnement" />
                             </div>
                         </div>    
