@@ -266,3 +266,18 @@ table > tbody > tr > td:last-child {
 .btn-group > .btn {
     margin: 10px;
 }
+.prossess {
+    padding: 5px;
+    border-radius: 4px;
+    background: rgba(255, 0, 0, 0.30);
+}
+.godkjent {
+    padding: 5px;
+    border-radius: 4px;
+    background: rgba(34, 216, 49, 0.3);
+}
+.kandidat {
+    padding: 5px;
+    border-radius: 4px;
+    background: rgba(221, 191, 7, 0.3)
+}

@@ -23,15 +23,15 @@
                     <div v-for="item in filteredItems" class="list-item">
                         <div class="row">
                             <div class="col-md-6">
-                                <a v-bind:href="item.MetadataUrl" v-bind:title="'Vis detaljer for ' + item.Label">{{item.label}}</a>
+                                <a v-bind:href="item.MetadataUrl" v-bind:title="'Vis detaljer for ' + item.Label">{{item.label}} </a>
                             </div>
                             <div class="col-md-4">
                                 <span class="d-inline-block d-md-none">Datasett</span>
                                 {{item.theme}}
                             </div>
-                            <div class="col-md-2">
-                                <span class="d-inline-block d-md-none">Format</span>
-                                {{item.dokStatus}}
+                            <div class="col-md-2"  >
+                                <span class="d-inline-block d-md-none">Status</span>
+                                <span v-bind:class="getClassname(item)">{{item.dokStatus}}</span>
                             </div>
 
                         </div>
@@ -126,6 +126,25 @@ var Dokdata = {
                 }
             },
 
+            getClassname: function (v) {
+                switch(v.dokStatus) {
+                    case 'I prosess':
+                    return 'prossess'
+                    break;
+                    case 'Godkjent':
+                    return 'godkjent'
+                    break;
+                    case 'Forslag':
+                    return 'forslag'
+                    break;
+                    case 'Kandidat':
+                    return 'kandidat'
+                    break;
+                    default:
+                    ''
+
+                }
+            },
 
             getCounter: function () {
                 

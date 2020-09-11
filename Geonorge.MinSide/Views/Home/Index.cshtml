@@ -54,18 +54,21 @@
             <input v-model="searchInput" v-bind:placeholder="getSearchInputPlaceholder()" class="data-search-filter" />
             <img src="/dist/images/search_icon-01.svg" alt="search">
         </div>
+        <div class="section" is="dokdata" v-bind:load-all-api-data="loadAllApiData"></div>
+        <div class="section" is="inspiredata" v-bind:load-all-api-data="loadAllApiData"></div>
         <div class="section" is="metadata" v-bind:load-all-api-data="loadAllApiData"></div>
 
         <div class="section" is="product-fact-sheets" v-bind:load-all-api-data="loadAllApiData"></div>
         <div class="section" is="cartography" v-bind:load-all-api-data="loadAllApiData"></div>
-        <div class="section" is="product-specifications" v-bind:load-all-api-data="loadAllApiData"></div>
+         <div class="section" is="sld" v-bind:load-all-api-data="loadAllApiData"></div>
+        
         <div class="section" is="report-measurment" v-bind:load-all-api-data="loadAllApiData"></div>
         <div class="section" is="code-lists-sosi" v-bind:load-all-api-data="loadAllApiData"></div>
         <div class="section" is="cartography-specifications" v-bind:load-all-api-data="loadAllApiData"></div>
         <div class="section" is="service-notifications" v-bind:load-all-api-data="loadAllApiData"></div>
-        <div class="section" is="sld" v-bind:load-all-api-data="loadAllApiData"></div>
-        <div class="section" is="dokdata" v-bind:load-all-api-data="loadAllApiData"></div>
-        <div class="section" is="inspiredata" v-bind:load-all-api-data="loadAllApiData"></div>
+        <div class="section" is="product-specifications" v-bind:load-all-api-data="loadAllApiData"></div>
+       
+        
 
     </div>
 </div>
