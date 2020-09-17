@@ -43,6 +43,7 @@
                     .then((apiData) => {
                         this.organizationData = apiData;
                         this.$root.translatedOrganizationName = apiData.Name;
+                        document.cookie = "member=" + apiData.Member;
                     });
             }
         },

@@ -81,7 +81,7 @@
                         }
                     </div>
                 }
-                <div class="col-12"><a href="https://www.geonorge.no/globalassets/geonorge2/avtaler-og-bilag-norge-digitalt/generelle-vilkar.pdf" target="_blank">Norge digitalt – Generelle vilkår</a></div>
+                <div id="norwaydigitalagreement" class="col-12" style="display:none"><a href="https://www.geonorge.no/globalassets/geonorge2/avtaler-og-bilag-norge-digitalt/generelle-vilkar.pdf" target="_blank">Norge digitalt – Generelle vilkår</a></div>
             </div>
         </div>
         <div class="list-group-item">
@@ -111,4 +111,15 @@
         </div>
     </div>
 </div>
-  
+<script>
+    function getCookie(name) {
+        var v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+        return v ? v[2] : null;
+    }
+
+    var member = getCookie("member");
+
+    if (member == "true")
+        document.getElementById('norwaydigitalagreement').style.display = 'block';
+
+</script>  
