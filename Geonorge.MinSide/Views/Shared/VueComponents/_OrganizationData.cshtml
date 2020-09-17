@@ -14,7 +14,12 @@
                         <div>
                             <a href="mailto:post@norgedigitalt.no">Meld fra om endring i kontaktinfo</a>
                         </div>
+                        <p></p>
+                        <div v-if="organizationData.Member">
+                            <a href="https://www.geonorge.no/globalassets/geonorge2/avtaler-og-bilag-norge-digitalt/generelle-vilkar.pdf" target="_blank">Norge digitalt – Generelle vilkår</a>
+                        </div>
                     </div>
+                   
                 </div>
                 <div class="col-sm-3">
                     <img v-bind:src="organizationData.LogoUrl" class="float-right" />
