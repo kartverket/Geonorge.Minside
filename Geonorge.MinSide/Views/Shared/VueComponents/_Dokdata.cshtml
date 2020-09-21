@@ -11,10 +11,10 @@
                         <div class="col-md-6">
                             Navn
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-5">
                             Tema
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-1">
                             Status
                         </div>
                     </div>
@@ -25,11 +25,11 @@
                             <div class="col-md-6">
                                 <a v-bind:href="item.MetadataUrl" v-bind:title="'Vis detaljer for ' + item.Label">{{item.label}} </a>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-5">
                                 <span class="d-inline-block d-md-none">Datasett</span>
                                 {{item.theme}}
                             </div>
-                            <div class="col-md-2"  >
+                            <div class="col-md-1">
                                 <span class="d-inline-block d-md-none">Status</span>
                                 <span v-bind:class="getClassname(item)">{{item.dokStatus}}</span>
                             </div>
