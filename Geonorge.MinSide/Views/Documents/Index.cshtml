@@ -10,7 +10,7 @@
     <h1>Avtaler @Context.Session.GetString("OrganizationName")</h1>
     @if (!string.IsNullOrEmpty(Model.InfoText) && !User.IsInRole(GeonorgeRoles.MetadataAdmin))
     {
-        <p>@Model.InfoText</p>
+        <div class="infotext"><p>@Model.InfoText</p></div>
     }
     @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
     {

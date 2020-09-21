@@ -284,3 +284,6 @@ table > tbody > tr > td:last-child {
 .list-item > .row > div:last-child {
     white-space:nowrap;
 }
+.infotext {
+    margin: 20px 0;
+}
