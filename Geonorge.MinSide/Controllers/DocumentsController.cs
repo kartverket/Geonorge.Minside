@@ -170,6 +170,16 @@ namespace Geonorge.MinSide.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = GeonorgeRoles.MetadataAdmin)]
+        [HttpPost, ActionName("UpdateInfoText")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateInfoText(InfoText infoText)
+        {
+            await _documentService.UpdateInfoText(infoText);
+            return RedirectToAction(nameof(Index));
+        }
+
+
         private bool DocumentExists(int id)
         {
             var document = _documentService.Get(id);

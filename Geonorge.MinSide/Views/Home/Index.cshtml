@@ -24,14 +24,29 @@
         @if (User.IsInRole(GeonorgeRoles.MetadataAdmin) || User.IsInRole(GeonorgeRoles.MetadataEditor) || User.IsInRole(GeonorgeRoles.ContactPerson))
         {
             <div>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <form asp-action="Settings">
-                            <input type="checkbox" asp-for="TodoNotification" /> Ønsker epost til @Model.Email om endringer oppfølgingspunkter,
-                            <input type="checkbox" asp-for="TodoReminder" /> ønsker påminnelse <input asp-for="TodoReminderTime" type="number" /> dager før frist <input type="submit" value="Lagre" />
-                        </form>
-                    </div>
-                </div>
+                
+                    <form asp-action="Settings">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <input type="checkbox" asp-for="TodoNotification" id="TodoNotification" /> 
+                                <label for="TodoNotification"> Abonner på endringer om oppfølgingspunkter ( @Model.Email )</label>
+                            </div>
+                        </div>
+                         <div class="row">
+                            <div class="col-sm-12">
+                                <input type="checkbox" asp-for="TodoReminder" id="TodoReminder" />
+                                <label for="TodoReminder"> Ønsker også påminnelse</label> 
+                                 <input asp-for="TodoReminderTime" type="number" min="0" max="100" id="TodoReminderTime" /> 
+                                <label for="TodoReminderTime">dager før frist </label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <input class="btn no-margin-bottom show-loading-animation" type="submit" value="Start abonnement" />
+                            </div>
+                        </div>    
+                    </form>
+                    
                 <p></p>
             </div>
         }
@@ -39,20 +54,29 @@
             <input v-model="searchInput" v-bind:placeholder="getSearchInputPlaceholder()" class="data-search-filter" />
             <img src="/dist/images/search_icon-01.svg" alt="search">
         </div>
+        <div class="section" is="dokdata" v-bind:load-all-api-data="loadAllApiData"></div>
+        <div class="section" is="inspiredata" v-bind:load-all-api-data="loadAllApiData"></div>
         <div class="section" is="metadata" v-bind:load-all-api-data="loadAllApiData"></div>
+
         <div class="section" is="product-fact-sheets" v-bind:load-all-api-data="loadAllApiData"></div>
         <div class="section" is="cartography" v-bind:load-all-api-data="loadAllApiData"></div>
-        <div class="section" is="product-specifications" v-bind:load-all-api-data="loadAllApiData"></div>
+        
+        
         <div class="section" is="report-measurment" v-bind:load-all-api-data="loadAllApiData"></div>
         <div class="section" is="code-lists-sosi" v-bind:load-all-api-data="loadAllApiData"></div>
         <div class="section" is="cartography-specifications" v-bind:load-all-api-data="loadAllApiData"></div>
         <div class="section" is="service-notifications" v-bind:load-all-api-data="loadAllApiData"></div>
+        <div class="section" is="product-specifications" v-bind:load-all-api-data="loadAllApiData"></div>
+       
+        
+
     </div>
 </div>
 
 @section scripts {
     @await Html.PartialAsync("~/Views/Shared/VueComponents/_OrganizationData.cshtml")
     @await Html.PartialAsync("~/Views/Shared/VueComponents/_Metadata.cshtml")
+    @await Html.PartialAsync("~/Views/Shared/VueComponents/_Sld.cshtml")
     @await Html.PartialAsync("~/Views/Shared/VueComponents/_ProductFactSheets.cshtml")
     @await Html.PartialAsync("~/Views/Shared/VueComponents/_Cartography.cshtml")
     @await Html.PartialAsync("~/Views/Shared/VueComponents/_ProductSpecifications.cshtml")
@@ -60,6 +84,8 @@
     @await Html.PartialAsync("~/Views/Shared/VueComponents/_CodeListsSosi.cshtml")
     @await Html.PartialAsync("~/Views/Shared/VueComponents/_CartographySpecifications.cshtml")
     @await Html.PartialAsync("~/Views/Shared/VueComponents/_ServiceNotifications.cshtml")
+    @await Html.PartialAsync("~/Views/Shared/VueComponents/_Dokdata.cshtml")
+    @await Html.PartialAsync("~/Views/Shared/VueComponents/_Inspiredata.cshtml")
 
     <script>
         var app = new Vue({
@@ -67,13 +93,16 @@
             components: {
                 OrganizationData: OrganizationData,
                 Metadata: Metadata,
+                Sld: Sld,
                 ProductFactSheets: ProductFactSheets,
                 Cartography: Cartography,
                 ProductSpecifications: ProductSpecifications,
                 ReportMeasurment: ReportMeasurment,
                 CodeListsSosi: CodeListsSosi,
                 CartographySpecifications: CartographySpecifications,
-                ServiceNotifications: ServiceNotifications
+                ServiceNotifications: ServiceNotifications,
+                Dokdata: Dokdata,
+                Inspiredata: Inspiredata
             },
             data: function() {
                 return {

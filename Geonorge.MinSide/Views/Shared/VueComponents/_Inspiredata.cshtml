@@ -1,49 +1,39 @@
-﻿<script type="text/x-template" id="cartography-template">
+<script type="text/x-template" id="inspiredata-template">
     <div>
         <div v-if="items && filteredItems.length" class="list">
             <h3 v-on:click="expanded = !expanded" class="section-title clickable">
                 <span class="expand-arrow clickable" style="vertical-align: middle;" v-bind:class="{active: expanded}"></span>
-                Kartografi ({{ getCounter() }})
+                Inspire data ({{ getCounter() }})
             </h3>
             <div v-show="expanded">
                 <div class="list-header d-none d-md-block">
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-5">
                             Navn
                         </div>
-                        <div class="col-md-4">
-                            Datasett
-                        </div>
-                        <div class="col-md-2">
-                            Status
+                        <div class="col-md-6">
+                            Temagrupper
                         </div>
                         <div class="col-md-1">
-                            Format
-                        </div>                       
-                        <div class="col-md-1"></div>
+                            Status
+                        </div>
                     </div>
                 </div>
                 <div class="list-content" v-bind:class="{'loading-data': loadingData}">
                     <div v-for="item in filteredItems" class="list-item">
                         <div class="row">
-                            <div class="col-md-4">
-                                <a v-bind:href="item.DetailsUrl" v-bind:title="'Vis detaljer for ' + item.Name">{{item.Name}}</a>
+                            <div class="col-md-5">
+                                <a v-bind:href="item.MetadataUrl" v-bind:title="'Vis detaljer for ' + item.Label">{{item.label}}</a>
                             </div>
-                            <div class="col-md-4">
-                                <span class="d-inline-block d-md-none">Tema:</span>
-                                {{ item.DatasetName }}
-                            </div>
-                            <div class="col-md-2">
-                                <span class="d-inline-block d-md-none">Status:</span>
-                                {{ item.Status }}
+                            <div class="col-md-6">
+                                <span class="d-inline-block d-md-none">Temagrupper</span>
+                                {{item.InspireTheme}}
                             </div>
                             <div class="col-md-1">
-                                {{item.Format}}
-                            </div>                            
-                            <div class="col-md-1">
-                                <a v-bind:href="item.FileUrl" class="d-none d-md-block fa fa-download icon-button float-right"></a>
-                                <button class="d-block d-md-none btn float-right">Last ned <span class="fa fa-download"></span></button>
+                                <span class="d-inline-block d-md-none">Status</span>
+                                {{item.InspireStatus}}
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -56,9 +46,9 @@
 </script>
 
 <script>
-    var Cartography = {
-        name: "Cartography",
-        template: "#cartography-template",
+var Inspiredata = {
+        name: "Inspiredata",
+        template: "#inspiredata-template",
         props: ['loadAllApiData'],
         data: function () {
             return {
@@ -67,9 +57,9 @@
                 items: null,
                 numberOfVisibleItems: 0,
                 filterProperties: [
-                    'Theme',
-                    'Name'
+                    'label',
                 ]
+
             }
         },
         computed: {
@@ -77,13 +67,13 @@
                 if (this.loadAllApiData) {
                     return false;
                 } else {
-                    return this.items && this.items.Total > this.numberOfVisibleItems;
+                    return this.items && this.items.ContainedItemsResult.Total > this.numberOfVisibleItems;
                 }
             },
             filteredItems: function () {
                 var filteredItems = [];
                 if (this.loadAllApiData && this.$root.searchInput) {
-                    this.items.Files.forEach(function (item) {
+                    this.items.containeditems.forEach(function (item) {
                         var itemHasMatch = false;
                         this.filterProperties.forEach(function (filterProperty) {
                             if (item[filterProperty].toUpperCase().indexOf(this.$root.searchInput.toUpperCase()) > -1) {
@@ -95,7 +85,7 @@
                         }
                     }.bind(this))
                 } else {
-                    filteredItems = this.items.Files;
+                    filteredItems = this.items.containeditems;
                 }
                 return filteredItems;
             }
@@ -104,21 +94,28 @@
             getItems: function () {
                 var itemsPerRequest = 10;
                 var offsetParameter = this.numberOfVisibleItems ? "&offset=" + this.numberOfVisibleItems : "";
-                var organizationNameParameter = '?owner=' + this.$root.OrganizationName;
+                var organizationNameParameter = '?filterOrganization=' + this.$root.OrganizationName;
+                var orderParameter = "&orderby=updated";
                 var environmentParameter = this.$root.Environment;
 
+                if (this.loadAllApiData && this.items) {
+                    itemsPerRequest = this.items.NumFound;
+                }
                 var apiURL = this.loadAllApiData
-                    ? "https://register." + environmentParameter + "geonorge.no/kartografi/api/cartography" + organizationNameParameter
-                    : "https://register." + environmentParameter + "geonorge.no/kartografi/api/cartography" + organizationNameParameter + "&limit=" + itemsPerRequest + offsetParameter;
+                    ? "https://register." + environmentParameter + "geonorge.no/api/inspire-statusregister" + organizationNameParameter + "&limit=" + itemsPerRequest + orderParameter
+                    : "https://register." + environmentParameter + "geonorge.no/api/inspire-statusregister" + organizationNameParameter  + "&limit=" + itemsPerRequest + orderParameter + offsetParameter
 
                 this.loadingData = true;
+                
+
                 Promise.resolve(this.$root.getApiData(apiURL))
                     .then((apiData) => {
                         this.loadingData = false;
                         if (!this.items || this.loadAllApiData) {
                             this.items = apiData;
-                        } else {
-                            this.items.Files = this.items.Files.concat(apiData.Files);
+                        }
+                        else {
+                            this.items.containeditems = this.items.containeditems.concat(apiData.containeditems);
                         }
                         this.numberOfVisibleItems += itemsPerRequest;
                     });
@@ -128,8 +125,11 @@
                     return moment(date).format('DD.MM.YYYY');
                 }
             },
+
+
             getCounter: function () {
-                return this.loadAllApiData && this.$root.searchInput ? this.filteredItems.length : this.items.Total;
+                
+                return this.loadAllApiData && this.$root.searchInput ? this.items.Registeritem.length : this.items.ContainedItemsResult.Total;
             }
         },
         mounted: function () {
@@ -140,5 +140,4 @@
                 this.getItems();
             }
         }
-    };
-</script>
+    };</script>

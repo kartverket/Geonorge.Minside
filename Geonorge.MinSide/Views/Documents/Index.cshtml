@@ -8,21 +8,32 @@
 
 <div class="container">
     <h1>Avtaler @Context.Session.GetString("OrganizationName")</h1>
+    @if (!string.IsNullOrEmpty(Model.InfoText) && !User.IsInRole(GeonorgeRoles.MetadataAdmin))
+    {
+        <div class="infotext"><p>@Model.InfoText</p></div>
+    }
     @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
     {
         <p>
             <a asp-action="Create" class="btn no-margin-bottom show-loading-animation"><i class="fas fa-plus"></i>Ny avtale</a>
         </p>
+        <form asp-action="UpdateInfoText" method="post">
+            <label for="Infotekst">Infotekst:</label>
+            <textarea name="Text" style="min-height: auto" rows="3" cols="20" id="Infotekst">@Model.InfoText</textarea>
+            <input type="hidden" value="@Context.Session.GetString("OrganizationNumber")" name="OrganizationNumber" />
+            <input type="submit" class="btn" value="Lagre" />
+        </form>
+        <p></p>
     }
-     <div class="list-group panel panel-default metadata-list">
-         <div class="list-group-item panel-heading hidden-sm hidden-xs">
-             <div class="row">
-                 <div class="col-6">Tittel</div>
-                 <div class="col-2">Dato</div>
-                 <div class="col-4">Lenker</div>
-             </div>
-         </div>
-         <div class="list-group-item">
+    <div class="list-group panel panel-default metadata-list">
+        <div class="list-group-item panel-heading hidden-sm hidden-xs">
+            <div class="row">
+                <div class="col-6">Tittel</div>
+                <div class="col-2">Dato</div>
+                <div class="col-4">Lenker</div>
+            </div>
+        </div>
+        <div class="list-group-item">
             <div class="row">
                 <div class="col-12"><h5>Forslag til nye avtaler</h5></div>
             </div>
@@ -45,59 +56,70 @@
                         }
                     </div>
                 }
+            </div>
         </div>
-         </div>
-  <div class="list-group-item">
-    <div class="row">
-            <div class="col-12"><h5>Mine avtaler</h5></div>
-    </div>
-    <div class="row list-item">
-        @foreach (var item in Model.Valid)
-        {
-            <div class="col-6">
-                <a asp-action="Download" asp-controller="Documents" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.Name)</a>
+        <div class="list-group-item">
+            <div class="row">
+                <div class="col-12"><h5>Mine avtaler</h5></div>
             </div>
-            <div class="col-2">
-                @item.Date.ToString("dd.MM.yyyy")
-            </div>
-            <div class="col-4">
-                @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
+            <div class="row list-item">
+                @foreach (var item in Model.Valid)
                 {
-                    <div>
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-xs">Rediger</a>
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-xs">Slett</a>
+                    <div class="col-6">
+                        <a asp-action="Download" asp-controller="Documents" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.Name)</a>
+                    </div>
+                    <div class="col-2">
+                        @item.Date.ToString("dd.MM.yyyy")
+                    </div>
+                    <div class="col-4">
+                        @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
+                        {
+                            <div>
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-xs">Rediger</a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-xs">Slett</a>
+                            </div>
+                        }
+                    </div>
+                }
+                <div id="norwaydigitalagreement" class="col-12" style="display:none"><a href="https://www.geonorge.no/globalassets/geonorge2/avtaler-og-bilag-norge-digitalt/generelle-vilkar.pdf" target="_blank">Norge digitalt – Generelle vilkår</a></div>
+            </div>
+        </div>
+        <div class="list-group-item">
+            <div class="row">
+                <div class="col-12"><h5>Arkiv:</h5></div>
+            </div>
+            <div class="row list-item">
+                @foreach (var item in Model.Superseded)
+                {
+                    <div class="col-6">
+                        <a asp-action="Download" asp-controller="Documents" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.Name)</a>
+                    </div>
+                    <div class="col-2">
+                        @item.Date.ToString("dd.MM.yyyy")
+                    </div>
+                    <div class="col-4">
+                        @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
+                        {
+                            <div>
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-xs">Rediger</a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-xs">Slett</a>
+                            </div>
+                        }
                     </div>
                 }
             </div>
-        }
-        <div class="col-12"><a href="https://www.geonorge.no/globalassets/geonorge2/avtaler-og-bilag-norge-digitalt/generelle-vilkar.pdf" target="_blank">Norge digitalt – Generelle vilkår</a></div>
-    </div>
-  </div>
-<div class="list-group-item">   
-    <div class="row">
-        <div class="col-12"><h5>Arkiv:</h5></div>
-    </div>
-        <div class="row list-item">
-            @foreach (var item in Model.Superseded)
-            {
-                <div class="col-6">
-                    <a asp-action="Download" asp-controller="Documents" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.Name)</a>
-                </div>
-                <div class="col-2">
-                    @item.Date.ToString("dd.MM.yyyy")
-                </div>
-                <div class="col-4">
-                    @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
-                    {
-                        <div>
-                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-xs">Rediger</a>
-                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-xs">Slett</a>
-                        </div>
-                    }
-                </div>
-            }
         </div>
-      </div>       
     </div>
 </div>
-  
+<script>
+    function getCookie(name) {
+        var v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+        return v ? v[2] : null;
+    }
+
+    var member = getCookie("member");
+
+    if (member == "true")
+        document.getElementById('norwaydigitalagreement').style.display = 'block';
+
+</script>  

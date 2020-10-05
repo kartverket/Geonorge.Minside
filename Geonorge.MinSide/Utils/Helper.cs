@@ -31,7 +31,7 @@ namespace Geonorge.MinSide.Utils
             return Path.GetExtension(FileName).ToLowerInvariant();
         }
 
-        public static string[] PermittedFileExtensions = { ".pdf", ".doc", ".xls", ".docx", ".xlsx" };
+        public static string[] PermittedFileExtensions = { ".pdf", ".doc", ".xls", ".docx", ".xlsx", ".pptx" };
 
         public static string GetContentType(string path)
         {
@@ -48,7 +48,8 @@ namespace Geonorge.MinSide.Utils
                 {".doc", "application/vnd.ms-word"},
                 {".docx", "application/vnd.ms-word"},
                 {".xls", "application/vnd.ms-excel"},
-                {".xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"},  
+                {".xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"},
+                {".pptx", "application/vnd.openxmlformats-officedocument.presentationml.presentation"},
             };
         }
 

@@ -8,6 +8,7 @@ namespace Geonorge.MinSide.Models
 {
     public class DocumentViewModel
     {
+        public string InfoText { get; set; }
         public List<Document> Drafts { get; set; }
         public List<Document> Valid { get; set; }
         public List<Document> Superseded { get; set; }

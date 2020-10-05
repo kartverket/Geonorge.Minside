@@ -14,7 +14,9 @@
                         <div>
                             <a href="mailto:post@norgedigitalt.no">Meld fra om endring i kontaktinfo</a>
                         </div>
+                        <p></p>                        
                     </div>
+                   
                 </div>
                 <div class="col-sm-3">
                     <img v-bind:src="organizationData.LogoUrl" class="float-right" />
@@ -43,6 +45,7 @@
                     .then((apiData) => {
                         this.organizationData = apiData;
                         this.$root.translatedOrganizationName = apiData.Name;
+                        document.cookie = "member=" + apiData.Member;
                     });
             }
         },

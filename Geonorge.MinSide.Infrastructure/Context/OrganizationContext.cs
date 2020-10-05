@@ -12,6 +12,7 @@ namespace Geonorge.MinSide.Infrastructure.Context
         public DbSet<Meeting> Meetings { get; set; }
         public virtual DbSet<ToDo> Todo { get; set; }
         public DbSet<UserSettings> UserSettings { get; set; }
+        public DbSet<InfoText> InfoTexts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -42,6 +43,9 @@ namespace Geonorge.MinSide.Infrastructure.Context
 
             modelBuilder.Entity<ToDo>()
                 .HasIndex(b => b.Deadline);
+
+            modelBuilder.Entity<InfoText>()
+                .HasIndex(b => b.OrganizationNumber);
         }
 
     }

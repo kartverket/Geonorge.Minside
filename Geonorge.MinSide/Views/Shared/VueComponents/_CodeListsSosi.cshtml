@@ -8,10 +8,10 @@
             <div v-show="expanded">
                 <div class="list-header d-none d-md-block">
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-11">
                             Tittel
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-1">
                             Status
                         </div>
                     </div>
@@ -19,10 +19,10 @@
                 <div class="list-content" v-bind:class="{'loading-data': loadingData}">
                     <div v-for="item in filteredItems" class="list-item">
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-11">
                                 <a v-bind:href="item.Url" v-bind:title="'Vis detaljer for ' + item.RegisterName">{{item.RegisterName}}</a>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-1">
                                 <span class="d-inline-block d-md-none">Status:</span>
                                 {{ item.Status }}
                             </div>
