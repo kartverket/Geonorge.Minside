@@ -36,11 +36,12 @@ namespace Geonorge.MinSide.Services
 
         public async Task<DocumentViewModel> GetAll(string organizationNumber)
         {
+            List<String> fixedOrder =  new List<String> { "Geonorge – distribusjonsavtale", "Norge digitalt – bilag 1", "Norge digitalt – bilag 2", "Norge digitalt – bilag 3", "Geonorge – deldistribusjonsavtale" };
             DocumentViewModel documentViewModel = new DocumentViewModel();
             var info = await GetInfoText(organizationNumber);
             documentViewModel.InfoText = info != null && !string.IsNullOrEmpty(info.Text) ? info.Text : "";
-            documentViewModel.Drafts = await _context.Documents.Where(d => d.OrganizationNumber.Equals(organizationNumber) && d.Status == "Forslag").OrderBy(d => d.Name).ToListAsync();
-            documentViewModel.Valid = await _context.Documents.Where(d => d.OrganizationNumber.Equals(organizationNumber) && d.Status == "Gyldig").OrderBy(d => d.Name).ToListAsync();
+            documentViewModel.Drafts =  _context.Documents.AsEnumerable().Where(d => d.OrganizationNumber.Equals(organizationNumber) && d.Status == "Forslag").OrderBy(item => fixedOrder.IndexOf(item.Type)).ThenBy(d => d.Name).ToList();
+            documentViewModel.Valid = _context.Documents.Where(d => d.OrganizationNumber.Equals(organizationNumber) && d.Status == "Gyldig").OrderBy(item => fixedOrder.IndexOf(item.Type)).ThenBy(d => d.Name).ToList();
             documentViewModel.Superseded = await _context.Documents.Where(d => d.OrganizationNumber.Equals(organizationNumber) && d.Status == "Utgått").OrderByDescending(d => d.Date).ToListAsync();
 
             return documentViewModel;
