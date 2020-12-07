@@ -28,7 +28,8 @@ namespace Geonorge.MinSide.Models
             {"Geonorge – distribusjonsavtale", "Geonorge – distribusjonsavtale"},
             {"Norge digitalt – bilag 1", "Norge digitalt – bilag 1"},
             {"Norge digitalt – bilag 2", "Norge digitalt – bilag 2"},
-            {"Norge digitalt – bilag 3", "Norge digitalt – bilag 3"}
+            {"Norge digitalt – bilag 3", "Norge digitalt – bilag 3"},
+            {"Geonorge – deldistribusjonsavtale", "Geonorge – deldistribusjonsavtale"},
         };
 
         public static Dictionary<string, string> MeetingTypes = new Dictionary<string, string>

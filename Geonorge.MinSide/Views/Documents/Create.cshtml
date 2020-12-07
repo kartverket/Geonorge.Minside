@@ -10,14 +10,19 @@
         <div class="col-md-4">
             <form enctype="multipart/form-data" asp-action="Create">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                
-                 <input asp-for="OrganizationNumber" type="hidden" value="@Context.Session.GetString("OrganizationNumber")" class="form-control" />
+
+                <input asp-for="OrganizationNumber" type="hidden" value="@Context.Session.GetString("OrganizationNumber")" class="form-control" />
 
                 <div class="form-group">
                     <label asp-for="Type" class="control-label"></label>
                     @{var Types = new SelectList(CodeList.DocumentTypes, "Key", "Value");}
                     <select name="Type" class="form-control" asp-items="Types"></select>
-                    <span asp-validation-for="Type"  class="text-danger"></span>
+                    <span asp-validation-for="Type" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Name" class="control-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
                 <div class="form-group">
                     <label asp-for="FileName"></label>

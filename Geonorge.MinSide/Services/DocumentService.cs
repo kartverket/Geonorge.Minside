@@ -53,8 +53,10 @@ namespace Geonorge.MinSide.Services
 
         public async Task<Document> Create(Document document, IFormFile file)
         {
-            if (string.IsNullOrEmpty(document.Name))
-                document.Name = document.Type;
+            if (!string.IsNullOrEmpty(document.Type) && !string.IsNullOrEmpty(document.Name) && document.Type == "Geonorge – deldistribusjonsavtale")
+                document.Name = document.Type + " – " + document.Name;
+            else if (string.IsNullOrEmpty(document.Name))
+            document.Name = document.Type;
 
             string organizationName = CodeList.Organizations[document.OrganizationNumber].ToString();
             document.FileName = Helper.CreateFileName(Helper.GetFileExtension(file.FileName), document.Name, document.Date, organizationName);
