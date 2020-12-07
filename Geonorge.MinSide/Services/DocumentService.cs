@@ -41,7 +41,7 @@ namespace Geonorge.MinSide.Services
             var info = await GetInfoText(organizationNumber);
             documentViewModel.InfoText = info != null && !string.IsNullOrEmpty(info.Text) ? info.Text : "";
             documentViewModel.Drafts =  _context.Documents.AsEnumerable().Where(d => d.OrganizationNumber.Equals(organizationNumber) && d.Status == "Forslag").OrderBy(item => fixedOrder.IndexOf(item.Type)).ThenBy(d => d.Name).ToList();
-            documentViewModel.Valid = _context.Documents.Where(d => d.OrganizationNumber.Equals(organizationNumber) && d.Status == "Gyldig").OrderBy(item => fixedOrder.IndexOf(item.Type)).ThenBy(d => d.Name).ToList();
+            documentViewModel.Valid = _context.Documents.AsEnumerable().Where(d => d.OrganizationNumber.Equals(organizationNumber) && d.Status == "Gyldig").OrderBy(item => fixedOrder.IndexOf(item.Type)).ThenBy(d => d.Name).ToList();
             documentViewModel.Superseded = await _context.Documents.Where(d => d.OrganizationNumber.Equals(organizationNumber) && d.Status == "Utgått").OrderByDescending(d => d.Date).ToListAsync();
 
             return documentViewModel;
