@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Geonorge.MinSide.Contstants;
@@ -9,7 +7,6 @@ using Geonorge.MinSide.Models;
 using Geonorge.MinSide.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Geonorge.MinSide.Services
 {
@@ -37,20 +34,12 @@ namespace Geonorge.MinSide.Services
 
         public async Task<DocumentViewModel> GetAll(string organizationNumber)
         {
-            var fixedOrder =  new List<string> { 
-                DocumentType.GeonorgeDistribusjonsavtale, 
-                DocumentType.NorgeDigitaltBilag1, 
-                DocumentType.NorgeDigitaltBilag2, 
-                DocumentType.NorgeDigitaltBilag3, 
-                DocumentType.GeonorgeDeldistribusjonsavtale
-            };
-
-            var documentViewModel = new DocumentViewModel();
             var info = await GetInfoText(organizationNumber);
+            var documentViewModel = new DocumentViewModel();
 
             documentViewModel.InfoText = info != null && !string.IsNullOrEmpty(info.Text) ? info.Text : "";
-            documentViewModel.Drafts =  _context.Documents.AsEnumerable().Where(d => d.OrganizationNumber.Equals(organizationNumber) && d.Status == "Forslag").OrderBy(item => fixedOrder.IndexOf(item.Type)).ThenBy(d => d.Name).ToList();
-            documentViewModel.Valid = _context.Documents.AsEnumerable().Where(d => d.OrganizationNumber.Equals(organizationNumber) && d.Status == "Gyldig").OrderBy(item => fixedOrder.IndexOf(item.Type)).ThenBy(d => d.Name).ToList();
+            documentViewModel.Drafts = await _context.Documents.Where(d => d.OrganizationNumber.Equals(organizationNumber) && d.Status == "Forslag").OrderBy(d => d.Name).ToListAsync();
+            documentViewModel.Valid = await _context.Documents.Where(d => d.OrganizationNumber.Equals(organizationNumber) && d.Status == "Gyldig").OrderBy(d => d.Name).ToListAsync();
             documentViewModel.Superseded = await _context.Documents.Where(d => d.OrganizationNumber.Equals(organizationNumber) && d.Status == "Utgått").OrderByDescending(d => d.Date).ToListAsync();
 
             return documentViewModel;
