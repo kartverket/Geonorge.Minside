@@ -1,8 +1,12 @@
 ﻿@using Microsoft.AspNetCore.Http;
+@using Geonorge.MinSide.Contstants; 
 @model Geonorge.MinSide.Infrastructure.Context.Document
 
 @{
     ViewData["Title"] = "Create";
+
+    var subDistributionAgreementDocumentType = Html.Raw(DocumentType.GeonorgeDeldistribusjonsavtale);
+    var showDocumentName = Model.Type == DocumentType.GeonorgeDeldistribusjonsavtale;
 }
 <div class="container">
     <h2>Ny avtale</h2>
@@ -15,11 +19,11 @@
 
                 <div class="form-group">
                     <label asp-for="Type" class="control-label"></label>
-                    @{var Types = new SelectList(CodeList.DocumentTypes, "Key", "Value");}
+                    @{var Types = new SelectList(CodeList.DocumentTypes, "Key", "Value", Model.Type);}
                     <select name="Type" class="form-control" asp-items="Types"></select>
                     <span asp-validation-for="Type" class="text-danger"></span>
                 </div>
-                <div class="form-group">
+                <div class="form-group" style="@(showDocumentName ? "display: block" : "display: none")">
                     <label asp-for="Name" class="control-label"></label>
                     <input asp-for="Name" class="form-control" />
                     <span asp-validation-for="Name" class="text-danger"></span>
@@ -36,10 +40,13 @@
                 </div>
                 <div class="form-group">
                     <label asp-for="Status" class="control-label"></label>
-                    @{var Statuses = new SelectList(CodeList.DocumentStatus, "Key", "Value");}
+                    @{
+                        var Statuses = new SelectList(CodeList.DocumentStatus, "Key", "Value");
+                    }
                     <select name="Status" class="form-control" asp-items="Statuses"></select>
                     <span asp-validation-for="Status" class="text-danger"></span>
                 </div>
+
                 <div class="form-group">
                     <input type="submit" value="Opprett" class="btn btn-default" />
                 </div>
@@ -51,4 +58,15 @@
         <a asp-action="Index">Tilbake</a>
     </div>
 </div>
+
+<script>
+    const subDistributionAgreementDocumentType = '@subDistributionAgreementDocumentType';
+    const documentTypeSelectElement = document.querySelector('select[name="Type"]');
+    const documentNameFormGroupElement = document.querySelector('#Name').parentElement;
+
+    documentTypeSelectElement.addEventListener('change', (event) => {
+        const display = event.target.value === subDistributionAgreementDocumentType ? 'block' : 'none';
+        documentNameFormGroupElement.style.display = display;
+    });
+</script>
 

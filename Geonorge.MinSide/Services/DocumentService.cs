@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Geonorge.MinSide.Contstants;
 using Geonorge.MinSide.Infrastructure.Context;
 using Geonorge.MinSide.Models;
 using Geonorge.MinSide.Utils;
@@ -36,9 +37,17 @@ namespace Geonorge.MinSide.Services
 
         public async Task<DocumentViewModel> GetAll(string organizationNumber)
         {
-            List<String> fixedOrder =  new List<String> { "Geonorge – distribusjonsavtale", "Norge digitalt – bilag 1", "Norge digitalt – bilag 2", "Norge digitalt – bilag 3", "Geonorge – deldistribusjonsavtale" };
-            DocumentViewModel documentViewModel = new DocumentViewModel();
+            var fixedOrder =  new List<string> { 
+                DocumentType.GeonorgeDistribusjonsavtale, 
+                DocumentType.NorgeDigitaltBilag1, 
+                DocumentType.NorgeDigitaltBilag2, 
+                DocumentType.NorgeDigitaltBilag3, 
+                DocumentType.GeonorgeDeldistribusjonsavtale
+            };
+
+            var documentViewModel = new DocumentViewModel();
             var info = await GetInfoText(organizationNumber);
+
             documentViewModel.InfoText = info != null && !string.IsNullOrEmpty(info.Text) ? info.Text : "";
             documentViewModel.Drafts =  _context.Documents.AsEnumerable().Where(d => d.OrganizationNumber.Equals(organizationNumber) && d.Status == "Forslag").OrderBy(item => fixedOrder.IndexOf(item.Type)).ThenBy(d => d.Name).ToList();
             documentViewModel.Valid = _context.Documents.AsEnumerable().Where(d => d.OrganizationNumber.Equals(organizationNumber) && d.Status == "Gyldig").OrderBy(item => fixedOrder.IndexOf(item.Type)).ThenBy(d => d.Name).ToList();
@@ -54,10 +63,10 @@ namespace Geonorge.MinSide.Services
 
         public async Task<Document> Create(Document document, IFormFile file)
         {
-            if (!string.IsNullOrEmpty(document.Type) && !string.IsNullOrEmpty(document.Name) && document.Type == "Geonorge – deldistribusjonsavtale")
+            if (!string.IsNullOrEmpty(document.Type) && !string.IsNullOrEmpty(document.Name) && document.Type == DocumentType.GeonorgeDeldistribusjonsavtale)
                 document.Name = document.Type + " – " + document.Name;
             else if (string.IsNullOrEmpty(document.Name))
-            document.Name = document.Type;
+                document.Name = document.Type;
 
             string organizationName = CodeList.Organizations[document.OrganizationNumber].ToString();
             document.FileName = Helper.CreateFileName(Helper.GetFileExtension(file.FileName), document.Name, document.Date, organizationName);
@@ -72,10 +81,12 @@ namespace Geonorge.MinSide.Services
 
         private async Task SaveFile(Document document, IFormFile file)
         {
-            using (var fileStream = new FileStream(_applicationSettings.FilePath + "\\" + document.FileName, FileMode.Create))
-            {
-                await file.CopyToAsync(fileStream);
-            }
+            if (!Directory.Exists(_applicationSettings.FilePath))
+                Directory.CreateDirectory(_applicationSettings.FilePath);
+
+            using var fileStream = new FileStream(_applicationSettings.FilePath + "\\" + document.FileName, FileMode.Create);
+            
+            await file.CopyToAsync(fileStream);
         }
 
         public async Task Update(Document updatedDocument, int documentId)

@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Http;
 using System.IO;
 using Geonorge.MinSide.Utils;
 using Geonorge.MinSide.Models;
+using Geonorge.MinSide.Contstants;
 
 namespace Geonorge.MinSide.Web.Controllers
 {
@@ -72,12 +73,23 @@ namespace Geonorge.MinSide.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,OrganizationNumber,Type,Name,FileName,Date,Status")] Document document, IFormFile file)
         {
-
-            var ext = Helper.GetFileExtension(file.FileName);
-
-            if (string.IsNullOrEmpty(ext) || !Helper.PermittedFileExtensions.Contains(ext))
+            if (file == null)
             {
-                ModelState.AddModelError("FileName", "Ugyldig filendelse");
+                ModelState.AddModelError("FileName", "En fil må velges");
+            } 
+            else
+            {
+                var ext = Helper.GetFileExtension(file.FileName);
+
+                if (string.IsNullOrEmpty(ext) || !Helper.PermittedFileExtensions.Contains(ext))
+                {
+                    ModelState.AddModelError("FileName", "Ugyldig filendelse");
+                }
+            }
+
+            if (document.Type == DocumentType.GeonorgeDeldistribusjonsavtale && string.IsNullOrWhiteSpace(document.Name))
+            {
+                ModelState.AddModelError("Name", "Navn må fylles ut");
             }
 
             if (ModelState.IsValid)
@@ -86,6 +98,7 @@ namespace Geonorge.MinSide.Web.Controllers
 
                 return RedirectToAction(nameof(Index));
             }
+
             return View(document);
         }
 
