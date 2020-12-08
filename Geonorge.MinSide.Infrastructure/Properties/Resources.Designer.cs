@@ -124,7 +124,7 @@ namespace Geonorge.MinSide.Infrastructure.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Navn/område.
+        ///   Looks up a localized string similar to Navn.
         /// </summary>
         public static string Name {
             get {
