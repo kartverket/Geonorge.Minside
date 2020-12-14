@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Geonorge.MinSide.Contstants;
 using Geonorge.MinSide.Infrastructure.Context;
 using Geonorge.MinSide.Models;
 using Geonorge.MinSide.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Geonorge.MinSide.Services
 {
@@ -36,8 +34,9 @@ namespace Geonorge.MinSide.Services
 
         public async Task<DocumentViewModel> GetAll(string organizationNumber)
         {
-            DocumentViewModel documentViewModel = new DocumentViewModel();
             var info = await GetInfoText(organizationNumber);
+            var documentViewModel = new DocumentViewModel();
+
             documentViewModel.InfoText = info != null && !string.IsNullOrEmpty(info.Text) ? info.Text : "";
             documentViewModel.Drafts = await _context.Documents.Where(d => d.OrganizationNumber.Equals(organizationNumber) && d.Status == "Forslag").OrderBy(d => d.Name).ToListAsync();
             documentViewModel.Valid = await _context.Documents.Where(d => d.OrganizationNumber.Equals(organizationNumber) && d.Status == "Gyldig").OrderBy(d => d.Name).ToListAsync();
@@ -53,7 +52,9 @@ namespace Geonorge.MinSide.Services
 
         public async Task<Document> Create(Document document, IFormFile file)
         {
-            if (string.IsNullOrEmpty(document.Name))
+            if (!string.IsNullOrEmpty(document.Type) && !string.IsNullOrEmpty(document.Name) && document.Type == DocumentType.GeonorgeDeldistribusjonsavtale)
+                document.Name = document.Type + " – " + document.Name;
+            else if (string.IsNullOrEmpty(document.Name))
                 document.Name = document.Type;
 
             string organizationName = CodeList.Organizations[document.OrganizationNumber].ToString();
@@ -69,10 +70,12 @@ namespace Geonorge.MinSide.Services
 
         private async Task SaveFile(Document document, IFormFile file)
         {
-            using (var fileStream = new FileStream(_applicationSettings.FilePath + "\\" + document.FileName, FileMode.Create))
-            {
-                await file.CopyToAsync(fileStream);
-            }
+            if (!Directory.Exists(_applicationSettings.FilePath))
+                Directory.CreateDirectory(_applicationSettings.FilePath);
+
+            using var fileStream = new FileStream(_applicationSettings.FilePath + "\\" + document.FileName, FileMode.Create);
+            
+            await file.CopyToAsync(fileStream);
         }
 
         public async Task Update(Document updatedDocument, int documentId)

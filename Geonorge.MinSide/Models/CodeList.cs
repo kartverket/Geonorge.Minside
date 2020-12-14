@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Geonorge.MinSide.Contstants;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,10 +26,11 @@ namespace Geonorge.MinSide.Models
 
         public static Dictionary<string, string> DocumentTypes = new Dictionary<string, string>
         {
-            {"Geonorge – distribusjonsavtale", "Geonorge – distribusjonsavtale"},
-            {"Norge digitalt – bilag 1", "Norge digitalt – bilag 1"},
-            {"Norge digitalt – bilag 2", "Norge digitalt – bilag 2"},
-            {"Norge digitalt – bilag 3", "Norge digitalt – bilag 3"}
+            {DocumentType.GeonorgeDistribusjonsavtale, DocumentType.GeonorgeDistribusjonsavtale},
+            {DocumentType.NorgeDigitaltBilag1, DocumentType.NorgeDigitaltBilag1},
+            {DocumentType.NorgeDigitaltBilag2, DocumentType.NorgeDigitaltBilag2},
+            {DocumentType.NorgeDigitaltBilag3, DocumentType.NorgeDigitaltBilag3},
+            {DocumentType.GeonorgeDeldistribusjonsavtale, DocumentType.GeonorgeDeldistribusjonsavtale}
         };
 
         public static Dictionary<string, string> MeetingTypes = new Dictionary<string, string>
