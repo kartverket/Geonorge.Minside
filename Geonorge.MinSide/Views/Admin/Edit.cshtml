@@ -17,16 +17,52 @@
         </select>
         <input type="submit" value="Vis" class="btn btn-default" />
     </form>
-    <b>Logg:</b>
-    <table border="1" width="100%">
-        <tr><th>Date</th><th>User</th><th>Description</th></tr>
-        @foreach (var log in Model)
+    <hr />
+    <b>Logg:</b><br />
+                <form>
+                    <input type="checkbox" @(ViewBag.limitCurrentApplication == true ? "checked" : "") name="limitCurrentApplication" value="true" /><input type="hidden" name="limitCurrentApplication" value="false" /> Vis kun oppfølgingpunkter,
+                    <span> antall hendelser:</span><input size="3" id="limitNumberOfEntries" name="limitNumberOfEntries" value="@ViewBag.limitNumberOfEntries" />
+                    <span>, begrens operasjon:</span>
+                    <select id="operation" name="operation">
+                        <option value=""></option>
+                        <option value="@Operation.Deleted" selected="@(ViewBag.operation == Operation.Deleted)">@Operation.Deleted</option>
+                        <option value="@Operation.Added" selected="@(ViewBag.operation == Operation.Added)">@Operation.Added</option>
+                        <option value="@Operation.Modified" selected="@(ViewBag.operation == Operation.Modified)">@Operation.Modified</option>
+                    </select>
+                    <input type="submit" value="Oppdater" class="btn btn-default" />
+                </form>
+    @if (ViewBag.limitCurrentApplication)
+    {
+        <table border="1" width="100%">
+            <tr><th>Date</th><th>User</th><th>Description</th></tr>
+            @foreach (var log in Model)
+            {
+                <tr>
+                    <td>@log.DateTime</td>
+                    <td>@log.User</td>
+                    <td>@Html.Raw(log.Description)</td>
+                </tr>
+            }
+        </table>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-md-2"><b>Date</b></div>
+            <div class="col-md-2"><b>Application</b></div>
+            <div class="col-md-2"><b>User</b></div>
+            <div class="col-md-1"><b>Operation</b></div>
+            <div class="col-md-5"><b>Description</b></div>
+        </div>
+        foreach (var entry in Model)
         {
-        <tr>
-            <td>@log.DateTime</td>
-            <td>@log.User</td>
-            <td>@Html.Raw(log.Description)</td>
-        </tr>
+            <div class="row">
+                <div class="col-md-2">@entry.DateTime</div>
+                <div class="col-md-2">@entry.Application</div>
+                <div class="col-md-2">@entry.User</div>
+                <div class="col-md-1">@entry.Operation</div>
+                <div class="col-md-5"><span>@entry.Description</span><span>. UUID:&nbsp;@entry.ElementId</span></div>
+            </div>
         }
-    </table>
+    }
 </div>
