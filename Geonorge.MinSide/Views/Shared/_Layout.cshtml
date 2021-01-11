@@ -17,10 +17,10 @@
     <div id="loading-animation" class="loading-animation" style="display: none;"></div>
 
     <script>
-    var applicationEnvironment = '@AppSettings.EnvironmentName.ToLower()';
-    var applicationVersionNumber = '@AppSettings.BuildVersionNumber';
-    var authenticationData = { supportsLogin: false, isAuthenticated: false };
-    var cultureData = { supportsMultiCulture: "true", currentCulture: 'no' };
+        var applicationEnvironment = '@AppSettings.EnvironmentName.ToLower()';
+        var applicationVersionNumber = '@AppSettings.BuildVersionNumber';
+        var authenticationData = { supportsLogin: false, isAuthenticated: false };
+        var cultureData = { supportsMultiCulture: "true", currentCulture: 'no' };
     </script>
 
     @await Html.PartialAsync("~/wwwroot/dist/partials/Header.html")
@@ -34,30 +34,32 @@
                     @RenderSection("breadcrumb", false)
                 </ul>
             </div>
-            @if (User.IsAuthenticated()) { 
-            <div class="container panel panel-default" style="padding: 10px;">
-                <div id="Tabs" role="tabpanel">
-                    <ul class="nav nav-tabs link-tabs" role="tablist">
-                        <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Home" ? "active" : "")"><a href="~/" role="tab"><i class="far fa-file-alt"></i>Registreringer&nbsp;</a></li>
-                        <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Documents" ? "active" : "")"><a href="~/Documents" role="tab"><i class="fas fa-file-contract"></i>Avtaler&nbsp;</a></li>
-                        @if (User.IsInRole(GeonorgeRoles.MetadataAdmin) || User.IsInRole(GeonorgeRoles.MetadataEditor) || User.IsInRole(GeonorgeRoles.ContactPerson))
-                        {
-                            <li class="@( (ViewContext.RouteData.Values["controller"].ToString() == "Meetings" ) ? "active" : "")"><a href="~/Meetings" role="tab"><i class="fas fa-handshake"></i>Møter&nbsp;</a></li>
-                            <li class="@( (ViewContext.RouteData.Values["controller"].ToString() == "ToDo") ? "active" : "")"><a href="~/ToDo?initial=true" role="tab"><i class="fas fa-clipboard-check"></i>Oppfølgingspunkter&nbsp;</a></li>
-                        }
-                        @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
-                        {
-                            <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Admin" ? "active" : "")"><a href="~/Admin/Edit" role="tab"><i class="fas fa-cog"></i>Admin</a></li>
-                        }
-                    </ul>
+            @if (User.IsAuthenticated())
+            {
+                <div class="container panel panel-default" style="padding: 10px;">
+                    <div id="Tabs" role="tabpanel">
+                        <ul class="nav nav-tabs link-tabs" role="tablist">
+                            <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Home" ? "active" : "")"><a href="~/" role="tab"><i class="far fa-file-alt"></i>Registreringer&nbsp;</a></li>
+                            <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Documents" ? "active" : "")"><a href="~/Documents" role="tab"><i class="fas fa-file-contract"></i>Avtaler&nbsp;</a></li>
+                            @if (User.IsInRole(GeonorgeRoles.MetadataAdmin) || User.IsInRole(GeonorgeRoles.MetadataEditor) || User.IsInRole(GeonorgeRoles.ContactPerson))
+                            {
+                                <li class="@( (ViewContext.RouteData.Values["controller"].ToString() == "Meetings" ) ? "active" : "")"><a href="~/Meetings" role="tab"><i class="fas fa-handshake"></i>Møter&nbsp;</a></li>
+                                <li class="@( (ViewContext.RouteData.Values["controller"].ToString() == "ToDo") ? "active" : "")"><a href="~/ToDo?initial=true" role="tab"><i class="fas fa-clipboard-check"></i>Oppfølgingspunkter&nbsp;</a></li>
+                            }
+                            @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
+                            {
+                                <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Admin" ? "active" : "")"><a href="~/Admin/Edit" role="tab"><i class="fas fa-cog"></i>Admin</a></li>
+                            }
+                        </ul>
+                    </div>
                 </div>
-            </div>
             }
         </div>
         @RenderBody()
     </div>
     @await Html.PartialAsync("~/wwwroot/dist/partials/Footer_v2.html")
 
+    <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/dist/vendor.js" asp-append-version="true"></script>
     <script src="~/dist/js/geonorge-shared/vendor.js" asp-append-version="true"></script>
     <script src="~/dist/js/geonorge-shared/main.js" asp-append-version="true"></script>
@@ -73,7 +75,8 @@
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
-    <script src="~/dist/main.js" asp-append-version="true"></script>
+    @*<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.20/lodash.min.js"></script>
+        <script src="~/dist/main.js" asp-append-version="true"></script>*@
 
 
     @RenderSection("scripts", required: false)

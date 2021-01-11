@@ -1,9 +1,9 @@
 ﻿<script type="text/x-template" id="report-measurment-template">
-    <div>
-        <div v-if="items && filteredItems.length" class="list">
+    <div v-if="items && visibleItems.length">
+        <div class="list">
             <h3 class="section-title">Statistikk</h3>
             <div class="list-content">
-                <div v-for="item in filteredItems" class="list-item">
+                <div v-for="item in visibleItems" class="list-item">
                     <div class="row">
                         <div class="col-md-10">
                             {{item.Label}}
@@ -18,7 +18,7 @@
         </div>
         <div>
             <a v-bind:href="reportUrl" target="_blank">Vis mer statistikk</a>
-</div>
+        </div>
     </div>
 </script>
 
@@ -26,49 +26,51 @@
     var ReportMeasurment = {
         name: "ReportMeasurment",
         template: "#report-measurment-template",
-        props: ['loadAllApiData'],
         data: function () {
             return {
                 items: null,
+                filteredItems: [],
+                visibleItems: [],
+                tooManyHits: false,
                 reportUrl: "https://rapportgenerator." + this.$root.Environment + "geonorge.no/statistics?organization=" + this.$root.OrganizationName,
                 filterProperties: [
                     'Label',
                 ]
             }
         },
-        computed: {
-            filteredItems: function () {
-                var filteredItems = [];
-                if (this.loadAllApiData && this.$root.searchInput) {
-                    this.items.forEach(function (item) {
-                        var itemHasMatch = false;
-                        this.filterProperties.forEach(function (filterProperty) {
-                            if (item[filterProperty].toUpperCase().indexOf(this.$root.searchInput.toUpperCase()) > -1) {
-                                itemHasMatch = true;
-                            }
-                        }.bind(this));
-                        if (itemHasMatch) {
-                            filteredItems.push(item);
-                        }
-                    }.bind(this))
-                } else {
-                    filteredItems = this.items;
-                }
-                return filteredItems;
-            }
-        },
         methods: {
             getItems: function () {
                 var organizationNameParameter = '?organization=' + this.$root.OrganizationName;
                 var environmentParameter = this.$root.Environment;
-                Promise.resolve(this.$root.getApiData("https://rapportgenerator." + environmentParameter + "geonorge.no/api/statistics" + organizationNameParameter))
+                var apiURL = "https://rapportgenerator." + environmentParameter + "geonorge.no/api/statistics" + organizationNameParameter;
+
+                return Promise.resolve(this.$root.getApiData(apiURL))
                     .then((apiData) => {
                         this.items = apiData;
                     });
+            },
+
+            filterItems: function (searchText) {
+                this.filteredItems = this.items.filter(item => {
+                    return this.filterProperties.some(filterProperty => {
+                        return item[filterProperty].toUpperCase().indexOf(searchText.toUpperCase()) > -1;
+                    });
+                });
             }
         },
         mounted: function () {
-            this.getItems();
+            this.getItems()
+                .then(() => {
+                    this.filteredItems = this.items;
+                    this.visibleItems = this.filteredItems;
+                });
+        },
+        watch: {
+            '$root.searchText': function () {
+                var searchText = this.$root.searchText.trim();
+                this.filterItems(searchText);
+                this.visibleItems = this.filteredItems;
+            }
         }
     };
 </script>

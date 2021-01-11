@@ -1,10 +1,11 @@
 ﻿<script type="text/x-template" id="service-notifications-template">
     <div>
-        <div v-if="items && filteredItems.length" class="list">
+        <div v-if="items && visibleItems.length" class="list">
             <h3 v-on:click="expanded = !expanded" class="section-title clickable">
                 <span class="expand-arrow clickable" style="vertical-align: middle;" v-bind:class="{active: expanded}"></span>
-                Varsler ({{ getCounter() }})
+                Varsler ({{ filteredItems.length }})
             </h3>
+            <h6 class="tooManyHits" v-show="tooManyHits">For mange treff ({{ filteredItems.length }}). Prøv å begrense søket.</h6>
             <div v-show="expanded">
                 <div class="list-header d-none d-md-block">
                     <div class="row">
@@ -23,10 +24,10 @@
                     </div>
                 </div>
                 <div class="list-content" v-bind:class="{'loading-data': loadingData}">
-                    <div v-for="item in filteredItems" class="list-item">
+                    <div v-for="item in visibleItems" class="list-item">
                         <div class="row">
                             <div class="col-md-3">
-                                <a v-bind:href="item.id" v-bind:title="'Vis detaljer for ' + item.label">{{item.label}}</a>
+                                <a v-bind:href="item.id" v-bind:title="'Vis detaljer for ' + item.label" target="_blank">{{item.label}}</a>
                             </div>
                             <div class="col-md-3">
                                 {{item.AlertCategory}}
@@ -43,7 +44,7 @@
                     </div>
                 </div>
                 <div class="text-center">
-                    <button v-show="moreItemsAvailable" v-on:click="getItems()" class="icon-button add-more-button" v-bind:class="loadingData ? 'fas fa-spinner fa-pulse' : 'fa fa-plus'"></button>
+                    <button v-show="moreItemsAvailable" v-on:click="showMoreItems()" class="icon-button add-more-button" v-bind:class="loadingData ? 'fas fa-spinner fa-pulse' : 'fa fa-plus'"></button>
                 </div>
             </div>
         </div>
@@ -54,13 +55,15 @@
     var ServiceNotifications = {
         name: "ServiceNotifications",
         template: "#service-notifications-template",
-        props: ['loadAllApiData'],
         data: function () {
             return {
                 loadingData: false,
                 expanded: true,
                 items: null,
-                numberOfVisibleItems: 0,
+                filteredItems: [],
+                visibleItems: [],
+                visibleItemsCount: this.$root.VISIBLE_ITEMS,
+                tooManyHits: false,
                 filterProperties: [
                     'label'
                 ]
@@ -68,71 +71,65 @@
         },
         computed: {
             moreItemsAvailable: function () {
-                if (this.loadAllApiData) {
-                    return false;
-                } else {
-                    return this.items && this.items.ContainedItemsResult.Total > this.numberOfVisibleItems;
-                }
-            },
-            filteredItems: function () {
-                var filteredItems = [];
-                if (this.loadAllApiData && this.$root.searchInput) {
-                    this.items.containeditems.forEach(function (item) {
-                        var itemHasMatch = false;
-                        this.filterProperties.forEach(function (filterProperty) {
-                            if (item[filterProperty].toUpperCase().indexOf(this.$root.searchInput.toUpperCase()) > -1) {
-                                itemHasMatch = true;
-                            }
-                        }.bind(this));
-                        if (itemHasMatch) {
-                            filteredItems.push(item);
-                        }
-                    }.bind(this))
-                } else {
-                    filteredItems = this.items.containeditems;
-                }
-                return filteredItems;
+                return this.items && this.filteredItems.length > this.visibleItems.length;
             }
         },
         methods: {
             getItems: function () {
-                var itemsPerRequest = 10;
-                var offsetParameter = this.numberOfVisibleItems ? "&offset=" + this.numberOfVisibleItems : "";
-                var orderBy = "&orderBy=alertDate";
-                var organizationNameParameter = '?filterOrganization=' + this.$root.OrganizationName;
                 var environmentParameter = this.$root.Environment;
-
-                var apiURL = this.loadAllApiData
-                    ? "https://register." + environmentParameter + "geonorge.no/api/varsler" + organizationNameParameter + orderBy
-                    : "https://register." + environmentParameter + "geonorge.no/api/varsler" + organizationNameParameter + "&limit=" + itemsPerRequest + offsetParameter + orderBy;
+                var organizationNameParameter = '?filterOrganization=' + this.$root.OrganizationName;
+                var orderBy = "&orderBy=alertDate";
+                var apiURL = "https://register." + environmentParameter + "geonorge.no/api/varsler" + organizationNameParameter + orderBy;
 
                 this.loadingData = true;
-                Promise.resolve(this.$root.getApiData(apiURL))
+
+                return Promise.resolve(this.$root.getApiData(apiURL))
                     .then((apiData) => {
+                        this.items = apiData;
                         this.loadingData = false;
-                        if (!this.items || this.loadAllApiData) {
-                            this.items = apiData;
-                        } else {
-                            this.items.containeditems = this.items.containeditems.concat(apiData.containeditems);
-                        }
-                        this.numberOfVisibleItems += itemsPerRequest;
                     });
             },
-            formatDate: function (date) {
-                if (date) {
-                    return moment(date).format('DD.MM.YYYY');
-                }
+
+            filterItems: function (searchText) {
+                this.filteredItems = this.items.containeditems.filter(item => {
+                    return this.filterProperties.some(filterProperty => {
+                        return item[filterProperty].toUpperCase().indexOf(searchText.toUpperCase()) > -1;
+                    });
+                });
             },
-            getCounter: function () {
-                return this.loadAllApiData && this.$root.searchInput ? this.filteredItems.length : this.items.ContainedItemsResult.Total;
+
+            showMoreItems: function () {
+                this.visibleItems = this.filteredItems.slice(0, this.visibleItems.length + this.$root.VISIBLE_ITEMS);
+                this.visibleItemsCount = this.visibleItems.length;
+            },
+
+            formatDate: function (date) {
+                return date ? moment(date).format('DD.MM.YYYY') : undefined;
             }
         },
         mounted: function () {
-            this.getItems();
+            this.getItems()
+                .then(() => {
+                    this.filteredItems = this.items.containeditems;
+                    this.visibleItems = this.filteredItems.slice(0, this.$root.VISIBLE_ITEMS);
+                });
         },
         watch: {
-            loadAllApiData: function () {
-                this.getItems();
+            '$root.searchText': function () {
+                var searchText = this.$root.searchText.trim();
+                this.filterItems(searchText);
+                this.tooManyHits = false;
+
+                if (searchText === '') {
+                    this.visibleItems = this.items.containeditems.slice(0, this.visibleItemsCount);
+                    return;
+                }
+
+                this.tooManyHits = this.filteredItems.length > this.$root.MAX_HITS;
+
+                if (!this.tooManyHits) {
+                    this.visibleItems = this.filteredItems;
+                }
             }
         }
     };

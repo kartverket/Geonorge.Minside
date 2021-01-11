@@ -1,10 +1,11 @@
 @inject ApplicationSettings AppSettings
 @using Geonorge.MinSide.Services.Authorization;
 @model UserSettingsViewModel
-@{ ViewData["Title"] = "Min side";
+@{
+    ViewData["Title"] = "Min side";
     ViewData["Environment"] = !string.IsNullOrEmpty(AppSettings.EnvironmentName) ? AppSettings.EnvironmentName.ToLower() + "." : "";
 }
-<div id="app">
+<div id="app" v-cloak>
     <div class="view-header">
         <div class="container">
             <div class="row">
@@ -18,58 +19,50 @@
         </div>
     </div>
 
-
     <div class="container">
         <div class="section" is="organization-data"></div>
         @if (User.IsInRole(GeonorgeRoles.MetadataAdmin) || User.IsInRole(GeonorgeRoles.MetadataEditor) || User.IsInRole(GeonorgeRoles.ContactPerson))
         {
             <div>
-                
-                    <form asp-action="Settings">
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <input type="checkbox" asp-for="TodoNotification" id="TodoNotification" /> 
-                                <label for="TodoNotification"> Abonner på endringer om oppfølgingspunkter ( @Model.Email )</label>
-                            </div>
+                <form asp-action="Settings">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <input type="checkbox" asp-for="TodoNotification" id="TodoNotification" />
+                            <label for="TodoNotification"> Abonner på endringer om oppfølgingspunkter ( @Model.Email )</label>
                         </div>
-                         <div class="row">
-                            <div class="col-sm-12">
-                                <input type="checkbox" asp-for="TodoReminder" id="TodoReminder" />
-                                <label for="TodoReminder"> Ønsker også påminnelse</label> 
-                                 <input asp-for="TodoReminderTime" type="number" min="0" max="100" id="TodoReminderTime" /> 
-                                <label for="TodoReminderTime">dager før frist </label>
-                            </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <input type="checkbox" asp-for="TodoReminder" id="TodoReminder" />
+                            <label for="TodoReminder"> Ønsker også påminnelse</label>
+                            <input asp-for="TodoReminderTime" type="number" min="0" max="100" id="TodoReminderTime" />
+                            <label for="TodoReminderTime">dager før frist </label>
                         </div>
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <input class="btn no-margin-bottom show-loading-animation" type="submit" value="Start abonnement" />
-                            </div>
-                        </div>    
-                    </form>
-                    
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <input class="btn no-margin-bottom show-loading-animation" type="submit" value="Start abonnement" />
+                        </div>
+                    </div>
+                </form>
+
                 <p></p>
             </div>
         }
         <div class="section data-search-filter-container">
-            <input v-model="searchInput" v-bind:placeholder="getSearchInputPlaceholder()" class="data-search-filter" />
+            <input v-on:keyup="search($event.target.value)" v-bind:placeholder="getSearchInputPlaceholder()" class="data-search-filter" />
             <img src="/dist/images/search_icon-01.svg" alt="search">
         </div>
         <div class="section" is="dokdata" v-bind:load-all-api-data="loadAllApiData"></div>
         <div class="section" is="inspiredata" v-bind:load-all-api-data="loadAllApiData"></div>
         <div class="section" is="metadata" v-bind:load-all-api-data="loadAllApiData"></div>
-
         <div class="section" is="product-fact-sheets" v-bind:load-all-api-data="loadAllApiData"></div>
         <div class="section" is="cartography" v-bind:load-all-api-data="loadAllApiData"></div>
-        
-        
         <div class="section" is="report-measurment" v-bind:load-all-api-data="loadAllApiData"></div>
         <div class="section" is="code-lists-sosi" v-bind:load-all-api-data="loadAllApiData"></div>
         <div class="section" is="cartography-specifications" v-bind:load-all-api-data="loadAllApiData"></div>
         <div class="section" is="service-notifications" v-bind:load-all-api-data="loadAllApiData"></div>
         <div class="section" is="product-specifications" v-bind:load-all-api-data="loadAllApiData"></div>
-       
-        
-
     </div>
 </div>
 
@@ -104,7 +97,7 @@
                 Dokdata: Dokdata,
                 Inspiredata: Inspiredata
             },
-            data: function() {
+            data: function () {
                 return {
                     OrganizationNumber: '@ViewData["OrganizationOrgnr"]',
                     OrganizationName: '@Html.Raw(ViewData["OrganizationName"])',
@@ -112,12 +105,15 @@
                     Environment: '@ViewData["Environment"]',
                     ViewTitle: '@ViewData["title"]',
                     activeLanguage: this.getActiveLanguage(),
-                    searchInput: '',
+                    loadAllApiData: false,
+                    searchText: '',
                     searchInputPlaceholder: {
                         en: 'Search your data',
                         no: 'Søk i dine data her'
                     },
-                    loadAllApiData: false
+                    LIMIT_MAX_VALUE: 2147483647,
+                    MAX_HITS: 250,
+                    VISIBLE_ITEMS: 10
                 }
             },
             methods: {
@@ -126,24 +122,23 @@
                         .then(response => { return response.data; })
                         .catch(error => { throw error; });
                 },
+
                 getActiveLanguage: function () {
                     return Cookies.get('_culture') ? Cookies.get('_culture') : 'no';
-
                 },
+
                 getSearchInputPlaceholder: function () {
                     return this.searchInputPlaceholder[this.activeLanguage];
                 },
+
                 getTranslatedOrganizationName: function () {
                     return this.translatedOrganizationName ? this.translatedOrganizationName : this.OrganizationName;
-                }
-            },
-            watch: {
-                searchInput: function (value) {
-                    if (value) {
-                        this.loadAllApiData = true;
-                    }
-                }
+                },
+
+                search: debounce(function (value) {
+                    this.searchText = value;
+                }, 1000)
             }
-        })
+        });
     </script>
 }
