@@ -20,9 +20,12 @@ namespace Geonorge.MinSide.Web.Controllers
             _logEntryService = logEntryService;
         }
         // GET: Admin
-        public ActionResult Edit()
+        public ActionResult Edit(string operation = "", int limitNumberOfEntries = 100, bool limitCurrentApplication = true)
         {
-            var logEntries = _logEntryService.GetEntries(100, "", true).Result;
+            ViewBag.limitCurrentApplication = limitCurrentApplication;
+            ViewBag.limitNumberOfEntries = limitNumberOfEntries;
+            ViewBag.operation = operation;
+            var logEntries = _logEntryService.GetEntries(limitNumberOfEntries, operation, limitCurrentApplication).Result;
             CodeList.UpdateOrganizations();
             return View(logEntries);
         }
