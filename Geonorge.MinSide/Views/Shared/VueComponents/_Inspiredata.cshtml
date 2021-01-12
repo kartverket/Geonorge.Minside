@@ -1,17 +1,18 @@
 <script type="text/x-template" id="inspiredata-template">
     <div>
-        <div v-if="items && filteredItems.length" class="list">
-            <h3 v-on:click="expanded = !expanded" class="section-title clickable">
+        <div v-if="items && visibleItems.length" class="list">
+            <h3 v-on:click="expand($event)" class="section-title clickable">
                 <span class="expand-arrow clickable" style="vertical-align: middle;" v-bind:class="{active: expanded}"></span>
-                Inspire data ({{ getCounter() }})
+                Inspire data ({{ filteredItems.length }}) <a v-bind:href="items.id + '?filterOrganization=' + items.owner" target="_blank" class="external-link">Se alle</a>
             </h3>
+            <h6 class="tooManyHits" v-show="tooManyHits">For mange treff ({{ filteredItems.length }}). Prøv å begrense søket.</h6>
             <div v-show="expanded">
                 <div class="list-header d-none d-md-block">
                     <div class="row">
-                        <div class="col-md-5">
+                        <div class="col-md-6">
                             Navn
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-5">
                             Temagrupper
                         </div>
                         <div class="col-md-1">
@@ -20,12 +21,12 @@
                     </div>
                 </div>
                 <div class="list-content" v-bind:class="{'loading-data': loadingData}">
-                    <div v-for="item in filteredItems" class="list-item">
+                    <div v-for="item in visibleItems" class="list-item">
                         <div class="row">
-                            <div class="col-md-5">
-                                <a v-bind:href="item.MetadataUrl" v-bind:title="'Vis detaljer for ' + item.Label">{{item.label}}</a>
-                            </div>
                             <div class="col-md-6">
+                                <a v-bind:href="item.id" v-bind:title="'Vis detaljer for ' + item.label" target="_blank">{{item.label}}</a>
+                            </div>
+                            <div class="col-md-5">
                                 <span class="d-inline-block d-md-none">Temagrupper</span>
                                 {{item.InspireTheme}}
                             </div>
@@ -38,7 +39,7 @@
                     </div>
                 </div>
                 <div class="text-center">
-                    <button v-show="moreItemsAvailable" v-on:click="getItems()" class="icon-button add-more-button" v-bind:class="loadingData ? 'fas fa-spinner fa-pulse' : 'fa fa-plus'"></button>
+                    <button v-show="moreItemsAvailable" v-on:click="showMoreItems()" class="icon-button add-more-button" v-bind:class="loadingData ? 'fas fa-spinner fa-pulse' : 'fa fa-plus'"></button>
                 </div>
             </div>
         </div>
@@ -46,98 +47,91 @@
 </script>
 
 <script>
-var Inspiredata = {
+    var Inspiredata = {
         name: "Inspiredata",
         template: "#inspiredata-template",
-        props: ['loadAllApiData'],
         data: function () {
             return {
                 loadingData: false,
                 expanded: true,
                 items: null,
-                numberOfVisibleItems: 0,
+                filteredItems: [],
+                visibleItems: [],
+                visibleItemsCount: this.$root.VISIBLE_ITEMS,
+                tooManyHits: false,
                 filterProperties: [
                     'label',
                 ]
-
             }
         },
         computed: {
             moreItemsAvailable: function () {
-                if (this.loadAllApiData) {
-                    return false;
-                } else {
-                    return this.items && this.items.ContainedItemsResult.Total > this.numberOfVisibleItems;
-                }
-            },
-            filteredItems: function () {
-                var filteredItems = [];
-                if (this.loadAllApiData && this.$root.searchInput) {
-                    this.items.containeditems.forEach(function (item) {
-                        var itemHasMatch = false;
-                        this.filterProperties.forEach(function (filterProperty) {
-                            if (item[filterProperty].toUpperCase().indexOf(this.$root.searchInput.toUpperCase()) > -1) {
-                                itemHasMatch = true;
-                            }
-                        }.bind(this));
-                        if (itemHasMatch) {
-                            filteredItems.push(item);
-                        }
-                    }.bind(this))
-                } else {
-                    filteredItems = this.items.containeditems;
-                }
-                return filteredItems;
+                return this.items && this.filteredItems.length > this.visibleItems.length;
             }
         },
         methods: {
             getItems: function () {
-                var itemsPerRequest = 10;
-                var offsetParameter = this.numberOfVisibleItems ? "&offset=" + this.numberOfVisibleItems : "";
+                var environmentParameter = this.$root.Environment;
                 var organizationNameParameter = '?filterOrganization=' + this.$root.OrganizationName;
                 var orderParameter = "&orderby=updated";
-                var environmentParameter = this.$root.Environment;
-
-                if (this.loadAllApiData && this.items) {
-                    itemsPerRequest = this.items.NumFound;
-                }
-                var apiURL = this.loadAllApiData
-                    ? "https://register." + environmentParameter + "geonorge.no/api/inspire-statusregister" + organizationNameParameter + "&limit=" + itemsPerRequest + orderParameter
-                    : "https://register." + environmentParameter + "geonorge.no/api/inspire-statusregister" + organizationNameParameter  + "&limit=" + itemsPerRequest + orderParameter + offsetParameter
+                var apiURL = "https://register." + environmentParameter + "geonorge.no/api/inspire-statusregister" + organizationNameParameter + "&limit=" + this.$root.LIMIT_MAX_VALUE + orderParameter;
 
                 this.loadingData = true;
-                
 
-                Promise.resolve(this.$root.getApiData(apiURL))
+                return Promise.resolve(this.$root.getApiData(apiURL))
                     .then((apiData) => {
+                        this.items = apiData;
                         this.loadingData = false;
-                        if (!this.items || this.loadAllApiData) {
-                            this.items = apiData;
-                        }
-                        else {
-                            this.items.containeditems = this.items.containeditems.concat(apiData.containeditems);
-                        }
-                        this.numberOfVisibleItems += itemsPerRequest;
                     });
             },
-            formatDate: function (date) {
-                if (date) {
-                    return moment(date).format('DD.MM.YYYY');
-                }
+
+            filterItems: function (searchText) {
+                this.filteredItems = this.items.containeditems.filter(item => {
+                    return this.filterProperties.some(filterProperty => {
+                        return item[filterProperty].toUpperCase().indexOf(searchText.toUpperCase()) > -1;
+                    });
+                });
             },
 
+            showMoreItems: function () {
+                this.visibleItems = this.filteredItems.slice(0, this.visibleItems.length + this.$root.VISIBLE_ITEMS);
+                this.visibleItemsCount = this.visibleItems.length;
+            },
 
-            getCounter: function () {
-                
-                return this.loadAllApiData && this.$root.searchInput ? this.items.Registeritem.length : this.items.ContainedItemsResult.Total;
+            formatDate: function (date) {
+                return date ? moment(date).format('DD.MM.YYYY') : undefined;
+            },
+
+            expand: function (event) {
+                if (event.target.nodeName !== "A") {
+                    this.expanded = !this.expanded;
+                }
             }
         },
         mounted: function () {
-            this.getItems();
+            this.getItems()
+                .then(() => {
+                    this.filteredItems = this.items.containeditems;
+                    this.visibleItems = this.filteredItems.slice(0, this.$root.VISIBLE_ITEMS);
+                });
         },
         watch: {
-            loadAllApiData: function () {
-                this.getItems();
+            '$root.searchText': function () {
+                var searchText = this.$root.searchText.trim();
+                this.filterItems(searchText);
+                this.tooManyHits = false;
+
+                if (searchText === '') {
+                    this.visibleItems = this.items.containeditems.slice(0, this.visibleItemsCount);
+                    return;
+                }
+
+                this.tooManyHits = this.filteredItems.length > this.$root.MAX_HITS;
+
+                if (!this.tooManyHits) {
+                    this.visibleItems = this.filteredItems;
+                }
             }
         }
-    };</script>
+    };
+</script>
