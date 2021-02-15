@@ -15,7 +15,11 @@
 </head>
 <body class="geonorge-container prototype geonorge">
     <div id="loading-animation" class="loading-animation" style="display: none;"></div>
+    <main-navigation environment="@AppSettings.EnvironmentName.ToLower()" signinurl="@AppSettings.RedirectUri.Replace("logout", "login")"
+                     signouturl="@AppSettings.RedirectUri"
+                     isLoggedIn="@User.IsAuthenticated().ToString().ToLower()">
 
+    </main-navigation>
     <script>
         var applicationEnvironment = '@AppSettings.EnvironmentName.ToLower()';
         var applicationVersionNumber = '@AppSettings.BuildVersionNumber';
@@ -23,7 +27,7 @@
         var cultureData = { supportsMultiCulture: "true", currentCulture: 'no' };
     </script>
 
-    @await Html.PartialAsync("~/wwwroot/dist/partials/Header.html")
+    @*@await Html.PartialAsync("~/wwwroot/dist/partials/Header.html")*@
 
     <div class="body-content">
         <div class="main-header">
@@ -36,7 +40,7 @@
             </div>
             @if (User.IsAuthenticated())
             {
-                <div class="container panel panel-default" style="padding: 10px;">
+                <div class="container panel panel-default" style="padding: 40px;">
                     <div id="Tabs" role="tabpanel">
                         <ul class="nav nav-tabs link-tabs" role="tablist">
                             <li class="@(ViewContext.RouteData.Values["controller"].ToString() == "Home" ? "active" : "")"><a href="~/" role="tab"><i class="far fa-file-alt"></i>Registreringer&nbsp;</a></li>
@@ -80,6 +84,6 @@
 
 
     @RenderSection("scripts", required: false)
-
+    <script src="https://cdn.jsdelivr.net/npm/@("@kartverket/geonorge-web-components@0.1.33/MainNavigation.js")"></script>
 </body>
 </html>
