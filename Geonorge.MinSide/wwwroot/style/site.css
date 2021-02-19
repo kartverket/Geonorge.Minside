@@ -1,4 +1,18 @@
-﻿.main-header,
+﻿.fixed-menu-margin {
+    margin-top: 140px;
+}
+@media (min-width: 360px) {
+    .fixed-menu-margin {
+        margin-top: 103px;
+    }
+}
+@media (min-width: 600px) {
+    .fixed-menu-margin {
+        margin-top: 62px;
+    }
+}
+
+.main-header,
 .view-header {
     background-color: #f8f8f7;
 }

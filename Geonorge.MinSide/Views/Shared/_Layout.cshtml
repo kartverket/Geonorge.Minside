@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="~/style/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/style/sharedPartialsBootstrapOverride.css" asp-append-version="true" />
 </head>
-<body class="geonorge-container prototype geonorge">
+<body class="geonorge-container prototype geonorge fixed-menu-margin">
     <div id="loading-animation" class="loading-animation" style="display: none;"></div>
     <main-navigation environment="@AppSettings.EnvironmentName.ToLower()" signinurl="@AppSettings.RedirectUri.Replace("logout", "login")"
                      signouturl="@AppSettings.RedirectUri"
@@ -84,6 +84,6 @@
 
 
     @RenderSection("scripts", required: false)
-    <script src="https://cdn.jsdelivr.net/npm/@("@kartverket/geonorge-web-components@0.1.33/MainNavigation.js")"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@("@kartverket/geonorge-web-components@0.1.41/MainNavigation.js")"></script>
 </body>
 </html>
