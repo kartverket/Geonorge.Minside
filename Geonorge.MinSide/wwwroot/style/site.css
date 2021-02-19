@@ -12,6 +12,10 @@
     }
 }
 
+.container-breadcrumbs {
+    display: block!important;
+}
+
 .main-header,
 .view-header {
     background-color: #f8f8f7;
