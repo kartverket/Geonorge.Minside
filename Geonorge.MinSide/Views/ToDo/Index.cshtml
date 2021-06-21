@@ -2,95 +2,95 @@
 @using Geonorge.MinSide.Utils;
 @using Microsoft.AspNetCore.Http;
 @model IEnumerable<Geonorge.MinSide.Infrastructure.Context.ToDo>
-<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
-<!-- Editor's Dependecy Style -->
-<link rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.min.css" />
-<!-- Editor's Style -->
-<link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
-@{
-    ViewData["Title"] = "Oppfølgingspunkter";
-}
-<div class="container">
-    <h2>Oppfølgingspunkter</h2>
-    @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
-    {
-        <p>
-            <a href="/ToDo/Create?meetingId=@Context.Request.Query["meetingId"]">Opprett nytt</a>
-        </p>
+    <script src="https://uicdn.toast.com/editor/2.5.2/toastui-editor-all.js"></script>
+    <!-- Editor's Dependecy Style -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.min.css" />
+    <!-- Editor's Style -->
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/2.5.2/toastui-editor.css" />
+    @{
+        ViewData["Title"] = "Oppfølgingspunkter";
     }
-    @if (Context.Request.Query["meetingId"].ToString() != "")
-    {
-        <p>
-            <a href="/Meetings/Edit/@Context.Request.Query["meetingId"]">Tilbake møte</a>
-        </p>
-    }
-    <form asp-action="Index" method="get">
-        @{var Status = new MultiSelectList(CodeList.ToDoStatus, "Key", "Value", ViewBag.Status); }
-        <span>Status: </span>
-        @foreach (var status in Status)
+    <div class="container">
+        <h2>Oppfølgingspunkter</h2>
+        @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
         {
-            <span>
-                <input onchange="this.form.submit()" id="@Helper.GetMeetingStatusClass(status.Value)" type="checkbox" name="status" value="@status.Value" @(status.Selected ? "checked" : "") />
-                <label for="@Helper.GetMeetingStatusClass(status.Value)">@status.Value</label>
-            </span>
+            <p>
+                <a href="/ToDo/Create?meetingId=@Context.Request.Query["meetingId"]">Opprett nytt</a>
+            </p>
         }
-    </form>
-    <div class="row">
-        <div class="col-12">
-            <form asp-action="EditToDoList">
-                @{int i = 0;}
-                @foreach (var todo in Model)
-                {
-                    <div class="row form-layout @Helper.GetMeetingStatusClass(todo.Status)">
+        @if (Context.Request.Query["meetingId"].ToString() != "")
+        {
+            <p>
+                <a href="/Meetings/Edit/@Context.Request.Query["meetingId"]">Tilbake møte</a>
+            </p>
+        }
+        <form asp-action="Index" method="get">
+            @{var Status = new MultiSelectList(CodeList.ToDoStatus, "Key", "Value", ViewBag.Status); }
+            <span>Status: </span>
+            @foreach (var status in Status)
+            {
+                <span>
+                    <input onchange="this.form.submit()" id="@Helper.GetMeetingStatusClass(status.Value)" type="checkbox" name="status" value="@status.Value" @(status.Selected ? "checked" : "") />
+                    <label for="@Helper.GetMeetingStatusClass(status.Value)">@status.Value</label>
+                </span>
+            }
+        </form>
+        <div class="row">
+            <div class="col-12">
+                <form asp-action="EditToDoList">
+                    @{int i = 0;}
+                    @foreach (var todo in Model)
+                    {
+                        <div class="row form-layout @Helper.GetMeetingStatusClass(todo.Status)">
 
-                        <div class="col-4">
-                            <span><strong>Nr @todo.Number</strong></span> - <span>@todo.Subject</span>
-                            <div>
-                                <label>Frist:</label>
-                                <span>@todo.Deadline.ToString("dd.MM.yyyy")</span>
-                                <label>Ansvarlig:</label>
-                                <span>@todo.ResponsibleOrganization</span>
+                            <div class="col-4">
+                                <span><strong>Nr @todo.Number</strong></span> - <span>@todo.Subject</span>
+                                <div>
+                                    <label>Frist:</label>
+                                    <span>@todo.Deadline.ToString("dd.MM.yyyy")</span>
+                                    <label>Ansvarlig:</label>
+                                    <span>@todo.ResponsibleOrganization</span>
 
-                            </div>
-                        </div>                                     <div class="col-3">
-                            <label>Status </label>
-                            @if (Context.Session.GetString("OrganizationName") != todo.ResponsibleOrganization && !User.IsInRole(GeonorgeRoles.MetadataAdmin))
-                            {
-                                <input type="hidden" name="ToDo[@i].Status" value="@todo.Status" />
-                                <span>@todo.Status</span>
-                            }
-                            else
-                            {
-                                var Status = new SelectList(CodeList.ToDoStatus, "Key", "Value", todo.Status);
-                                <select name="ToDo[@i].Status" class="form-control" asp-items="Status"></select>
-                            }
-
-                        </div>
-                        <div class="col-5">
-                            <div class="datepicker">
-                                <label>Utført dato</label>
+                                </div>
+                            </div>                                     <div class="col-3">
+                                <label>Status </label>
                                 @if (Context.Session.GetString("OrganizationName") != todo.ResponsibleOrganization && !User.IsInRole(GeonorgeRoles.MetadataAdmin))
                                 {
-                                    <input type="hidden" name="ToDo[@i].Done" value="@todo.Done" />
-                                    <span>@(todo.Done.HasValue ? "Utført den " + todo.Done.Value.ToString("dd.MM.yyyy") : "")</span>
+                                    <input type="hidden" name="ToDo[@i].Status" value="@todo.Status" />
+                                    <span>@todo.Status</span>
                                 }
                                 else
                                 {
-                                    <input type="datetime" placeholder="dd.mm.yyyy" class="form-control" name="ToDo[@i].Done" value="@(todo.Done.HasValue ? todo.Done.Value.ToString("dd.MM.yyyy") : "")" />
+                                    var Status = new SelectList(CodeList.ToDoStatus, "Key", "Value", todo.Status);
+                                    <select name="ToDo[@i].Status" class="form-control" asp-items="Status"></select>
                                 }
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <label>Beskrivelse</label>
-                            <p>@todo.Description</p>
-                        </div>
 
-                        <div class="col-12">
-                            <label>Kommentar</label>
-                            <input type="hidden" name="ToDo[@i].Comment" id="todo@(i)" value="@todo.Comment">
-                            <div id="editor@(i)"></div>
-                            <script>
+                            </div>
+                            <div class="col-5">
+                                <div class="datepicker">
+                                    <label>Utført dato</label>
+                                    @if (Context.Session.GetString("OrganizationName") != todo.ResponsibleOrganization && !User.IsInRole(GeonorgeRoles.MetadataAdmin))
+                                    {
+                                        <input type="hidden" name="ToDo[@i].Done" value="@todo.Done" />
+                                        <span>@(todo.Done.HasValue ? "Utført den " + todo.Done.Value.ToString("dd.MM.yyyy") : "")</span>
+                                    }
+                                    else
+                                    {
+                                        <input type="datetime" placeholder="dd.mm.yyyy" class="form-control" name="ToDo[@i].Done" value="@(todo.Done.HasValue ? todo.Done.Value.ToString("dd.MM.yyyy") : "")" />
+                                    }
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <label>Beskrivelse</label>
+                                <p>@todo.Description</p>
+                            </div>
+
+                            <div class="col-12">
+                                <label>Kommentar</label>
+                                <input type="hidden" name="ToDo[@i].Comment" id="todo@(i)" value="@todo.Comment">
+                                <div id="editor@(i)"></div>
+                                <script>
 
                                 let hiddenBodyMarkdown@(i) = document.querySelector("#todo@(i)");
                                 let onEditorUpdate@(i) = () => {
@@ -116,32 +116,31 @@
                                     initialValue: content@(i),
                                     initialEditType: 'wysiwyg'
                                 });
-                            </script>
+                                </script>
+                            </div>
+                            <div class="btn-group">
+                                <button type="submit" class="btn btn-default" onclick="confirmNotify();"><i class="fas fa-save"></i>Lagre</button>
+                                @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
+                                {
+                                    <a class="btn btn-default" href="/ToDo/Edit?id=@todo.Id&meetingId=@Context.Request.Query["meetingId"]"><i class="fas fa-edit"></i>Rediger</a>
+                                    <a class="btn btn-default" href="/ToDo/Delete?id=@todo.Id&meetingId=@Context.Request.Query["meetingId"]"><i class="fas fa-trash"></i> Slett </a>
+                                }
+                            </div>
+                            <input type="hidden" name="ToDo[@i].Id" value="@todo.Id" />
                         </div>
-                        <div class="btn-group">
-                            <button type="submit" class="btn btn-default" onclick="confirmNotify();"><i class="fas fa-save"></i>Lagre</button>
-                            @if (User.IsInRole(GeonorgeRoles.MetadataAdmin))
-                            {
-                                <a class="btn btn-default" href="/ToDo/Edit?id=@todo.Id&meetingId=@Context.Request.Query["meetingId"]"><i class="fas fa-edit"></i>Rediger</a>
-                                <a class="btn btn-default" href="/ToDo/Delete?id=@todo.Id&meetingId=@Context.Request.Query["meetingId"]"><i class="fas fa-trash"></i> Slett </a>
-                            }
-                        </div>
-                        <input type="hidden" name="ToDo[@i].Id" value="@todo.Id" />
-                    </div>
-                    i++;
-                }
-                    <input type="hidden" name="sendNotification" id="sendNotification" value="true" />
-            </form>
-            <script>
-                function confirmNotify()
-                {
-                    if (confirm("Send beskjed til andre på epost om endringen")) {
-                        document.getElementById("sendNotification").value = true;
-                    } else {
-                        document.getElementById("sendNotification").value = false;
+                        i++;
                     }
-                }
-            </script>
+                    <input type="hidden" name="sendNotification" id="sendNotification" value="true" />
+                </form>
+                <script>
+                    function confirmNotify() {
+                        if (confirm("Send beskjed til andre på epost om endringen")) {
+                            document.getElementById("sendNotification").value = true;
+                        } else {
+                            document.getElementById("sendNotification").value = false;
+                        }
+                    }
+                </script>
+            </div>
         </div>
     </div>
-</div>
