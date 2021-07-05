@@ -61,7 +61,7 @@
         </div>
         @RenderBody()
     </div>
-    @await Html.PartialAsync("~/wwwroot/dist/partials/Footer_v2.html")
+    <geonorge-footer language="no" version="@AppSettings.BuildVersionNumber" environment="@AppSettings.EnvironmentName.ToLower()" />
 
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/dist/vendor.js" asp-append-version="true"></script>
@@ -84,6 +84,7 @@
 
 
     @RenderSection("scripts", required: false)
-    <script src="https://cdn.jsdelivr.net/npm/@("@kartverket/geonorge-web-components@0.1.41/MainNavigation.js")"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@("@kartverket/geonorge-web-components@0.1.53/MainNavigation.js")"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@("@kartverket/geonorge-web-components@0.1.53/GeonorgeFooter.js")"></script>
 </body>
 </html>
